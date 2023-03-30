@@ -1,0 +1,19 @@
+{
+    "self": "https://supercompany.atlassian.net/rest/api/3/version/80757",
+    "id": "80757",
+    "name": "6.14",
+    "archived": false,
+    "released": false,
+    "startDate": "2021-11-29",
+    "releaseDate": "2021-12-15",
+    "overdue": false,
+    "userStartDate": "29.11.21",
+    "userReleaseDate": "15.12.21",
+    "projectId": 10181,
+    "issuesStatusForFixVersion": {
+        "unmapped": 0,
+        "toDo": 35,
+        "inProgress": 29,
+        "done": 81
+    }
+}

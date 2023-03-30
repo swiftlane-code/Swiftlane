@@ -1,0 +1,21 @@
+diff --git a/scripts/some_script.sh b/scripts/some_script.sh
+index c1bf6f992f..2966dff1ae 100755
+--- a/scripts/some_script.sh
++++ b/scripts/some_script.sh
+@@ -3,6 +3,7 @@
+ set -euo pipefail
+ 
+ export SM_UTILS_PATH="etc/utils/"
++# some change 1
+ export SM_UTILS_BIN_PATH="etc/bin/"
+ 
+ # ==== Install staff ==== #
+@@ -19,7 +20,7 @@ echo "🧑🏻‍💻 Installing certificates..."
+ 
+ ./bin/job --config $(pwd)/configs/some_config.yml
+ 
+-
++# some change 2
+ echo
+ echo "🥳"
+ echo

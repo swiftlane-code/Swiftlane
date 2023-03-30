@@ -1,0 +1,47 @@
+{
+  "configurations" : [
+    {
+      "id" : "233FEB36-02C6-4739-A9F1-AAB9077C6BEB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "tp_var_2",
+        "value" : "value 2"
+      },
+      {
+        "key" : "tp_var1",
+        "value" : "value1"
+      }
+    ],
+    "maximumTestRepetitions" : 2,
+    "testRepetitionMode" : "retryOnFailure"
+  },
+  "RAnDOmKey" : [
+    1,
+    2,
+    3,
+    4
+  ],
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "selectedTests" : [
+        "PickupTest\/testCheckAlcoholAgeInfoInFavouriteAndOrder()",
+        "PickupTest\/testCheckAlcoholAgeNotConfirmedAndCancelOrderNotAlcoholShip()",
+        "PickupTest\/testCheckPickupActions()"
+      ],
+      "target" : {
+        "containerPath" : "container:Project.xcodeproj",
+        "identifier" : "BD0E5B56E34A361611FCFB41",
+        "name" : "SOMERANDOMUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

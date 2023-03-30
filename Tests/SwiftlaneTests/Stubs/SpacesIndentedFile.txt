@@ -1,0 +1,14 @@
+//
+
+import Foundation
+
+/// Spaces indented file
+class Foo {
+    func foo() {
+         print("gogo spaces")
+    }
+
+    func bar() {
+         print("gogo spaces")
+    }
+}

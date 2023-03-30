@@ -1,0 +1,39 @@
+[
+    {
+        "self": "https://supercompany.atlassian.net/rest/api/3/version/87858",
+        "id": "87858",
+        "name": "6.12",
+        "archived": false,
+        "released": true,
+        "startDate": "2021-11-01",
+        "releaseDate": "2021-11-19",
+        "userStartDate": "01.11.21",
+        "userReleaseDate": "19.11.21",
+        "projectId": 10181
+    },
+    {
+        "self": "https://supercompany.atlassian.net/rest/api/3/version/77461",
+        "id": "77461",
+        "name": "6.13",
+        "archived": false,
+        "released": true,
+        "startDate": "2021-11-15",
+        "releaseDate": "2021-12-03",
+        "userStartDate": "15.11.21",
+        "userReleaseDate": "03.12.21",
+        "projectId": 10181
+    },
+    {
+        "self": "https://supercompany.atlassian.net/rest/api/3/version/80757",
+        "id": "45496",
+        "name": "6.14",
+        "archived": false,
+        "released": false,
+        "startDate": "2021-11-29",
+        "releaseDate": "2021-12-15",
+        "overdue": false,
+        "userStartDate": "29.11.21",
+        "userReleaseDate": "15.12.21",
+        "projectId": 10181
+    }
+]

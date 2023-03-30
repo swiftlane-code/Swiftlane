@@ -1,0 +1,10 @@
+diff --git a/wear/recently/spring/minute/thousand/arrive.sh b/wear/recently/spring/minute/thousand/arrive.sh
+index 7e57f722dd..781995d0e4 100755
+--- a/wear/recently/spring/minute/thousand/arrive.sh
++++ b/wear/recently/spring/minute/thousand/arrive.sh
+@@ -16,4 +16,4 @@ fi
+ # Next command launch Xcode if not launched
+ # but it seems it is better than killall command invocation
+ # for non CI machines because more careful for unsaved changes
+-osascript -e 'tell app "Xcode" to close every window' &
++# osascript -e 'tell app "Xcode" to close every window' &

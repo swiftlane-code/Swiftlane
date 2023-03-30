@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "233FEB36-02C6-4739-A9F1-AAB9077C6BEB",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : [
+        "AdditionalOrderTest\/testCheckAdditionalOrderCatalogActions()",
+        "AdditionalOrderTest\/testCheckAdditionalOrderIsNotPossible()",
+      ],
+      "target" : {
+        "containerPath" : "container:Project.xcodeproj",
+        "identifier" : "BD0E5B56E34A361611FCFB41",
+        "name" : "UITests"
+      }
+    }
+  ],
+  "version" : 1
+}

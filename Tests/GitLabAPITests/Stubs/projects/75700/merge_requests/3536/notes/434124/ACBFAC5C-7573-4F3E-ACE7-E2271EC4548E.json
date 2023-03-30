@@ -1,0 +1,12 @@
+{
+  "loggerRequestUUID" : "ACBFAC5C-7573-4F3E-ACE7-E2271EC4548E",
+  "request" : {
+    "absoluteURL" : "https:\/\/gitlab.host.com\/api\/v4\/\/projects\/75700\/merge_requests\/3536\/notes\/434124",
+    "baseURL" : "https:\/\/gitlab.host.com\/api\/v4\/",
+    "method" : "DELETE",
+    "route" : "\/projects\/75700\/merge_requests\/3536\/notes\/434124",
+    "timeout" : 5
+  },
+  "responseBody" : "",
+  "responseCode" : 204
+}
