@@ -1,0 +1,12 @@
+{
+  "loggerRequestUUID": "0BBB909D-90F8-4462-9C02-6CA37727FFF6",
+  "request": {
+    "absoluteURL": "https://gitlab.host.com/api/v4//projects/75700/merge_requests/3536/notes?body=%23%20COMMENT%20BY%20C3PO%20TESTS%20%60createNote()%60%0A%0ATest%20mr%20BODY%0A%0A%23%23%23%20Multiline%20comment%0A%0A%60%60%60swift%0Afunc%20code()%20%7B%0A%09print(%22hello%20world!%22)%0A%7D%0A%60%60%60%0A%0A%F0%9F%98%8E",
+    "baseURL": "https://gitlab.host.com/api/v4/",
+    "method": "POST",
+    "route": "/projects/75700/merge_requests/3536/notes",
+    "timeout": 5
+  },
+  "responseBody": "{\"id\": 434124, \"type\": null, \"body\": \"# COMMENT BY C3PO TESTS `createNote()`\\n\\nTest mr BODY\\n\\n### Multiline comment\\n\\n```swift\\nfunc code() {\\n\\tprint(\\\"hello world!\\\")\\n}\\n```\\n\\n\\ud83d\\ude0e\", \"attachment\": null, \"author\": {\"id\": 483, \"username\": \"douglasholmes\", \"name\": \"Luba-Katanga\", \"state\": \"active\", \"avatar_url\": \"https://gitlab.host.com/uploads/-/system/user/avatar/671/avatar.png\", \"web_url\": \"https://gitlab.host.com/douglasholmes\"}, \"created_at\": \"2022-02-01T11:30:38.715Z\", \"updated_at\": \"2022-02-01T11:30:38.715Z\", \"system\": false, \"noteable_id\": 59110, \"noteable_type\": \"MergeRequest\", \"resolvable\": false, \"confidential\": false, \"noteable_iid\": 3536, \"commands_changes\": {}}",
+  "responseCode": 201
+}

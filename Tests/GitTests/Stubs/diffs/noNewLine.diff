@@ -1,0 +1,12 @@
+diff --git a/file.yml b/file.yml
+index 7e57f722dd..781995d0e4 100644
+--- a/file.yml
++++ b/file.yml
+@@ -2,4 +2,4 @@ deviceModel: "iPhone 11"
+ osVersion: "15.5"
+ simulatorsCount: 1
+ scheme: SMAllTests
+-useMultiScan: false
+\ No newline at end of file
++useMultiScan: true
+\ No newline at end of file

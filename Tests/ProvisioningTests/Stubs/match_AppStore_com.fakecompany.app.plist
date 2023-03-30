@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AppIDName</key>
+	<string>FakeApp</string>
+	<key>ApplicationIdentifierPrefix</key>
+	<array>
+		<string>ABCDEFGHKL</string>
+	</array>
+	<key>CreationDate</key>
+	<date>2021-04-15T11:39:18Z</date>
+	<key>Platform</key>
+	<array>
+		<string>iOS</string>
+	</array>
+	<key>IsXcodeManaged</key>
+	<false/>
+	<key>DeveloperCertificates</key>
+	<array>
+		<data>MIIDpTCCAo2gAwIBAgIJALl9CNg1ttTEMA0GCSqGSIb3DQEBCwUAMHkxCzAJBgNVBAYTAlVTMQwwCgYDVQQIDANOL0ExDDAKBgNVBAcMA04vQTEgMB4GA1UECgwXU2VsZi1zaWduZWQgY2VydGlmaWNhdGUxLDAqBgNVBAMMI0FCQ0RFRkdIS0w6IFNlbGYtc2lnbmVkIGNlcnRpZmljYXRlMB4XDTIyMTIxOTEzMjIyMVoXDTI0MTIxODEzMjIyMVoweTELMAkGA1UEBhMCVVMxDDAKBgNVBAgMA04vQTEMMAoGA1UEBwwDTi9BMSAwHgYDVQQKDBdTZWxmLXNpZ25lZCBjZXJ0aWZpY2F0ZTEsMCoGA1UEAwwjQUJDREVGR0hLTDogU2VsZi1zaWduZWQgY2VydGlmaWNhdGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCe27L0VJdXnp2YfXo7ADcqB3u4EKz9b6Na1hDYgIyI+CVcwQxJqmSGi7BEaupFTLUJn0PdnF3WTSpDCIlSkMrt0NV+jnYgwPtnamNLR4d2aF6mrpFf3ZvlXkp4EGfV0JHQGND5E0xGxfVjPO5zbQHe0Yy6eytMIoeCmbc9j8cSHLvsZuPO03VFgaLPv4o9Q+77eKu5jDYjHYJLTPIHXmxOmYuNblgg8M+nacKmm7nfmOwVyTHVt0AuKZIt9xsDTnIUctlQREJR5mbX0ygKh/Rh7mDwMRUkbeMGn+64kz3+5MgSrmKJzIUTu5kOyfkaIrLpHK2y3B+GkNwoaDgkeAKnAgMBAAGjMDAuMCwGA1UdEQQlMCOCCWxvY2FsaG9zdIcEfwAAAYcQAAAAAAAAAAAAAAAAAAAAATANBgkqhkiG9w0BAQsFAAOCAQEAMLanm162I8HtAtBXbQN+5iw2Q4EPQkOgPuK0gJu9+OJCuAMKTD/HdlyJf5ooA6GLfquCabbwIl/6W5x5g/iH6JmB/SuR9OYOCgQDsGoih21IiDsnJUkDM+xVZIg9MYnonXQjrv0HxP+QK3H/PrlYn9+jmasRByo7IEBgDTMFaDFr6VmDnQZ8jgteMw0J9YNNa01rW87ApCr1LHKAWJgLhvFGsDfQzDiUt+3Pki8OTsMSd2+XkRMK2Dl8WcXRD7P0B2EGDAk4sJc6WnwLxub9r4WfzxbbDAocTEnegirdQc3yZHPSA9JFi1J/REaWJlZAZRQt3GgFiEVsiglL60N5vQ==</data>
+	</array>
+	<key>Entitlements</key>
+	<dict>
+		<key>beta-reports-active</key>
+		<true/>
+		<key>com.apple.security.application-groups</key>
+		<array>
+			<string>group.com.domain.fakecompany</string>
+		</array>
+		<key>application-identifier</key>
+		<string>ABCDEFGHKL.com.fakecompany.app</string>
+		<key>keychain-access-groups</key>
+		<array>
+			<string>ABCDEFGHKL.*</string>
+			<string>com.apple.token</string>
+		</array>
+		<key>get-task-allow</key>
+		<false/>
+		<key>com.apple.developer.team-identifier</key>
+		<string>ABCDEFGHKL.</string>
+	</dict>
+	<key>ExpirationDate</key>
+	<date>2022-04-15T11:28:47Z</date>
+	<key>Name</key>
+	<string>match AppStore com.fakecompany.app</string>
+	<key>TeamIdentifier</key>
+	<array>
+		<string>ABCDEFGHKL</string>
+	</array>
+	<key>TeamName</key>
+	<string>FAKECOMPANY, LTD</string>
+	<key>TimeToLive</key>
+	<integer>364</integer>
+	<key>UUID</key>
+	<string>c723fe24-67de-4e76-9f7c-c93bf6c32766</string>
+	<key>Version</key>
+	<integer>1</integer>
+</dict>
+</plist>

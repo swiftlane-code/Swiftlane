@@ -1,0 +1,173 @@
+sourceryCommand: ./etc/bin/sourcery
+sourceryTemplate: .build/checkouts/SwiftyMocky/Sources/SwiftyMocky/Mock.swifttemplate
+
+mocky.Swiftlane:
+  sources:
+    include:
+    - ./Sources/Swiftlane/
+    - ./Sources/Git/
+    - ./Sources/GitLabAPI/
+    - ./Sources/JiraAPI/
+    - ./Sources/Simulator/
+    - ./Sources/Xcodebuild/
+    - ./Sources/Guardian/
+  output: ./Tests/SwiftlaneTests/Mocks/Mock.generated.swift
+  targets:
+  - SwiftlaneTests
+  testable:
+  - Swiftlane
+  import:
+  - Foundation
+  - SwiftlaneCore
+  - Git
+  - GitLabAPI
+  - JiraAPI
+  - Simulator
+  - Xcodebuild
+  - Combine
+  - Networking
+  - Guardian
+  - PerfectRainbow
+  
+mocky.Guardian:
+  sources:
+    include:
+    - ./Sources/Git/
+    - ./Sources/GitLabAPI/
+    - ./Sources/JiraAPI/
+    - ./Sources/Simulator/
+    - ./Sources/Xcodebuild/
+    - ./Sources/Guardian/
+  output: ./Tests/GuardianTests/Mocks/Mock.generated.swift
+  targets:
+  - GuardianTests
+  testable:
+  - Guardian
+  import:
+  - Foundation
+  - SwiftlaneCore
+  - Git
+  - GitLabAPI
+  - JiraAPI
+  - Simulator
+  - Xcodebuild
+  - Guardian
+  - Combine
+  - Networking
+  - PerfectRainbow
+
+mocky.Git:
+  sources:
+    include:
+    - ./Sources/Git/
+    - ./Tests/GitTests/
+  output: ./Tests/GitTests/Mocks/Mock.generated.swift
+  targets:
+  - GitTests
+  testable:
+  - Git
+  import:
+  - Foundation
+  - SwiftlaneCore
+  - PerfectRainbow
+
+mocky.GitLabAPI:
+  sources:
+    include:
+    - ./Sources/GitLabAPI/
+    - ./Sources/Networking/
+    - ./Tests/GitLabAPITests/
+  output: ./Tests/GitLabAPITests/Mocks/Mock.generated.swift
+  targets:
+  - GitLabAPITests
+  testable:
+  - GitLabAPI
+  import:
+  - SwiftlaneCore
+  - Foundation
+  - Combine
+  - Networking
+  - PerfectRainbow
+
+mocky.JiraAPI:
+  sources:
+    include:
+    - ./Sources/JiraAPI/
+    - ./Tests/JiraAPITests/
+    - ./Sources/Networking/
+  output: ./Tests/JiraAPITests/Mocks/Mock.generated.swift
+  targets:
+  - JiraAPITests
+  testable:
+  - JiraAPI
+  import:
+  - SwiftlaneCore
+  - Foundation
+  - Combine
+  - Networking
+  - PerfectRainbow
+
+mocky.Networking:
+  sources:
+    include:
+    - ./Sources/Networking/
+  output: ./Tests/NetworkingTests/Mocks/Mock.generated.swift
+  targets:
+  - NetworkingTests
+  testable:
+  - Networking
+  import:
+  - SwiftlaneCore
+  - Networking
+  - Foundation
+  - PerfectRainbow
+
+mocky.Simulator:
+  sources:
+    include:
+    - ./Sources/Simulator/
+  output: ./Tests/SimulatorTests/Mocks/Mock.generated.swift
+  targets:
+  - SimulatorTests
+  testable:
+  - Simulator
+  import:
+  - SwiftlaneCore
+  - Foundation
+  - PerfectRainbow
+
+mocky.Xcodebuild:
+  sources:
+    include:
+    - ./Sources/Xcodebuild/
+  output: ./Tests/XcodebuildTests/Mocks/Mock.generated.swift
+  targets:
+  - XcodebuildTests
+  testable:
+  - Xcodebuild
+  import:
+  - Simulator
+  - Foundation
+  - Combine
+  - SwiftlaneCore
+  - PerfectRainbow
+
+mocky.Provisioning:
+  sources:
+    include:
+    - ./Sources/Provisioning/
+    - ./Sources/Git/
+    - ./Sources/AppStoreConnectAPI/
+  output: ./Tests/ProvisioningTests/Mocks/Mock.generated.swift
+  targets:
+  - ProvisioningTests
+  testable:
+  - Provisioning
+  import:
+  - Foundation
+  - Combine
+  - SwiftlaneCore
+  - Git
+  - AppStoreConnectAPI
+  - PerfectRainbow
+

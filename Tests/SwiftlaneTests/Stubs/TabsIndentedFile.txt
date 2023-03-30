@@ -1,0 +1,14 @@
+//
+
+import Foundation
+
+/// Tabs indented file
+class Foo {
+	func foo() {
+		print("gogo tabs")
+	}
+
+    func bar() {
+		print("gogo tabs")
+    }
+}

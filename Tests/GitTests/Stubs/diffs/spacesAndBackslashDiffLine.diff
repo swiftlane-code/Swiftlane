@@ -1,0 +1,26 @@
+diff --git a/public/social/listen/world/than/friend.swift b/public/social/listen/world/than/friend.swift
+index 25958219b5..b53d3e5a68 100644
+--- a/public/social/listen/world/than/friend.swift
++++ b/public/social/listen/world/than/friend.swift
+@@ -275,25 +275,6 @@ extension Manager {
+         }
+     }
+ 
+-    func hasGrandchildren(taxon: RealmTaxonVariant) -> Bool {
+-        while index < children.count - 1, !hasGrandchildren {
+-	     }
+-        return hasGrandchildren
+-    }
+-
+     /**
+       Searches for a non-skippable descendant.
+ 
+@@ -302,7 +283,7 @@ extension Manager {
+       ```
+       hier - A - B - C - D - D1
+                            \
+-                            D1
++                            D2
+ 
+       For B - jumpFromId = A
+               jumpToId = D
