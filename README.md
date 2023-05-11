@@ -137,7 +137,7 @@ To contribute to Swiftlane, you can fork the repository, make your changes, and 
 
 # License
 
-Swiftlane is licensed under the Apache License 2.0.
+Swiftlane is licensed under the [Apache License 2.0](LICENSE).
 
 # Credits
 
