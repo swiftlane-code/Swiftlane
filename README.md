@@ -16,7 +16,7 @@ That way we got compile time safe, type safe, written in well-known language cod
 
 In the past we used to use fastlane + [danger/swift](https://github.com/danger/swift). Why we moved away from it?
 
-* We are iOS developers and we know Swift well unlike ruby with all of it's caveats.
+* We are iOS developers and we know Swift well unlike Ruby with all of it's caveats.
 * Proper Swift infrastructure (danger scripts were getting huge and inconvenient very fast)
 * Type safe code
 * Unit tests and debugging? Easy!
