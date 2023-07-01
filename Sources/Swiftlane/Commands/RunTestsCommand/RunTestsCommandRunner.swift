@@ -32,9 +32,10 @@ public struct RunTestsCommandRunner: CommandRunnerProtocol {
     public func run(
         params: RunTestsCommandParamsAccessing,
         commandConfig: RunTestsCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
+        let logger: Logging = DependenciesFactory.resolve()
+        
         let simulatorsCount = params.simCount ?? commandConfig.simulatorsCount
         guard 1 ... 10 ~= simulatorsCount else {
             logger.error("--sim-count value is allowed to be in range 1...10. Passed value: \(simulatorsCount).")

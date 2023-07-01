@@ -26,10 +26,8 @@ public struct SharedConfigValues: Decodable {
     public let gitAuthorName: String
     public let gitAuthorEmail: String
 
-    public let availableProjects: [StringMatcher]
-
     private enum CodingKeys: String, CodingKey {
-        case jiraProjectKey, jiraRequestsTimeout, gitAuthorName, availableProjects, gitAuthorEmail
+        case jiraProjectKey, jiraRequestsTimeout, gitAuthorName, gitAuthorEmail
     }
 
     public init(from decoder: Decoder) throws {
@@ -37,7 +35,6 @@ public struct SharedConfigValues: Decodable {
         jiraProjectKey = try container.decode(String.self, forKey: .jiraProjectKey)
         jiraRequestsTimeout = try container.decode(TimeInterval.self, forKey: .jiraRequestsTimeout)
         gitAuthorName = try container.decode(String.self, forKey: .gitAuthorName)
-        availableProjects = try container.decode([StringMatcher].self, forKey: .availableProjects)
 
         let decodedGitAuthorEmail = try container.decodeIfPresent(String.self, forKey: .gitAuthorEmail)
         gitAuthorEmail = try decodedGitAuthorEmail ?? EnvironmentValueReader().string(ShellEnvKey.GIT_AUTHOR_EMAIL)
@@ -47,14 +44,12 @@ public struct SharedConfigValues: Decodable {
         jiraProjectKey: String,
         jiraRequestsTimeout: TimeInterval,
         gitAuthorName: String,
-        gitAuthorEmail: String,
-        availableProjects: [StringMatcher]
+        gitAuthorEmail: String
     ) {
         self.jiraProjectKey = jiraProjectKey
         self.jiraRequestsTimeout = jiraRequestsTimeout
         self.gitAuthorName = gitAuthorName
         self.gitAuthorEmail = gitAuthorEmail
-        self.availableProjects = availableProjects
     }
 }
 

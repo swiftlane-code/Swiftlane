@@ -17,20 +17,10 @@ public struct CheckCommitsCommandConfig: Decodable {
 }
 
 public struct CheckCommitsCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: CheckCommitsCommandParamsAccessing,
-        commandConfig _: CheckCommitsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        return true
-    }
-
     public func run(
         params: CheckCommitsCommandParamsAccessing,
         commandConfig: CheckCommitsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let checkerConfig = CommitsChecker.Config(
             projectDir: params.sharedConfigOptions.projectDir,

@@ -10,20 +10,10 @@ import Xcodebuild
 import Yams
 
 public struct UploadGitLabPackageCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: UploadGitLabPackageCommandParamsAccessing,
-        commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        return true
-    }
-
     public func run(
         params: UploadGitLabPackageCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let taskConfig = UploadGitLabPackageTask.Config(
             projectID: params.projectID,

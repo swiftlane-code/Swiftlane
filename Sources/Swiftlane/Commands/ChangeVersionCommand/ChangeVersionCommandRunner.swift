@@ -19,8 +19,7 @@ public struct ChangeVersionCommandRunner: CommandRunnerProtocol {
     public func run(
         params: ChangeVersionCommandParamsAccessing,
         commandConfig: ChangeVersionCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger _: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let bumpStrategy: ChangeVersionTask.Config.ChangeVersionStrategy = {
             switch params.action {

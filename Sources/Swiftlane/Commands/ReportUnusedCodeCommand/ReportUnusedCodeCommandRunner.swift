@@ -14,8 +14,7 @@ public class ReportUnusedCodeCommandRunner: CommandRunnerProtocol {
     public func run(
         params: ReportUnusedCodeCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger _: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let taskConfig = ReportUnusedCodeTaskConfig(
             projectDir: params.sharedConfigOptions.projectDir,

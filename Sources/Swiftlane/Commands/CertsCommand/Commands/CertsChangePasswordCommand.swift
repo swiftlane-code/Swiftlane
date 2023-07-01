@@ -34,8 +34,7 @@ private class Runner: CommandRunnerProtocol {
     public func run(
         params: CertsChangePasswordCommand,
         commandConfig: CertsCommandConfig,
-        sharedConfig _: Void,
-        logger _: Logging
+        sharedConfig _: Void
     ) throws {
         let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
 

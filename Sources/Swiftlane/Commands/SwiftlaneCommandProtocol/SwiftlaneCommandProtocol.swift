@@ -23,28 +23,8 @@ public protocol CommandRunnerProtocol {
     func run(
         params: Command,
         commandConfig: Config,
-        sharedConfig: SharedConfig,
-        logger: Logging
+        sharedConfig: SharedConfig
     ) throws
-
-    func verifyConfigs(
-        params: Command,
-        commandConfig: Config,
-        sharedConfig: SharedConfig,
-        logger: Logging
-    ) throws -> Bool
-}
-
-public extension CommandRunnerProtocol {
-    func verifyConfigs(
-        params _: Command,
-        commandConfig _: Config,
-        sharedConfig _: SharedConfig,
-        logger: Logging
-    ) throws -> Bool {
-        logger.warn("Custom configs verification is not implemented for this command.")
-        return true
-    }
 }
 
 public struct SharedConfigData {
@@ -62,75 +42,27 @@ public struct SharedConfigData {
 
 private extension CommandRunnerProtocol {
     private var logger: Logging {
-        DependencyResolver.shared.resolve(Logging.self, .shared)
+        DependenciesFactory.resolve()
     }
 
-    private func initializeLoggers(commons: CommonOptions) {
+    private func initializeDependencies(commons: CommonOptions) {
         DependenciesFactory.registerLoggerProducer(commons: commons)
         DependenciesFactory.registerProducers()
     }
 
     private func logIntentions(command: Command, sharedConfigOptions: SharedConfigOptions?) {
-        let message = (sharedConfigOptions?.commonOptions.onlyVerifyConfigs == true)
-            ? "Going to verify configs for Swiftlane command"
-            : "Going to run Swiftlane command"
-
-        log(command: command, message: message)
-    }
-
-    private func log(command: Command, message: String) {
+        let message = "Going to run Swiftlane command"
         guard let command = command as? ParsableCommand else {
             return
         }
         logger.important("\(message) \(type(of: command)._commandName.quoted)...".bold)
     }
 
-    private func isAvailableProject(sharedConfig: SharedConfigValues) throws -> Bool {
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
-        let projectPath = try gitlabCIEnvironmentReader.string(.CI_PROJECT_PATH)
-        guard sharedConfig.availableProjects.isMatching(string: projectPath) else {
-            logger.warn("Skipped run task about project with path \(projectPath.quoted)")
-            return false
-        }
-        return true
-    }
-
-    private func runOrVerifyConfigs(
-        command: Command,
-        commandConfig: Config,
-        sharedConfig: SharedConfig,
-        onlyVerifyConfigs: Bool
-    ) throws {
-        if onlyVerifyConfigs {
-            log(command: command, message: "Verifying configs for Swiftlane command")
-            guard try verifyConfigs(
-                params: command,
-                commandConfig: commandConfig,
-                sharedConfig: sharedConfig,
-                logger: logger
-            ) else {
-                Exitor().exit(with: 1)
-                return
-            }
-            logger.success("Configs verified")
-            return
-        }
-
-        log(command: command, message: "Running Swiftlane command")
-        try run(
-            params: command,
-            commandConfig: commandConfig,
-            sharedConfig: sharedConfig,
-            logger: logger
-        )
-    }
-
     private func parseSharedConfig(
         sharedConfigOptions: SharedConfigOptions,
         commandConfigPath: AbsolutePath?
     ) throws -> SharedConfigData {
-        let filesManager = FSManager(logger: logger, fileManager: FileManager.default)
+        let filesManager: FSManaging = DependenciesFactory.resolve()
 
         let sharedConfigReader = SharedConfigReader(logger: logger, filesManager: filesManager)
         let sharedConfig: SharedConfigModel = try sharedConfigReader.read(
@@ -157,7 +89,7 @@ public extension CommandRunnerProtocol where Config: Decodable, SharedConfig == 
         sharedConfigOptions: SharedConfigOptions,
         commandConfigPath: AbsolutePath
     ) {
-        initializeLoggers(commons: sharedConfigOptions.commonOptions)
+        initializeDependencies(commons: sharedConfigOptions.commonOptions)
 
         logIntentions(command: command, sharedConfigOptions: sharedConfigOptions)
 
@@ -173,12 +105,11 @@ public extension CommandRunnerProtocol where Config: Decodable, SharedConfig == 
                 sharedConfigOptions: sharedConfigOptions,
                 commandConfigPath: commandConfigPath
             )
-
-            try runOrVerifyConfigs(
-                command: command,
+            
+            try run(
+                params: command,
                 commandConfig: commandConfig,
-                sharedConfig: sharedData,
-                onlyVerifyConfigs: sharedConfigOptions.commonOptions.onlyVerifyConfigs
+                sharedConfig: sharedData
             )
         }
     }
@@ -190,7 +121,7 @@ public extension CommandRunnerProtocol where Config == Void, SharedConfig == Sha
         _ command: Command,
         sharedConfigOptions: SharedConfigOptions
     ) {
-        initializeLoggers(commons: sharedConfigOptions.commonOptions)
+        initializeDependencies(commons: sharedConfigOptions.commonOptions)
 
         logIntentions(command: command, sharedConfigOptions: sharedConfigOptions)
 
@@ -200,11 +131,10 @@ public extension CommandRunnerProtocol where Config == Void, SharedConfig == Sha
                 commandConfigPath: nil
             )
 
-            try runOrVerifyConfigs(
-                command: command,
+            try run(
+                params: command,
                 commandConfig: (),
-                sharedConfig: sharedData,
-                onlyVerifyConfigs: sharedConfigOptions.commonOptions.onlyVerifyConfigs
+                sharedConfig: sharedData
             )
         }
     }
@@ -217,7 +147,7 @@ public extension CommandRunnerProtocol where Config: Decodable, SharedConfig == 
         commandConfigPath: AbsolutePath,
         commonOptions: CommonOptions
     ) {
-        initializeLoggers(commons: commonOptions)
+        initializeDependencies(commons: commonOptions)
 
         logIntentions(command: command, sharedConfigOptions: nil)
 
@@ -229,11 +159,10 @@ public extension CommandRunnerProtocol where Config: Decodable, SharedConfig == 
                 decoder: YAMLDecoder()
             )
 
-            try runOrVerifyConfigs(
-                command: command,
+            try run(
+                params: command,
                 commandConfig: commandConfig,
-                sharedConfig: (),
-                onlyVerifyConfigs: commonOptions.onlyVerifyConfigs
+                sharedConfig: ()
             )
         }
     }
@@ -245,16 +174,15 @@ public extension CommandRunnerProtocol where Config == Void, SharedConfig == Voi
         _ command: Command,
         commonOptions: CommonOptions
     ) {
-        initializeLoggers(commons: commonOptions)
+        initializeDependencies(commons: commonOptions)
 
         logIntentions(command: command, sharedConfigOptions: nil)
 
         CommonRunner(logger: logger).run {
-            try runOrVerifyConfigs(
-                command: command,
+            try run(
+                params: command,
                 commandConfig: (),
-                sharedConfig: (),
-                onlyVerifyConfigs: commonOptions.onlyVerifyConfigs
+                sharedConfig: ()
             )
         }
     }

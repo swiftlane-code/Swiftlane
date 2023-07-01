@@ -15,8 +15,7 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
     private func archiveAndExportIPA(
         params: ArchiveAndExportIPACommandParamsAccessing,
         exportMethod: XCArchiveExportOptions.ExportMethod,
-        paths: PathsFactoring,
-        logger _: Logging
+        paths: PathsFactoring
     ) throws -> AbsolutePath {
         let archiveTaskConfig = ArchiveAndExportIPATaskConfig(
             projectFile: paths.projectFile,
@@ -42,8 +41,7 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
     public func run(
         params: ArchiveAndExportIPACommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let exportMethod = try XCArchiveExportOptions.ExportMethod(
             rawValue: params.exportMethod
@@ -54,8 +52,7 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
         _ = try archiveAndExportIPA(
             params: params,
             exportMethod: exportMethod,
-            paths: sharedConfig.paths,
-            logger: logger
+            paths: sharedConfig.paths
         )
     }
 }

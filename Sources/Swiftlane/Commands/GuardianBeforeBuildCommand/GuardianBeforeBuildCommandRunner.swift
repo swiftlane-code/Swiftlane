@@ -8,20 +8,10 @@ import SwiftlaneCore
 import Yams
 
 public struct GuardianBeforeBuildCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: GuardianBeforeBuildCommandParamsAccessing,
-        commandConfig _: GuardianBeforeBuildCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        return true
-    }
-
     public func run(
         params: GuardianBeforeBuildCommandParamsAccessing,
         commandConfig: GuardianBeforeBuildCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger _: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
         let filesManager: FSManaging = DependenciesFactory.resolve()

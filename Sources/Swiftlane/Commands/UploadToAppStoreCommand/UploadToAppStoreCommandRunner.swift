@@ -25,29 +25,20 @@ public class UploadToAppStoreTask {
 }
 
 public class UploadToAppStoreCommandRunner: CommandRunnerProtocol {
-    private func uploadIPA(
+    public func run(
         params: UploadToAppStoreCommandParamsAccessing,
-        paths: PathsFactoring,
-        logger _: Logging
+        commandConfig _: Void,
+        sharedConfig: SharedConfigData
     ) throws {
         let task = try TasksFactory.makeUploadToAppStoreTask(
             authKeyPath: params.authKeyPath,
             authKeyIssuerID: params.authKeyIssuerID,
-            paths: paths
+            paths: sharedConfig.paths
         )
 
         try task.upload(
             ipaPath: params.ipaPath,
             using: params.uploadTool
         )
-    }
-
-    public func run(
-        params: UploadToAppStoreCommandParamsAccessing,
-        commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
-    ) throws {
-        try uploadIPA(params: params, paths: sharedConfig.paths, logger: logger)
     }
 }

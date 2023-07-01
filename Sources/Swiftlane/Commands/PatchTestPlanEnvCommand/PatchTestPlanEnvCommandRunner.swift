@@ -15,8 +15,7 @@ public struct PatchTestPlanEnvCommandRunner: CommandRunnerProtocol {
     public func run(
         params: PatchTestPlanEnvCommandParamsAccessing,
         commandConfig: PatchTestPlanEnvCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let config = PatchTestPlanEnvTaskConfig(
             testPlanName: params.testPlanName,

@@ -11,20 +11,10 @@ public struct SetupLabelsCommandConfig: Decodable {
 }
 
 public struct SetupLabelsCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: SetupLabelsCommandParamsAccessing,
-        commandConfig _: SetupLabelsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        return true
-    }
-
     public func run(
         params _: SetupLabelsCommandParamsAccessing,
         commandConfig: SetupLabelsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
 

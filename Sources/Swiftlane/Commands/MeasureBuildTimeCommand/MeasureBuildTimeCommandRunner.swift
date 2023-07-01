@@ -10,8 +10,7 @@ public class MeasureBuildTimeCommandRunner: CommandRunnerProtocol {
     public func run(
         params: MeasureBuildTimeCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger _: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let builderConfig = Builder.Config(
             project: sharedConfig.paths.projectFile,

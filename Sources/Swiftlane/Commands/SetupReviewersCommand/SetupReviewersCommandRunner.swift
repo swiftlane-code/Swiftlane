@@ -15,8 +15,7 @@ public struct SetupReviewersCommandRunner: CommandRunnerProtocol {
     public func run(
         params _: SetupReviewersCommandParamsAccessing,
         commandConfig: SetupReviewersCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
         let filesManager: FSManaging = DependenciesFactory.resolve()

@@ -47,24 +47,10 @@ public struct CertsUpdateCommand: ParsableCommand, CommandRunnerProtocol {
         )
     }
 
-    public func verifyConfigs(
-        params _: (),
-        commandConfig _: CertsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        if options.repoPassword == nil {
-            logger.error("--repo-password option is not supplied. User will be prompted to enter password in runtime.")
-            return false
-        }
-        return true
-    }
-
     public func run(
         params _: Void,
         commandConfig: CertsCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let passwordReader: PasswordReading = DependenciesFactory.resolve()
 

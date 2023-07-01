@@ -28,28 +28,10 @@ public struct CertsCommandConfig: Codable {
 }
 
 public class CertsInstallCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params: CertsInstallCommandParamsAccessing,
-        commandConfig _: CertsCommandConfig,
-        sharedConfig _: Void,
-        logger: Logging
-    ) throws -> Bool {
-        if params.options.repoPassword == nil {
-            logger.error("--repo-password option is not supplied. User will be prompted to enter password in runtime.")
-            return false
-        }
-        if params.keychainPassword == nil {
-            logger.error("--keychain-password option is not supplied. User will be prompted to enter password in runtime.")
-            return false
-        }
-        return true
-    }
-
     public func run(
         params: CertsInstallCommandParamsAccessing,
         commandConfig: CertsCommandConfig,
-        sharedConfig _: Void,
-        logger _: Logging
+        sharedConfig _: Void
     ) throws {
         let additionalCertificates = try params.additionalCertificates.split(separator: ",")
             .map { String($0) }

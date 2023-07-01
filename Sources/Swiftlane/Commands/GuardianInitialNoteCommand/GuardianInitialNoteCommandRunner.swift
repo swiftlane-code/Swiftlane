@@ -10,8 +10,7 @@ public struct GuardianInitialNoteCommandRunner: CommandRunnerProtocol {
     public func run(
         params _: GuardianInitialNoteCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let task = try TasksFactory.makeGuardianInitialNoteTask()
 

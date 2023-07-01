@@ -25,7 +25,7 @@ public enum DependenciesFactory {
     }
 
     public static func registerLoggerProducer(commons: CommonOptions) {
-        let logLevel = LoggingLevel(from: commons.resolvedLogLevel)
+        let logLevel = LoggingLevel(from: commons.logLevel)
         let mainLogger: Logging
         if logLevel >= .info {
             mainLogger = DetailedLogger(logLevel: logLevel)

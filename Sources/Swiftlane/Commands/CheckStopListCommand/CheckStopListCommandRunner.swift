@@ -13,20 +13,10 @@ public struct CheckStopListCommandConfig: Decodable {
 }
 
 public struct CheckStopListCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: CheckStopListCommandParamsAccessing,
-        commandConfig _: CheckStopListCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        return true
-    }
-
     public func run(
         params: CheckStopListCommandParamsAccessing,
         commandConfig: CheckStopListCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
         let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
         let filesManager: FSManaging = DependenciesFactory.resolve()

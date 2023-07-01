@@ -11,8 +11,7 @@ public struct GuardianAfterBuildCommandRunner: CommandRunnerProtocol {
     public func run(
         params: GuardianAfterBuildCommandParamsAccessing,
         commandConfig: GuardianAfterBuildCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger _: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let task = try TasksFactory.makeGuardianAfterBuildTask(
             projectDir: params.sharedConfigOptions.projectDir,

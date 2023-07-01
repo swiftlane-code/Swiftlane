@@ -12,8 +12,7 @@ import Yams
 public class BuildAppCommandRunner: CommandRunnerProtocol {
     private func build(
         params: BuildAppCommandParamsAccessing,
-        paths: PathsFactoring,
-        logger _: Logging
+        paths: PathsFactoring
     ) throws {
         let builderConfig = Builder.Config(
             project: paths.projectFile,
@@ -35,9 +34,8 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
     public func run(
         params: BuildAppCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        try build(params: params, paths: sharedConfig.paths, logger: logger)
+        try build(params: params, paths: sharedConfig.paths)
     }
 }

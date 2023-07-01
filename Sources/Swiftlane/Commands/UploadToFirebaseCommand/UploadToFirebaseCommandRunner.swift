@@ -16,8 +16,7 @@ import Yams
 public class UploadToFirebaseCommandRunner: CommandRunnerProtocol {
     private func releaseNotes(
         params: UploadToFirebaseCommandParamsAccessing,
-        sharedConfig _: SharedConfigValues,
-        logger _: Logging
+        sharedConfig _: SharedConfigValues
     ) throws -> String {
         if let notes = params.releaseNotes {
             return notes
@@ -35,31 +34,23 @@ public class UploadToFirebaseCommandRunner: CommandRunnerProtocol {
 
     private func uploadIPA(
         params: UploadToFirebaseCommandParamsAccessing,
-        releaseNotes: String,
-        logger: Logging
+        releaseNotes: String
     ) throws {
-        let timeMeasurer = TimeMeasurer(logger: logger)
-
         let googleAuthClient = GoogleAuthAPIClient(
             refreshToken: params.firebaseToken.sensitiveValue,
-            logger: logger
+            logger: DependenciesFactory.resolve()
         )
 
         let firebaseDistributionClient = try FirebaseDistributionAPIClient(
             firebaseAppID: params.firebaseAppID,
-            logger: logger
+            logger: DependenciesFactory.resolve()
         )
 
         let ipaUploader = FirebaseDistributionIPAUploader(
-            logger: logger,
-            timeMeasurer: timeMeasurer,
+            logger: DependenciesFactory.resolve(),
+            timeMeasurer: DependenciesFactory.resolve(),
             googleAuthClient: googleAuthClient,
             appDistributionClient: firebaseDistributionClient
-        )
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
         )
 
         let testersEmails = params.testersEmails.split(separator: ",")
@@ -68,6 +59,8 @@ public class UploadToFirebaseCommandRunner: CommandRunnerProtocol {
         let testersGroupsAliases = params.testersGroupsAliases.split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
 
+        let filesManager: FSManaging = DependenciesFactory.resolve()
+        
         let ipaData = try filesManager.readData(params.ipaPath, log: true)
 
         try ipaUploader.uploadRelease(
@@ -82,19 +75,16 @@ public class UploadToFirebaseCommandRunner: CommandRunnerProtocol {
     public func run(
         params: UploadToFirebaseCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
         let releaseNotes = try releaseNotes(
             params: params,
-            sharedConfig: sharedConfig.values,
-            logger: logger
+            sharedConfig: sharedConfig.values
         )
 
         try uploadIPA(
             params: params,
-            releaseNotes: releaseNotes,
-            logger: logger
+            releaseNotes: releaseNotes
         )
     }
 }
