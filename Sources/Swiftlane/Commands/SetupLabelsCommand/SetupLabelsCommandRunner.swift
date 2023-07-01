@@ -17,20 +17,18 @@ public struct SetupLabelsCommandRunner: CommandRunnerProtocol {
         sharedConfig _: SharedConfigData,
         logger: Logging
     ) throws -> Bool {
-        let _ = try GitLabAPIClient(logger: logger)
         return true
     }
 
     public func run(
         params _: SetupLabelsCommandParamsAccessing,
         commandConfig: SetupLabelsCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData,
+        logger _: Logging
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
+        let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
 
-        let filesManager = FSManager(logger: logger, fileManager: FileManager.default)
+        let filesManager: FSManaging = DependenciesFactory.resolve()
 
         let expandedLabelsConfigPath = try environmentValueReader.expandVariables(
             in: commandConfig.labelsConfigPath
@@ -46,17 +44,11 @@ public struct SetupLabelsCommandRunner: CommandRunnerProtocol {
         )
 
         let task = SetupLabelsTask(
-            logger: logger,
+            logger: DependenciesFactory.resolve(),
             config: taskConfig,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            gitlabApi: try GitLabAPIClient(logger: logger)
+            gitlabCIEnvironment: DependenciesFactory.resolve(),
+            gitlabApi: DependenciesFactory.resolve()
         )
-
-        let projectPath = try gitlabCIEnvironmentReader.string(.CI_PROJECT_PATH)
-        guard sharedConfig.values.availableProjects.isMatching(string: projectPath) else {
-            logger.warn("Skipped run task about project with path \(projectPath.quoted)")
-            return
-        }
 
         try task.run()
     }

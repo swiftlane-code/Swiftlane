@@ -16,28 +16,18 @@ import Yams
 public class UploadToFirebaseCommandRunner: CommandRunnerProtocol {
     private func releaseNotes(
         params: UploadToFirebaseCommandParamsAccessing,
-        sharedConfig: SharedConfigValues,
-        logger: Logging
+        sharedConfig _: SharedConfigValues,
+        logger _: Logging
     ) throws -> String {
         if let notes = params.releaseNotes {
             return notes
         }
 
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
-
         let changelogFactory = ChangelogFactory(
-            logger: logger,
-            gitlabCIEnvironmentReader: gitlabCIEnvironmentReader,
-            jiraClient: try JiraAPIClient(
-                requestsTimeout: sharedConfig.jiraRequestsTimeout,
-                logger: logger
-            ),
-            issueKeySearcher: IssueKeySearcher(
-                logger: logger,
-                issueKeyParser: IssueKeyParser(jiraProjectKey: sharedConfig.jiraProjectKey),
-                gitlabCIEnvironmentReader: gitlabCIEnvironmentReader
-            )
+            logger: DependenciesFactory.resolve(),
+            gitlabCIEnvironmentReader: DependenciesFactory.resolve(),
+            jiraClient: DependenciesFactory.resolve(),
+            issueKeySearcher: DependenciesFactory.resolve()
         )
 
         return try changelogFactory.changelog()

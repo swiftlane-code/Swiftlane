@@ -18,7 +18,6 @@ public struct GuardianCheckAuthorCommandRunner: CommandRunnerProtocol {
         sharedConfig _: SharedConfigData,
         logger: Logging
     ) throws -> Bool {
-        let _ = try GitLabAPIClient(logger: logger)
         return true
     }
 

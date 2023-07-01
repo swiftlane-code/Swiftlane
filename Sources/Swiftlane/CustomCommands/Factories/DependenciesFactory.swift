@@ -122,7 +122,10 @@ public enum DependenciesFactory {
 
         DependencyResolver.shared.register(GitLabAPIClientProtocol.self) {
             // TODO: force unwrap
-            try! GitLabAPIClient(logger: resolve(.shared))
+            try! GitLabAPIClient(
+                logger: resolve(.shared),
+                environmentReader: resolve()
+            )
         }
 
         DependencyResolver.shared.register(MergeRequestReporting.self) {
@@ -348,7 +351,8 @@ public enum DependenciesFactory {
             // TODO: force unwrap
             try! JiraAPIClient(
                 requestsTimeout: 60, // TODO: hardcode
-                logger: resolve()
+                logger: resolve(),
+                environmentReader: resolve()
             )
         }
 
@@ -420,6 +424,10 @@ public enum DependenciesFactory {
 
         DependencyResolver.shared.register(NetworkingProgressLogging.self) {
             NetworkingProgressLogger(progressLogger: resolve())
+        }
+
+        DependencyResolver.shared.register(WinSizeReading.self) {
+            WinSizeReader()
         }
     }
 }

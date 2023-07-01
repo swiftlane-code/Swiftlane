@@ -20,14 +20,14 @@ public final class XCArchiveExporter {
     private let logger: Logging
     private let shell: ShellExecuting
     private let filesManager: FSManaging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
     private let xcodebuildCommand: XcodebuildCommandProducing
 
     public init(
         logger: Logging,
         shell: ShellExecuting,
         filesManager: FSManaging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         xcodebuildCommand: XcodebuildCommandProducing
     ) {
         self.logger = logger

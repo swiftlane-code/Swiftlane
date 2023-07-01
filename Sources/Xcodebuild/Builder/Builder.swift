@@ -49,7 +49,7 @@ public class Builder: BuilderProtocol {
     let logPathFactory: LogPathFactory
     let shell: ShellExecuting
     let logger: Logging
-    let timeMeasurer: TimeMeasurer
+    let timeMeasurer: TimeMeasuring
     let xcodebuildCommand: XcodebuildCommandProducing
     public let config: Config
 
@@ -58,7 +58,7 @@ public class Builder: BuilderProtocol {
         logPathFactory: LogPathFactory,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         xcodebuildCommand: XcodebuildCommandProducing,
         config: Config
     ) {

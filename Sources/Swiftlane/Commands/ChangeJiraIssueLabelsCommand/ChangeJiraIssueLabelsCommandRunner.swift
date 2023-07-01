@@ -15,7 +15,6 @@ public struct ChangeJiraIssueLabelsCommandRunner: CommandRunnerProtocol {
         sharedConfig: SharedConfigData,
         logger: Logging
     ) throws -> Bool {
-        let _ = try JiraAPIClient(requestsTimeout: sharedConfig.values.jiraRequestsTimeout, logger: logger)
         return true
     }
 

@@ -20,7 +20,7 @@ public class Scan: ScanProtocol {
     private let logPathFactory: LogPathFactory
     private let shell: ShellExecuting
     private let logger: Logging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
 
     private let config: Config
     private let runner: TestsRunner
@@ -30,7 +30,7 @@ public class Scan: ScanProtocol {
         logPathFactory: LogPathFactory,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         config: Config,
         runner: TestsRunner
     ) {

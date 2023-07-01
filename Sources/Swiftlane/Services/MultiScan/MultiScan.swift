@@ -24,7 +24,7 @@ public class MultiScan: MultiScanProtocol {
     private let simulatorProvider: SimulatorProviding
     private let shell: ShellExecuting
     private let logger: Logging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
     private let testPlanService: XCTestPlanServicing
     private let junitService: JUnitServicing
 
@@ -41,7 +41,7 @@ public class MultiScan: MultiScanProtocol {
         junitService: JUnitServicing,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         config: Config,
         builder: Builder,
         runner: TestsRunner,

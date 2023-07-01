@@ -15,13 +15,13 @@ public final class XCArchiveDSYMsExtractor {
     private let logger: Logging
     private let shell: ShellExecuting
     private let filesManager: FSManaging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
 
     public init(
         logger: Logging,
         shell: ShellExecuting,
         filesManager: FSManaging,
-        timeMeasurer: TimeMeasurer
+        timeMeasurer: TimeMeasuring
     ) {
         self.logger = logger
         self.shell = shell

@@ -10,7 +10,7 @@ public struct SetupAssigneeCommandConfig: Decodable {}
 
 public struct SetupAssigneeCommandRunner: CommandRunnerProtocol {
     private func makeGitLabAPIClient(logger: Logging) throws -> GitLabAPIClientProtocol {
-        try GitLabAPIClient(logger: logger)
+        DependenciesFactory.resolve()
     }
 
     public func verifyConfigs(

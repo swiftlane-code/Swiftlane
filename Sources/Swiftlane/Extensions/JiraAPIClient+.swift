@@ -11,7 +11,7 @@ public extension JiraAPIClient {
         logLevel: LoggingLevel = .silent,
         baseURLEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.JIRA_API_ENDPOINT,
         accessTokenEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.JIRA_API_TOKEN,
-        environmentReader: EnvironmentValueReading = EnvironmentValueReader()
+        environmentReader: EnvironmentValueReading
     ) throws {
         self.init(
             baseURL: try environmentReader.url(baseURLEnvKey),
