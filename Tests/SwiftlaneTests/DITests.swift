@@ -5,24 +5,8 @@ import XCTest
 
 @testable import Swiftlane
 
-private struct _Producer {
-    let closure: () -> Any
-}
-
-private class _DependencyResolver {
-    public enum Strategy {
-        case unique
-        case shared
-    }
-    
-    public static let shared = _DependencyResolver()
-    
-    var producers: [String: _Producer] = [:]
-    var sharedInstances: [String: Any] = [:]
-}
-
 final class DITests: XCTestCase {
-    func _testAllDIObjects() {
+    func testAllDIObjects() {
         DependencyResolver.shared.register(Logging.self) {
             DetailedLogger(logLevel: .verbose)
         }
@@ -47,12 +31,9 @@ final class DITests: XCTestCase {
             return EnvironmentValueReader(processInfo: Fake())
         }
         
-        let res = unsafeBitCast(DependencyResolver.shared, to: _DependencyResolver.self)
-        print(res.producers)
-        
-        for x in res.producers {
-            print(x.key)
-            x.value.closure()
+        for key in DependencyResolver.shared.allRegisteredTypes() {
+            print(key)
+            let _: Any = DependencyResolver.shared.resolve(key, .shared)
         }
     }
 }
