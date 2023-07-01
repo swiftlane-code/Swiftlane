@@ -4,27 +4,8 @@ import Foundation
 import GitLabAPI
 import SwiftlaneCore
 
-// sourcery: AutoMockable
-public protocol MergeRequestReporting {
-    func checkEnvironmentCorrect() throws
-
-    func createOrUpdateReport() throws
-
-    func warn(_ markdown: String)
-
-    func fail(_ markdown: String)
-
-    func message(_ markdown: String)
-
-    func markdown(_ markdown: String)
-
-    func success(_ markdown: String)
-
-    func hasFails() -> Bool
-}
-
-public extension MergeRequestReporter {
-    /// Create new `MergeRequestReporter` instance.
+public extension GitLabMergeRequestReporter {
+    /// Create new `GitLabMergeRequestReporter` instance.
     ///
     /// - Parameters:
     ///   - publishEmptyReport: when `false` empty report will not be commented/updated.
@@ -47,7 +28,7 @@ public extension MergeRequestReporter {
     }
 }
 
-public class MergeRequestReporter: MergeRequestReporting {
+public class GitLabMergeRequestReporter: MergeRequestReporting {
     public enum Errors: Error, Equatable {
         case failsReported(reportURL: String)
     }

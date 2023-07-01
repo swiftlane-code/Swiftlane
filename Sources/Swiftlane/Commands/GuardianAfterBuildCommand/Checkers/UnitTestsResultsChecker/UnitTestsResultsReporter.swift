@@ -16,11 +16,11 @@ public class UnitTestsResultsReporter {
 // swiftformat:disable indent
 extension UnitTestsResultsReporter: UnitTestsResultsReporting {
 	public func failedToParseJUnit(error: Error, jobUrl: String) {
-		let jobLogsText = "Logs of job"
+		let jobLogsText = "Job logs"
 		let jobLogsLinkText = "[\(jobLogsText)](\(jobUrl))"
 		reporter.fail(
 			"Check \(jobLogsLinkText), " +
-					"it looks like the build or tests fell, but I couldn't parse the reason 😢"
+					"it looks like build or tests have failed but I couldn't determine the reason 😢"
 		)
 		reporter.markdown("```log\nError decoding junit report: \(String(reflecting: error))\n```")
 	}

@@ -34,7 +34,7 @@ extension ChangesCoverageReporter: ChangesCoverageReporting {
 
 		reporter.fail(
 			"Code Coverage of changes is *(\(percent(from: violation.coverageOfChangedLines)))* " +
-			"less than limit *\(limit)%* in file \(violation.file)"
+			"less than the limit *\(limit)%* for file \(violation.file)"
 		)
 	}
 }

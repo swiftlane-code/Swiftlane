@@ -34,7 +34,7 @@ public struct ChangeVersionCommand: ParsableCommand, ChangeVersionCommandParamsA
     public init() {}
 
     public mutating func run() throws {
-        ChangeVersionCommandRunner<StraightforwardProjectVersionConverter>()
+        ChangeVersionCommandRunner()
             .run(self, sharedConfigOptions: sharedConfigOptions, commandConfigPath: configPath)
     }
 }

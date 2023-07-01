@@ -26,42 +26,9 @@ public struct GuardianCheckAuthorCommandRunner: CommandRunnerProtocol {
         params _: GuardianCheckAuthorCommandParamsAccessing,
         commandConfig: GuardianCheckAuthorCommandConfig,
         sharedConfig _: SharedConfigData,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-
-        let gitlabAPIClient = try GitLabAPIClient(logger: logger)
-
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(
-            environmentValueReading: environmentValueReader
-        )
-
-        let mergeRequestReporter = MergeRequestReporter(
-            logger: logger,
-            gitlabApi: gitlabAPIClient,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            reportFactory: MergeRequestReportFactory(),
-            publishEmptyReport: true
-        )
-
-        let reporter = MergeRequestAuthorCheckerReporter(
-            reporter: mergeRequestReporter
-        )
-
-        let mergeRequestAuthorChecker = MergeRequestAuthorChecker(
-            reporter: reporter,
-            gitlabApi: gitlabAPIClient,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            validGitLabUserName: commandConfig.validGitLabUserName,
-            validCommitAuthorName: commandConfig.validCommitAuthorName
-        )
-
-        let task = GuardianCheckAuthorTask(
-            logger: logger,
-            mergeRequestReporter: mergeRequestReporter,
-            mergeRequestAuthorChecker: mergeRequestAuthorChecker,
-            gitlabCIEnvironmentReader: gitlabCIEnvironmentReader
-        )
+        let task = try TasksFactory.makeGuardianCheckAuthorTask(commandConfig: commandConfig)
 
         try task.run()
     }

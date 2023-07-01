@@ -9,11 +9,21 @@ private extension String {
     }
 }
 
+public typealias LogsPathPair = (stdout: AbsolutePath, stderr: AbsolutePath)
+
+public protocol LogPathFactoring {
+    func makeBuildLogPath(logsDir: AbsolutePath, scheme: String) -> LogsPathPair
+    func makeArchiveLogPath(logsDir: AbsolutePath, scheme: String, configuration: String) -> LogsPathPair
+    func makeTestRunLogPath(logsDir: AbsolutePath, scheme: String, simulatorName: String) -> LogsPathPair
+    func makeJunitReportPath(logsDir: AbsolutePath, scheme: String, simulatorName: String) -> AbsolutePath
+    func makeSystemLogPath(logsDir: AbsolutePath, scheme: String, simulatorName: String) -> AbsolutePath
+}
+
 public class LogPathFactory {
     let filesManager: FSManaging
     let dateFormatter: DateFormatter
 
-    init(
+    public init(
         filesManager: FSManaging,
         dateFormatter: DateFormatter
     ) {
@@ -32,8 +42,6 @@ public class LogPathFactory {
 
     public static let stderrLogFileNamePrefix = "stderr_"
 
-    public typealias LogsPathPair = (stdout: AbsolutePath, stderr: AbsolutePath)
-
     private func makeStdOutAndStdErrFileName(baseName: String) -> (stdout: RelativePath, stderr: RelativePath) {
         (
             try! RelativePath(baseName),
@@ -48,7 +56,9 @@ public class LogPathFactory {
             dir.appending(path: fileNames.stderr)
         )
     }
+}
 
+extension LogPathFactory: LogPathFactoring {
     public func makeBuildLogPath(logsDir: AbsolutePath, scheme: String) -> LogsPathPair {
         let result = makeStdOutAndStdErrPaths(
             in: logsDir.appending(path: buildLogsDirName),
@@ -97,6 +107,7 @@ public class LogPathFactory {
 }
 
 public extension LogPathFactory {
+    /// Used date format: `dd-MM-yyyy_HH-mm-ss.SSS`
     convenience init(filesManager: FSManaging) {
         // TODO: Use formatter from one of predefined statically allocated formatters.
         let formatter = DateFormatter()

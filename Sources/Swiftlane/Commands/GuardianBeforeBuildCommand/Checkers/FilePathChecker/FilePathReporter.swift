@@ -20,6 +20,6 @@ public class FilePathReporter {
 
 extension FilePathReporter: FilePathReporting {
     public func reportInvalidFilePath(_ path: String) {
-        reporter.fail("The file path contains forbidden characters `\(path)`")
+        reporter.fail("File path contains forbidden characters: `\(path)`")
     }
 }

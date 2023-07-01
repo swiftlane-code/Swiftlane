@@ -18,25 +18,9 @@ public class BuildNumberSetCommandRunner: CommandRunnerProtocol {
         params: BuildNumberSetCommandParamsAccessing,
         commandConfig _: Void,
         sharedConfig: SharedConfigData,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: SigIntHandler(logger: logger),
-            logger: logger,
-            xcodeChecker: XcodeChecker(),
-            filesManager: filesManager
-        )
-
-        let projectPatcher = XcodeProjectPatcher(
-            logger: logger,
-            shell: shell,
-            plistBuddyService: PlistBuddyService(shell: shell)
-        )
+        let projectPatcher: XcodeProjectPatching = DependenciesFactory.resolve()
 
         if params.buildSettings {
             try projectPatcher.setCurrentProjectVersion(

@@ -16,7 +16,7 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
         params: ArchiveAndExportIPACommandParamsAccessing,
         exportMethod: XCArchiveExportOptions.ExportMethod,
         paths: PathsFactoring,
-        logger: Logging
+        logger _: Logging
     ) throws -> AbsolutePath {
         let archiveTaskConfig = ArchiveAndExportIPATaskConfig(
             projectFile: paths.projectFile,
@@ -31,9 +31,11 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
             compileBitcode: params.compileBitcode,
             manageAppVersionAndBuildNumber: nil,
             isUseRosetta: params.rosettaOption.isUseRosetta,
-            xcodebuildFormatterPath: paths.xcodebuildFormatterPath
+            xcodebuildFormatterCommand: paths.xcodebuildFormatterCommand
         )
-        let task = try ArchiveAndExportIPATaskAssembly().assemble(taskConfig: archiveTaskConfig, logger: logger)
+        let task = TasksFactory.makeArchiveAndExportIPATask(
+            taskConfig: archiveTaskConfig
+        )
         return try task.run().ipaPath
     }
 

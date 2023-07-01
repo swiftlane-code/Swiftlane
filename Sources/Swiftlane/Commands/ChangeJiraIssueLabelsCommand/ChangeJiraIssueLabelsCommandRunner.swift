@@ -23,39 +23,14 @@ public struct ChangeJiraIssueLabelsCommandRunner: CommandRunnerProtocol {
         params: ChangeJiraIssueLabelsCommandParamsAccessing,
         commandConfig _: ChangeJiraIssueLabelsCommandConfig,
         sharedConfig: SharedConfigData,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
-
-        let issueKeySearcher = IssueKeySearcher(
-            logger: logger,
-            issueKeyParser: IssueKeyParser(jiraProjectKey: sharedConfig.values.jiraProjectKey),
-            gitlabCIEnvironmentReader: gitlabCIEnvironmentReader
-        )
-
         let taskConfig = ChangeJiraIssueLabelsTask.Config(
             neededLabels: params.neededLabels,
             appendLabels: params.appendLabels
         )
 
-        let jiraClient = try JiraAPIClient(
-            requestsTimeout: sharedConfig.values.jiraRequestsTimeout,
-            logger: logger
-        )
-
-        let task = ChangeJiraIssueLabelsTask(
-            logger: logger,
-            jiraClient: jiraClient,
-            issueKeySearcher: issueKeySearcher,
-            config: taskConfig
-        )
-
-        let projectPath = try gitlabCIEnvironmentReader.string(.CI_PROJECT_PATH)
-        guard sharedConfig.values.availableProjects.isMatching(string: projectPath) else {
-            logger.warn("Skipped run task about project with path \(projectPath.quoted)")
-            return
-        }
+        let task = try TasksFactory.makeChangeJiraIssueLabelsTask(taskConfig: taskConfig)
 
         try task.run(sharedConfig: sharedConfig.values)
     }

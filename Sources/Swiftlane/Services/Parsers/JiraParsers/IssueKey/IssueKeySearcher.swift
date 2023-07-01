@@ -18,10 +18,10 @@ public protocol IssueKeySearching {
 
 public struct IssueKeySearcher: IssueKeySearching {
     public let logger: Logging
-    public let issueKeyParser: IssueKeyParser
+    public let issueKeyParser: IssueKeyParsing
     public let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
 
-    public init(logger: Logging, issueKeyParser: IssueKeyParser, gitlabCIEnvironmentReader: GitLabCIEnvironmentReading) {
+    public init(logger: Logging, issueKeyParser: IssueKeyParsing, gitlabCIEnvironmentReader: GitLabCIEnvironmentReading) {
         self.logger = logger
         self.issueKeyParser = issueKeyParser
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader

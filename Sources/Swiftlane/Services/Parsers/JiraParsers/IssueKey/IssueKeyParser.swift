@@ -3,6 +3,11 @@
 import Foundation
 import SwiftlaneCore
 
+public protocol IssueKeyParsing {
+    /// Parse all jira issue keys from string.
+    func parse(from description: String) throws -> [String]
+}
+
 // Parser of jira issue key.
 public struct IssueKeyParser {
     public let jiraProjectKey: String
@@ -12,7 +17,7 @@ public struct IssueKeyParser {
     }
 }
 
-extension IssueKeyParser: Parsing {
+extension IssueKeyParser: IssueKeyParsing, Parsing {
     /// Parse all jira issue keys from string.
     public func parse(from description: String) throws -> [String] {
         let regex = try NSRegularExpression(

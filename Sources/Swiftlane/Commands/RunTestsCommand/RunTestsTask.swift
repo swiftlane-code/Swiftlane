@@ -42,7 +42,7 @@ public final class RunTestsTask {
             derivedDataPath: config.derivedDataDir,
             logsPath: config.logsDir,
             configuration: nil,
-            xcodebuildFormatterPath: config.xcodebuildFormatterPath
+            xcodebuildFormatterCommand: config.xcodebuildFormatterCommand
         )
 
         let runnerConfig = TestsRunner.Config(
@@ -52,7 +52,7 @@ public final class RunTestsTask {
             testRunsLogsPath: config.logsDir,
             testPlan: config.testPlan,
             testWithoutBuilding: config.testWithoutBuilding,
-            xcodebuildFormatterPath: config.xcodebuildFormatterPath,
+            xcodebuildFormatterCommand: config.xcodebuildFormatterCommand,
             testingTimeout: config.testingTimeout
         )
 

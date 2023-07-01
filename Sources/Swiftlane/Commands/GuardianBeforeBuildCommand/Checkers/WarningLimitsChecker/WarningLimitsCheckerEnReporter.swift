@@ -4,7 +4,7 @@ import Foundation
 import Guardian
 
 // swiftformat:disable indent
-public class WarnigLimitsCheckerEnReporter {
+public class WarningLimitsCheckerEnReporter {
 	private let reporter: MergeRequestReporting
 
 	public init(
@@ -33,7 +33,7 @@ public class WarnigLimitsCheckerEnReporter {
 
 // swiftformat:enable indent
 
-extension WarnigLimitsCheckerEnReporter: WarningLimitsCheckerReporting {
+extension WarningLimitsCheckerEnReporter: WarningLimitsCheckerReporting {
     public func warningLimitsAreCorrect() {
         reporter.success("SwiftLint is happy")
     }

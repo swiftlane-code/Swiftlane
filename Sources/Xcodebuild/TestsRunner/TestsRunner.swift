@@ -86,8 +86,13 @@ public class TestsRunner {
                 .joined(separator: " ")
 
             // -disable-concurrent-destination-testing \
-            let junitReportRelativePath = try junitPath.deletingLastComponent.relative(to: config.projectDirPath).string
+
+            /// # xcbeautfy's bug:
+            /// `xcbeautfy` treats any path provided to `--report-path` as a path
+            /// relative to current working directory.
+            let junitReportRelativePath = try junitPath.deletingLastComponent.relative(to: AbsolutePath(FileManager.default.currentDirectoryPath)).string
             let junitFileName = junitPath.lastComponent.string
+
             try shell.run(
                 [
                     "set -o pipefail && \(xcodebuildCommand.produce())",
@@ -102,7 +107,7 @@ public class TestsRunner {
                     "\(testPlanArgument)",
                     config.testWithoutBuilding ? "test-without-building" : "test",
                     "| tee '\(runLogsPaths.stdout)'",
-                    "| \(config.xcodebuildFormatterPath.string) --is-ci --report junit",
+                    "| \(config.xcodebuildFormatterCommand) --is-ci --report junit",
                     "--report-path '\(junitReportRelativePath)' --junit-report-filename '\(junitFileName)'",
                 ],
                 log: .commandAndOutput(outputLogLevel: .verbose),

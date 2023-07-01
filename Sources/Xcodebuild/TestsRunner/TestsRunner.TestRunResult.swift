@@ -10,7 +10,7 @@ public extension TestsRunner {
         public let simulator: Simulator
         public let tests: [XCTestFunction]
         public let xcresultPath: AbsolutePath?
-        public let runLogsPaths: LogPathFactory.LogsPathPair
+        public let runLogsPaths: LogsPathPair
         public let junitPath: AbsolutePath?
         public let result: Result<Void, XcodebuildError>
     }

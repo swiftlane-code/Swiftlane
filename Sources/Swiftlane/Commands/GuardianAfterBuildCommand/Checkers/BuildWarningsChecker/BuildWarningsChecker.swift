@@ -17,6 +17,18 @@ public extension BuildWarningsChecker {
         public let derivedDataPath: AbsolutePath
         public let jsonReportOutputFilePath: AbsolutePath
         public let decodableConfig: DecodableConfig
+
+        public init(
+            projectDir: AbsolutePath,
+            derivedDataPath: AbsolutePath,
+            jsonReportOutputFilePath: AbsolutePath,
+            decodableConfig: BuildWarningsChecker.DecodableConfig
+        ) {
+            self.projectDir = projectDir
+            self.derivedDataPath = derivedDataPath
+            self.jsonReportOutputFilePath = jsonReportOutputFilePath
+            self.decodableConfig = decodableConfig
+        }
     }
 
     struct DecodableConfig: Codable {
@@ -24,6 +36,18 @@ public extension BuildWarningsChecker {
         public let ignoreWarningTitle: [StringMatcher]
         public let ignoreWarningLocation: [StringMatcher]
         public let ignoreWarningType: [StringMatcher]
+
+        public init(
+            failBuildWhenWarningsDetected: Bool,
+            ignoreWarningTitle: [StringMatcher],
+            ignoreWarningLocation: [StringMatcher],
+            ignoreWarningType: [StringMatcher]
+        ) {
+            self.failBuildWhenWarningsDetected = failBuildWhenWarningsDetected
+            self.ignoreWarningTitle = ignoreWarningTitle
+            self.ignoreWarningLocation = ignoreWarningLocation
+            self.ignoreWarningType = ignoreWarningType
+        }
     }
 }
 

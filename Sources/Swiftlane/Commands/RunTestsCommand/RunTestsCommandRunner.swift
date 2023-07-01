@@ -10,6 +10,22 @@ public struct RunTestsCommandConfig: Decodable {
     public let simulatorsCount: UInt
     public let testPlan: String?
     public let useMultiScan: Bool
+
+    public init(
+        scheme: String,
+        deviceModel: String,
+        osVersion: String,
+        simulatorsCount: UInt,
+        testPlan: String? = nil,
+        useMultiScan: Bool
+    ) {
+        self.scheme = scheme
+        self.deviceModel = deviceModel
+        self.osVersion = osVersion
+        self.simulatorsCount = simulatorsCount
+        self.testPlan = testPlan
+        self.useMultiScan = useMultiScan
+    }
 }
 
 public struct RunTestsCommandRunner: CommandRunnerProtocol {
@@ -25,28 +41,6 @@ public struct RunTestsCommandRunner: CommandRunnerProtocol {
             Exitor().exit(with: 1)
             return
         }
-
-        let sigIntHandler = SigIntHandler(logger: logger)
-        let xcodeChecker = XcodeChecker()
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: sigIntHandler,
-            logger: logger,
-            xcodeChecker: xcodeChecker,
-            filesManager: filesManager
-        )
-
-        let runtimesMiner = RuntimesMiner(shell: shell)
-        let simulatorProvider = SimulatorProvider(
-            runtimesMiner: runtimesMiner,
-            shell: shell,
-            logger: logger
-        )
 
         let useMultiScan = params.useMultiScan ?? commandConfig.useMultiScan
 
@@ -67,15 +61,15 @@ public struct RunTestsCommandRunner: CommandRunnerProtocol {
             testWithoutBuilding: useMultiScan,
             useMultiScan: useMultiScan,
             isUseRosetta: params.rosettaOption.isUseRosetta,
-            xcodebuildFormatterPath: sharedConfig.paths.xcodebuildFormatterPath,
+            xcodebuildFormatterCommand: sharedConfig.paths.xcodebuildFormatterCommand,
             testingTimeout: params.testingTimeout
         )
 
         let task = RunTestsTask(
-            simulatorProvider: simulatorProvider,
-            logger: logger,
-            shell: shell,
-            exitor: Exitor(),
+            simulatorProvider: DependenciesFactory.resolve(),
+            logger: DependenciesFactory.resolve(),
+            shell: DependenciesFactory.resolve(),
+            exitor: DependenciesFactory.resolve(),
             config: config
         )
 

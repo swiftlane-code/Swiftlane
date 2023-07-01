@@ -35,9 +35,9 @@ private class Runner: CommandRunnerProtocol {
         params: CertsChangePasswordCommand,
         commandConfig: CertsCommandConfig,
         sharedConfig _: Void,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let passwordReader = PasswordReader()
+        let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
 
         let repoPassword = try params.options.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
@@ -51,72 +51,8 @@ private class Runner: CommandRunnerProtocol {
             )
         )
 
-        let task = try assembleTask(config: config, logger: logger)
+        let task = try TasksFactory.makeCertsChangePasswordTask(config: config)
 
         try task.run()
-    }
-
-    private func assembleTask(config: CertsChangePasswordTaskConfig, logger: Logging) throws -> CertsChangePasswordTask {
-        let sigIntHandler = SigIntHandler(logger: logger)
-        let xcodeChecker = XcodeChecker()
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: sigIntHandler,
-            logger: logger,
-            xcodeChecker: xcodeChecker,
-            filesManager: filesManager
-        )
-
-        let git = Git(
-            shell: shell,
-            filesManager: filesManager,
-            diffParser: GitDiffParser(logger: logger)
-        )
-
-        let openssl = OpenSSLService(
-            shell: shell,
-            filesManager: filesManager
-        )
-
-        let provisionProfileParser = MobileProvisionParser(
-            logger: logger,
-            shell: shell
-        )
-
-        let security = MacOSSecurity(shell: shell)
-
-        let provisioningProfileService = ProvisioningProfilesService(
-            filesManager: filesManager,
-            logger: logger,
-            provisionProfileParser: provisionProfileParser
-        )
-
-        let certsRepo = CertsRepository(
-            git: git,
-            openssl: openssl,
-            filesManager: filesManager,
-            provisioningProfileService: provisioningProfileService,
-            provisionProfileParser: provisionProfileParser,
-            security: security,
-            logger: logger,
-            config: CertsRepository.Config(
-                gitAuthorName: nil, // use local git config
-                gitAuthorEmail: nil // use local git config
-            )
-        )
-
-        return CertsChangePasswordTask(
-            logger: logger,
-            shell: shell,
-            repo: certsRepo,
-            passwordReader: PasswordReader(),
-            filesManager: filesManager,
-            config: config
-        )
     }
 }

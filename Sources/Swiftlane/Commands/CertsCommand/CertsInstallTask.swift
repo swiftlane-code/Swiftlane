@@ -11,14 +11,14 @@ import Xcodebuild
 public final class CertsInstallTask {
     private let logger: Logging
     private let shell: ShellExecuting
-    private let installer: CertsInstaller
+    private let installer: CertsInstalling
 
     private let config: CertsInstallConfig
 
     public init(
         logger: Logging,
         shell: ShellExecuting,
-        installer: CertsInstaller,
+        installer: CertsInstalling,
         config: CertsInstallConfig
     ) {
         self.logger = logger

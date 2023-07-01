@@ -9,51 +9,34 @@ import SwiftlaneCore
 import Xcodebuild
 import Yams
 
+public class UploadToAppStoreTask {
+    private let uploader: AppStoreConnectIPAUploading
+
+    public init(uploader: AppStoreConnectIPAUploading) {
+        self.uploader = uploader
+    }
+
+    func upload(ipaPath: AbsolutePath, using uploader: AppStoreConnectIPAUploaderType) throws {
+        try self.uploader.upload(
+            ipaPath: ipaPath,
+            using: uploader
+        )
+    }
+}
+
 public class UploadToAppStoreCommandRunner: CommandRunnerProtocol {
     private func uploadIPA(
         params: UploadToAppStoreCommandParamsAccessing,
         paths: PathsFactoring,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let authKeyIDParser = AppStoreConnectAuthKeyIDParser()
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
+        let task = try TasksFactory.makeUploadToAppStoreTask(
+            authKeyPath: params.authKeyPath,
+            authKeyIssuerID: params.authKeyIssuerID,
+            paths: paths
         )
 
-        let sigIntHandler = SigIntHandler(logger: logger)
-        let xcodeChecker = XcodeChecker()
-
-        let shell = ShellExecutor(
-            sigIntHandler: sigIntHandler,
-            logger: logger,
-            xcodeChecker: xcodeChecker,
-            filesManager: filesManager
-        )
-
-        let ipaUploader = AppStoreConnectIPAUploader(
-            logger: logger,
-            filesManager: filesManager,
-            shell: shell,
-            tokenGenerator: try AppStoreConnectTokenGenerator(
-                filesManager: filesManager,
-                authKeyIDParser: authKeyIDParser,
-                jwtGenerator: AppStoreConnectJWTGenerator(),
-                authKeyPath: params.authKeyPath,
-                authKeyIssuerID: params.authKeyIssuerID.sensitiveValue
-            ),
-            authKeyIDParser: authKeyIDParser,
-            config: .init(
-                authKeyPath: params.authKeyPath,
-                authKeyIssuerID: params.authKeyIssuerID.sensitiveValue,
-                logFile: try paths.logsDir.appending(
-                    path: "upload-to-appstore/\(params.ipaPath.lastComponent.string)_\(Date().full_custom).log"
-                )
-            )
-        )
-
-        try ipaUploader.upload(
+        try task.upload(
             ipaPath: params.ipaPath,
             using: params.uploadTool
         )

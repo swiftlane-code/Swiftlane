@@ -48,8 +48,8 @@ public final class ExpiringToDoReporter {
 
 		var todoTextAndFileLine = "\n\n**\(todo.fullMatch)**.\n\n" + "_\(todo.file):\(todo.line)_"
 		let noAuthorMessage =
-			"_TODO_ has no author. Format: `// TODO: [date] @gitlab.username Refactor this.` \n\n" +
-			"Outdated _TODO_ witout author is blocking everyone!"
+			"_TODO_ has no author. Expected format: `// TODO: [date] @gitlab.username Refactor this.` \n\n" +
+			"Outdated _TODO_ without author will block everyone!"
 
 		if todo.author == nil {
 			reporter.message(
@@ -67,50 +67,50 @@ public final class ExpiringToDoReporter {
 
 		case let .approachingExpiryDate(daysLeft):
 			reporter.warn(
-				"You have \(daysLeft) days before \(todo.dateString), to fix _TODO_:" + suppressedAuthorMentionToDoTextAndFileLine
+				"You have \(daysLeft) days before \(todo.dateString) to fix the _TODO_:" + suppressedAuthorMentionToDoTextAndFileLine
 			)
 
 		case let .expiredError(daysAgo):
 			reportFail(
-			    "\(daysAgo) days ago (\(todo.dateString)) outdated _TODO_:" + todoTextAndFileLine,
+			    "(\(todo.dateString)) was \(daysAgo) days ago, outdated _TODO_:" + todoTextAndFileLine,
 			    preventFail: preventFail || !failIfExpiredDetected
 			)
 
 		case let .expiredWarning(daysAgo):
 			reporter.warn(
-				"\(daysAgo) days ago (\(todo.dateString)) outdated _TODO_:" + suppressedAuthorMentionToDoTextAndFileLine
+				"(\(todo.dateString)) was \(daysAgo) days ago, outdated _TODO_:" + suppressedAuthorMentionToDoTextAndFileLine
 			)
 
 		case let .invalidDateFormat(expectedFormat):
 			reportFail(
-			    "Wronge date in _TODO_.\n\n" +
-				"Need formate date: `\(expectedFormat)`.\n\n" + todoTextAndFileLine,
+			    "Wrong date specified for a _TODO_.\n\n" +
+				"Expected date format: `\(expectedFormat)`.\n\n" + todoTextAndFileLine,
 			    preventFail: preventFail
 			)
 
 		case let .tooFarInFuture(maxFutureDays):
 			reportFail(
-			    "Is date _TODO_ too far in future.\n\n" +
+			    "Date for a _TODO_ is too far in future.\n\n" +
 				"Max days allowed for _TODO_: `\(maxFutureDays)`.\n\n" + todoTextAndFileLine,
 			    preventFail: preventFail
 			)
 
 		case let .authorIsNotInAllowedGitLabGroup(author, members):
 			reportFail(
-			    "User `\(author.quoted)` is not in allowed authors GitLab Group.\n\n" +
+			    "Specified author `\(author.quoted)` is not in the allowed authors GitLab Group.\n\n" +
 				"Allowed authors: \(members.map { "`\($0)`" }.joined(separator: ", ")).\n\n" + suppressedAuthorMentionToDoTextAndFileLine,
 			    preventFail: preventFail
 			)
 
 		case let .authorIsNotListedInTeamsConfigs(author):
 			reportFail(
-			    "User `\(author.quoted)` not found in _TODO_ configs.\n\n" + todoTextAndFileLine,
+			    "`\(author.quoted)` not found in list of allowed authors in _TODO_ configs.\n\n" + todoTextAndFileLine,
 			    preventFail: preventFail
 			)
 
 		case .emptyAuthorIsNotAllowed:
 			reportFail(
-			    "_TODO_ without author is not allowed.\n\n" + todoTextAndFileLine,
+			    "_TODO_ without an author is not allowed.\n\n" + todoTextAndFileLine,
 			    preventFail: preventFail
 			)
 		}
@@ -130,11 +130,11 @@ extension ExpiringToDoReporter: ExpiringToDoReporting {
     }
 
     public func reportCheckIsDisabledForSourceBranch(sourceBranch: String) {
-        reporter.message("_TODO_ check is disabled for source branch `\(sourceBranch)`.")
+        reporter.message("_TODO_ date check is disabled for source branch `\(sourceBranch)`.")
     }
 
     public func reportCheckIsDisabledForTargetBranch(targetBranch: String) {
-        reporter.message("_TODO_ check is disabled for target branch `\(targetBranch)`.")
+        reporter.message("_TODO_ date check is disabled for target branch `\(targetBranch)`.")
     }
 
     public func reportSuccessIfNeeded() {

@@ -50,6 +50,14 @@ public extension CommandRunnerProtocol {
 public struct SharedConfigData {
     public let values: SharedConfigValues
     public let paths: PathsFactoring
+
+    public init(
+        values: SharedConfigValues,
+        paths: PathsFactoring
+    ) {
+        self.values = values
+        self.paths = paths
+    }
 }
 
 private extension CommandRunnerProtocol {
@@ -58,39 +66,8 @@ private extension CommandRunnerProtocol {
     }
 
     private func initializeLoggers(commons: CommonOptions) {
-        let logLevel = LoggingLevel(from: commons.resolvedLogLevel)
-        let mainLogger: Logging
-        if logLevel >= .info {
-            mainLogger = DetailedLogger(logLevel: logLevel)
-        } else {
-            mainLogger = SimpleLogger(logLevel: logLevel)
-        }
-
-        guard let verboseLogFile = commons.verboseLogfile else {
-            DependencyResolver.shared.register(Logging.self) {
-                mainLogger
-            }
-            return
-        }
-
-        do {
-            let filesManager = FSManager(logger: mainLogger, fileManager: FileManager.default)
-            var file = try FileHandleTextOutputStream(
-                filesManager: filesManager,
-                filePath: verboseLogFile,
-                appendFile: true
-            )
-
-            let fileLogger = DetailedLogger(logLevel: .verbose) {
-                Swift.print($0, terminator: $1, to: &file)
-            }
-            DependencyResolver.shared.register(Logging.self) {
-                CompositeLogger(loggers: [mainLogger, fileLogger])
-            }
-        } catch {
-            mainLogger.logError(error)
-            Exitor().exit(with: 1)
-        }
+        DependenciesFactory.registerLoggerProducer(commons: commons)
+        DependenciesFactory.registerProducers()
     }
 
     private func logIntentions(command: Command, sharedConfigOptions: SharedConfigOptions?) {
@@ -164,7 +141,6 @@ private extension CommandRunnerProtocol {
         let paths = PathsFactory(
             pathsConfig: sharedConfig.pathsConfig,
             projectDir: sharedConfigOptions.projectDir,
-            filesManager: filesManager,
             logger: logger
         )
 

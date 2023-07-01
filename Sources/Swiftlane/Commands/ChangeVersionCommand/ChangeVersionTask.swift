@@ -15,15 +15,8 @@ public extension ChangeVersionTask {
             case bumpPatch
         }
 
-        public let projectDir: AbsolutePath
-
         public let sourceBranchName: String
         public let bumpStrategy: ChangeVersionStrategy
-
-        public let infoPlistPath: RelativePath
-        public let prefixUpdateCommitMessage: String
-        public let committeeName: String
-        public let committeeEmail: String
     }
 }
 

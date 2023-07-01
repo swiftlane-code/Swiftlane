@@ -56,24 +56,22 @@ public protocol PathsFactoring {
     /// Path to cloned repo with certificates.
     var tempDir: AbsolutePath { get }
 
-    var xcodebuildFormatterPath: AbsolutePath { get }
+    /// e.g. `"xcbeautify"`
+    var xcodebuildFormatterCommand: String { get }
 }
 
 public struct PathsFactory: PathsFactoring {
     private let pathsConfig: PathsConfig
     private let projectDir: AbsolutePath
-    private let filesManager: FSManaging
     private let logger: Logging
 
     public init(
         pathsConfig: PathsConfig,
         projectDir: AbsolutePath,
-        filesManager: FSManaging,
         logger: Logging
     ) {
         self.pathsConfig = pathsConfig
         self.projectDir = projectDir
-        self.filesManager = filesManager
         self.logger = logger
     }
 
@@ -135,7 +133,7 @@ public struct PathsFactory: PathsFactoring {
         pathsConfig.tempDir.makeAbsoluteIfIsnt(relativeTo: projectDir)
     }
 
-    public var xcodebuildFormatterPath: AbsolutePath {
-        pathsConfig.xcodebuildFormatterPath.makeAbsoluteIfIsnt(relativeTo: projectDir)
+    public var xcodebuildFormatterCommand: String {
+        pathsConfig.xcodebuildFormatterCommand
     }
 }

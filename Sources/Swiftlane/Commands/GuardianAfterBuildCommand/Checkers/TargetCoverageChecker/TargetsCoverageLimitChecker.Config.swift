@@ -14,7 +14,7 @@ public extension TargetsCoverageLimitChecker {
 
     struct DecodableConfig: Decodable {
         /// Name of filters from ``excludeFilesFilters`` to be used for target by default.
-        static let defaultFilterSetName = "base"
+        public static let defaultFilterSetName = "base"
 
         public var defaultFilters: [StringMatcher] {
             excludeFilesFilters?[Self.defaultFilterSetName] ?? []
@@ -32,6 +32,18 @@ public extension TargetsCoverageLimitChecker {
 
         /// Do not check code coverage of targets with these names.
         public let excludeTargetsNames: [StringMatcher]
+
+        public init(
+            excludeFilesFilters: [String: [StringMatcher]]? = nil,
+            targetCoverageLimits: [String: TargetsCoverageLimitChecker.DecodableConfig.TargetSetting],
+            allowedProductNameSuffixes: [String],
+            excludeTargetsNames: [StringMatcher]
+        ) {
+            self.excludeFilesFilters = excludeFilesFilters
+            self.targetCoverageLimits = targetCoverageLimits
+            self.allowedProductNameSuffixes = allowedProductNameSuffixes
+            self.excludeTargetsNames = excludeTargetsNames
+        }
 
         public struct TargetSetting: Decodable {
             public let limit: Int

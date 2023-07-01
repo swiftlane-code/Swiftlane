@@ -22,7 +22,7 @@ public struct ArchiveAndExportIPATaskConfig {
     public let compileBitcode: Bool
     public let manageAppVersionAndBuildNumber: Bool?
     public let isUseRosetta: Bool
-    public let xcodebuildFormatterPath: AbsolutePath
+    public let xcodebuildFormatterCommand: String
 }
 
 /// Archive and export `.ipa`.
@@ -72,7 +72,7 @@ public final class ArchiveAndExportIPATask {
             derivedDataPath: config.derivedDataDir,
             logsPath: config.logsDir,
             configuration: nil,
-            xcodebuildFormatterPath: config.xcodebuildFormatterPath
+            xcodebuildFormatterCommand: config.xcodebuildFormatterCommand
         )
 
         let logPathFactory = LogPathFactory(filesManager: filesManager)

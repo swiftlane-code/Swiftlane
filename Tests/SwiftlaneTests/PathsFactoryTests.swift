@@ -34,7 +34,6 @@ class PathsFactoryTests: XCTestCase {
         let factory = PathsFactory(
             pathsConfig: pathsConfig,
             projectDir: try AbsolutePath("/project/dir"),
-            filesManager: filesManager,
             logger: logger
         )
 
@@ -126,7 +125,7 @@ class PathsFactoryTests: XCTestCase {
             swiftlintConfigPath: try Path("swiftlintConfigPath"),
             swiftlintWarningsJsonsFolder: try Path("swiftlintWarningsJsonsFolder"),
             tempDir: try Path("tempDir"),
-            xcodebuildFormatterPath: try Path("xcodebuildFormatterPath")
+            xcodebuildFormatterCommand: "xcodebuildFormatterCommand"
         )
     }
 }

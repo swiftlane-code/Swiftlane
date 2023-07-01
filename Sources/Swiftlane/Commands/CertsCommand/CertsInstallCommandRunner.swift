@@ -49,7 +49,7 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
         params: CertsInstallCommandParamsAccessing,
         commandConfig: CertsCommandConfig,
         sharedConfig _: Void,
-        logger: Logging
+        logger _: Logging
     ) throws {
         let additionalCertificates = try params.additionalCertificates.split(separator: ",")
             .map { String($0) }
@@ -57,7 +57,7 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
                 try URL(string: $0).unwrap(errorDescription: "\($0.quoted) is not a valid URL.")
             }
 
-        let passwordReader = PasswordReader()
+        let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
 
         let repoPassword = try params.options.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
@@ -78,7 +78,9 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
             keychainPassword: keychainPassword
         )
 
-        let task = try CertsInstallTaskAssembly().assemble(config: installConfig, logger: logger)
+        let task = TasksFactory.makeCertsInstallTask(
+            taskConfig: installConfig
+        )
 
         _ = try task.run()
     }

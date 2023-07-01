@@ -3,20 +3,25 @@
 import Foundation
 import SwiftlaneCore
 
-public class CertsInstaller {
+public protocol CertsInstalling {
+    func installCertificatesAndProfiles(config: CertsInstallConfig) throws
+        -> [(MobileProvision, installPath: AbsolutePath)]
+}
+
+public class CertsInstaller: CertsInstalling {
     private let logger: Logging
 
     private let repo: CertsRepositoryProtocol
     private let atomicInstaller: CertsAtomicInstalling
     private let filesManager: FSManaging
-    private let remoteCertInstaller: RemoteCertificateInstaller
+    private let remoteCertInstaller: RemoteCertificateInstalling
 
     public init(
         logger: Logging,
         repo: CertsRepositoryProtocol,
         atomicInstaller: CertsAtomicInstalling,
         filesManager: FSManaging,
-        remoteCertInstaller: RemoteCertificateInstaller
+        remoteCertInstaller: RemoteCertificateInstalling
     ) {
         self.logger = logger
         self.repo = repo

@@ -9,6 +9,7 @@ public protocol MeasureBuildTimeCommandParamsAccessing {
     var rosettaOption: RosettaGlobalOption { get }
     var projectName: Path { get }
     var scheme: String { get }
+    var configuration: String { get }
     var deviceModel: String { get }
     var osVersion: String { get }
     var iterations: Int { get }
@@ -29,6 +30,9 @@ public struct MeasureBuildTimeCommand: ParsableCommand, MeasureBuildTimeCommandP
 
     @Option(help: "Project scheme.")
     public var scheme: String
+
+    @Option(help: "Configuration to build (usually Debug or Release).")
+    public var configuration: String
 
     @Option(help: "Name of original simulator to be cloned.")
     public var deviceModel: String = "iPhone 11"

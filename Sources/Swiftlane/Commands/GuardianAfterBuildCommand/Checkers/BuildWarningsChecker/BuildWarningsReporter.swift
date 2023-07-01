@@ -26,7 +26,7 @@ public class BuildWarningsReporter: BuildWarningsReporting {
     }
 
     public func reportNoWarningsDetected() {
-        reporter.success("New warning's not found")
+        reporter.success("New warnings not detected")
     }
 
     // swiftformat:disable indent
@@ -43,7 +43,7 @@ public class BuildWarningsReporter: BuildWarningsReporting {
 				"""
 		}.joined(separator: "\n\n")
 
-		let message = "Your warning's found (see table)"
+		let message = "Build warnings detected (see table)"
 		if failBuildWhenWarningsDetected {
 			reporter.fail(message)
 		} else {

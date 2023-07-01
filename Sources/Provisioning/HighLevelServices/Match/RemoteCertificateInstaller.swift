@@ -3,7 +3,16 @@
 import Foundation
 import SwiftlaneCore
 
-public class RemoteCertificateInstaller {
+public protocol RemoteCertificateInstalling {
+    func installCertificate(
+        from url: URL,
+        downloadTimeout: TimeInterval,
+        keychainName: String,
+        installTimeout: TimeInterval
+    ) throws
+}
+
+public class RemoteCertificateInstaller: RemoteCertificateInstalling {
     private let logger: Logging
     private let shell: ShellExecuting
     private let filesManager: FSManaging

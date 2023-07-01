@@ -13,7 +13,7 @@ public class SetProvisioningCommandRunner: CommandRunnerProtocol {
     private func updateProvisioning(
         params: SetProvisioningCommandParamsAccessing,
         paths: PathsFactoring,
-        logger: Logging
+        logger _: Logging
     ) throws {
         let taskConfig = SetProvisioningTaskConfig(
             xcodeprojPath: paths.projectFile,
@@ -21,11 +21,9 @@ public class SetProvisioningCommandRunner: CommandRunnerProtocol {
             buildConfigurationName: params.buildConfiguration,
             provisionProfileName: params.provisionProfileName
         )
-        let updateProvisioningTask = SetProvisioningTaskAssembly()
-            .assemble(
-                config: taskConfig,
-                logger: logger
-            )
+        let updateProvisioningTask = TasksFactory.makeSetProvisioningTask(
+            taskConfig: taskConfig
+        )
         try updateProvisioningTask.run()
     }
 

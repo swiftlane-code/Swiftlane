@@ -80,13 +80,13 @@ extension TargetCoverageReporter: TargetCoverageReporting {
 	}
 
 	public func reportCoverageLimitsSuccess() {
-		reporter.success("Limits Code Coverage by targets is ok")
+		reporter.success("Code Coverage limits per target are ok")
 	}
 
 	public func reportCoverageLimitsCheckFailed(violation: TargetsCoverageLimitChecker.Violation) {
 		reporter.fail(
-			"Code Coverage of target \(violation.targetName) (\(percent(from: violation.actualCoverage))) " +
-			" less than \(percent(from: violation.minCoverage))"
+			"Code Coverage of target \(violation.targetName) is (\(percent(from: violation.actualCoverage))) " +
+			" less than the limit \(percent(from: violation.minCoverage))"
 		)
 	}
 }

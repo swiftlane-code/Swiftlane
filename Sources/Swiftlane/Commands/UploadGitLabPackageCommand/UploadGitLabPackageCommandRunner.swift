@@ -24,17 +24,8 @@ public struct UploadGitLabPackageCommandRunner: CommandRunnerProtocol {
         params: UploadGitLabPackageCommandParamsAccessing,
         commandConfig _: Void,
         sharedConfig _: SharedConfigData,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let progressLogger = ProgressLogger(
-            winsizeReader: WinSizeReader()
-        )
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
         let taskConfig = UploadGitLabPackageTask.Config(
             projectID: params.projectID,
             packageName: params.packageName,
@@ -44,14 +35,7 @@ public struct UploadGitLabPackageCommandRunner: CommandRunnerProtocol {
             timeoutSeconds: params.timeoutSeconds
         )
 
-        let task = UploadGitLabPackageTask(
-            logger: logger,
-            progressLogger: NetworkingProgressLogger(progressLogger: progressLogger),
-            filesManager: filesManager,
-            gitlabApi: try GitLabAPIClient(logger: logger),
-            timeMeasurer: TimeMeasurer(logger: logger),
-            config: taskConfig
-        )
+        let task = try TasksFactory.makeUploadGitLabPackageTask(taskConfig: taskConfig)
 
         try task.run()
     }

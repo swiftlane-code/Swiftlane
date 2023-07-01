@@ -13,7 +13,7 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
     private func build(
         params: BuildAppCommandParamsAccessing,
         paths: PathsFactoring,
-        logger: Logging
+        logger _: Logging
     ) throws {
         let builderConfig = Builder.Config(
             project: paths.projectFile,
@@ -21,15 +21,13 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
             derivedDataPath: paths.derivedDataDir,
             logsPath: paths.logsDir,
             configuration: nil,
-            xcodebuildFormatterPath: paths.xcodebuildFormatterPath
+            xcodebuildFormatterCommand: paths.xcodebuildFormatterCommand
         )
-        let buildTask = BuildAppTaskAssembly().assemble(
-            paths: paths,
+        let buildTask = TasksFactory.makeBuildAppTask(
             builderConfig: builderConfig,
             buildForTesting: params.buildForTesting,
-            buildDestination: .genericIOSDevice, // hardcode for now
-            isUseRosetta: params.rosettaOption.isUseRosetta,
-            logger: logger
+            buildDestination: .genericIOSDevice,
+            isUseRosetta: params.rosettaOption.isUseRosetta
         )
         try buildTask.run()
     }

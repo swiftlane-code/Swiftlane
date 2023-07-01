@@ -22,5 +22,17 @@ public extension ChangesCoverageLimitChecker {
 
         /// Do not check changes coverage when Merge Request Target Branch is one of these.
         public let ignoreCheckForTargetBranches: [StringMatcher]
+
+        public init(
+            filesToIgnoreCheck: [StringMatcher],
+            changedLinesCoverageLimit: Int,
+            ignoreCheckForSourceBranches: [StringMatcher],
+            ignoreCheckForTargetBranches: [StringMatcher]
+        ) {
+            self.filesToIgnoreCheck = filesToIgnoreCheck
+            self.changedLinesCoverageLimit = changedLinesCoverageLimit
+            self.ignoreCheckForSourceBranches = ignoreCheckForSourceBranches
+            self.ignoreCheckForTargetBranches = ignoreCheckForTargetBranches
+        }
     }
 }

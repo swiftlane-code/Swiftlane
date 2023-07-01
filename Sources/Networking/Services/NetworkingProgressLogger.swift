@@ -4,7 +4,21 @@ import Combine
 import Foundation
 import SwiftlaneCore
 
-public class NetworkingProgressLogger {
+public protocol NetworkingProgressLogging {
+    func performLoggingProgress<Result>(
+        description: String,
+        publisher: AnyPublisher<ProgressOrResult<NetworkingProgress, Result>, NetworkingError>,
+        timeout: TimeInterval
+    ) throws -> Result
+
+    func performLoggingDoubleProgress<Result, Failure>(
+        description: String,
+        publisher: AnyPublisher<ProgressOrResult<Double, Result>, Failure>,
+        timeout: TimeInterval
+    ) throws -> Result
+}
+
+public class NetworkingProgressLogger: NetworkingProgressLogging {
     private let progressLogger: ProgressLogging
 
     public init(progressLogger: ProgressLogging) {

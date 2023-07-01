@@ -10,7 +10,6 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
     // MARK: Services
 
     private let reporter: MergeRequestReporting
-    private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
     private let environmentValueReader: EnvironmentValueReading
 
     // MARK: Checkers
@@ -34,7 +33,6 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         unitTestsChecker: UnitTestsResultsChecking,
         exitCodeChecker: UnitTestsExitCodeChecking,
         config: Config,
-        gitlabCIEnvironmentReader: GitLabCIEnvironmentReading,
         environmentValueReader: EnvironmentValueReading
     ) {
         reporter = mergeRequestReporter
@@ -45,7 +43,6 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         self.unitTestsChecker = unitTestsChecker
         self.exitCodeChecker = exitCodeChecker
         self.config = config
-        self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
         self.environmentValueReader = environmentValueReader
         super.init(reporter: reporter, logger: logger)
     }
@@ -83,7 +80,7 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         }
 
         if !reporter.hasFails() {
-            reporter.success("Everything ok!")
+            reporter.success("All checks passed!")
         }
     }
 }

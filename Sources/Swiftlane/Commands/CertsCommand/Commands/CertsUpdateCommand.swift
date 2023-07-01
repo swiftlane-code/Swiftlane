@@ -63,56 +63,15 @@ public struct CertsUpdateCommand: ParsableCommand, CommandRunnerProtocol {
     public func run(
         params _: Void,
         commandConfig: CertsCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData,
+        logger _: Logging
     ) throws {
-        let sigIntHandler = SigIntHandler(logger: logger)
-        let xcodeChecker = XcodeChecker()
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: sigIntHandler,
-            logger: logger,
-            xcodeChecker: xcodeChecker,
-            filesManager: filesManager
-        )
-
-        let git = Git(
-            shell: shell,
-            filesManager: filesManager,
-            diffParser: GitDiffParser(logger: logger)
-        )
-
-        let openssl = OpenSSLService(
-            shell: shell,
-            filesManager: filesManager
-        )
-
-        let provisionProfileParser = MobileProvisionParser(
-            logger: logger,
-            shell: shell
-        )
-
-        let security = MacOSSecurity(shell: shell)
-
-        let provisioningProfileService = ProvisioningProfilesService(
-            filesManager: filesManager,
-            logger: logger,
-            provisionProfileParser: provisionProfileParser
-        )
-
-        let authKeyID = try AppStoreConnectAuthKeyIDParser().apiKeyID(from: authKeyPath)
-
-        let passwordReader = PasswordReader()
+        let passwordReader: PasswordReading = DependenciesFactory.resolve()
 
         let repoPassword = try options.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
 
-        let installConfig = CertsUpdateConfig(
+        let taskConfig = CertsUpdateConfig(
             common: CertsCommonConfig(
                 repoURL: commandConfig.repoURL,
                 clonedRepoDir: options.clonedRepoDir,
@@ -123,40 +82,10 @@ public struct CertsUpdateCommand: ParsableCommand, CommandRunnerProtocol {
             profileTypes: type
         )
 
-        let appStoreConnectAPIClient = try AppStoreConnectAPIClient(
-            keyId: authKeyID,
-            issuerId: authKeyIssuerID.sensitiveValue,
-            privateKeyPath: authKeyPath.string
-        )
-
-        let certsService = CertsUpdater(
-            logger: logger,
-            repo: CertsRepository(
-                git: git,
-                openssl: openssl,
-                filesManager: filesManager,
-                provisioningProfileService: provisioningProfileService,
-                provisionProfileParser: provisionProfileParser,
-                security: security,
-                logger: logger,
-                config: CertsRepository.Config(
-                    gitAuthorName: sharedConfig.values.gitAuthorName,
-                    gitAuthorEmail: sharedConfig.values.gitAuthorEmail
-                )
-            ),
-            generator: CertsGenerator(
-                logger: logger,
-                openssl: openssl,
-                api: appStoreConnectAPIClient
-            ),
-            filesManager: filesManager
-        )
-
-        let task = CertsUpdateTask(
-            logger: logger,
-            shell: shell,
-            certsService: certsService,
-            config: installConfig
+        let task = try TasksFactory.makeCertsUpdateTask(
+            authKeyPath: authKeyPath,
+            authKeyIssuerID: authKeyIssuerID,
+            taskConfig: taskConfig
         )
 
         _ = try task.run()

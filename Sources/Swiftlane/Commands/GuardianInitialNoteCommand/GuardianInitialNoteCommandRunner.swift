@@ -11,27 +11,9 @@ public struct GuardianInitialNoteCommandRunner: CommandRunnerProtocol {
         params _: GuardianInitialNoteCommandParamsAccessing,
         commandConfig _: Void,
         sharedConfig _: SharedConfigData,
-        logger: Logging
+        logger _: Logging
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(
-            environmentValueReading: environmentValueReader
-        )
-
-        let mergeRequestReporter = MergeRequestReporter(
-            logger: logger,
-            gitlabApi: try GitLabAPIClient(logger: logger),
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            reportFactory: MergeRequestReportFactory(),
-            publishEmptyReport: false
-        )
-
-        let task = GuardianInitialNoteTask(
-            logger: logger,
-            mergeRequestReporter: mergeRequestReporter,
-            gitlabCIEnvironmentReader: gitlabCIEnvironmentReader
-        )
+        let task = try TasksFactory.makeGuardianInitialNoteTask()
 
         try task.run()
     }

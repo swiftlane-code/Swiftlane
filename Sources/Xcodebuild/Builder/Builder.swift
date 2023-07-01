@@ -127,7 +127,7 @@ public class Builder: BuilderProtocol {
                     forTesting ? "-enableCodeCoverage YES" : "",
                     forTesting ? "build-for-testing" : "build",
                     "| tee '\(logsPaths.stdout)'",
-                    "| \(config.xcodebuildFormatterPath.string)",
+                    "| \(config.xcodebuildFormatterCommand)",
                 ],
                 log: .commandAndOutput(outputLogLevel: .verbose),
                 logStdErrToFile: logsPaths.stderr
@@ -165,7 +165,7 @@ public class Builder: BuilderProtocol {
                     "-archivePath " + archivePath.string.quoted,
                     "clean archive",
                     "| tee '\(logsPaths.stdout)'",
-                    "| \(config.xcodebuildFormatterPath.string)",
+                    "| \(config.xcodebuildFormatterCommand)",
                 ],
                 log: .commandAndOutput(outputLogLevel: .verbose),
                 logStdErrToFile: logsPaths.stderr

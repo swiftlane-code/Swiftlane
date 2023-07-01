@@ -25,7 +25,7 @@ public class CommonRunner {
             let environmentValueReader = EnvironmentValueReader()
             let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
 
-            let mergeRequestReporter = MergeRequestReporter(
+            let mergeRequestReporter = GitLabMergeRequestReporter(
                 logger: logger,
                 gitlabApi: try GitLabAPIClient(logger: logger),
                 gitlabCIEnvironment: gitlabCIEnvironmentReader,
@@ -50,7 +50,6 @@ public class CommonRunner {
             } else {
                 try closure()
             }
-            logger.success("Swiftlane is finishing execution with `0` exit code.")
         } catch {
             logger.logError(error)
             exitor.exit(with: 1)

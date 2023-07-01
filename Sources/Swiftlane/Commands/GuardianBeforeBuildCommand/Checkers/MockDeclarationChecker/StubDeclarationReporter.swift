@@ -33,8 +33,8 @@ extension StubDeclarationReporter: StubDeclarationReporting {
         }
 
         let violationsMessage = violations.map {
-            "* **extension** for  `\($0.typeName)` from `\($0.typeDefinedIn)`, " +
-            "allowed targets for extension: \(styleTargets($0.extensionMayBeIn))."
+            "* **extension** for type `\($0.typeName)` defined in `\($0.typeDefinedIn)`, " +
+            "allowed targets for such extension: \(styleTargets($0.extensionMayBeIn))."
         }.joined(separator: "\n\n")
         let message = "`" + file + "`\n\n" + violationsMessage
 
@@ -46,14 +46,14 @@ extension StubDeclarationReporter: StubDeclarationReporting {
     }
 
     public func reportExpiredToDoCheckerDisabled() {
-        reporter.message("Verification of mock declarations in the corresponding targets is disabled.")
+        reporter.message("Check for mocks' extensension declaration places is disabled.")
     }
 
     public func reportSuccessIfNeeded() {
         guard !reporter.hasFails() else {
             return
         }
-        reporter.success("The verification of the mock declarations in the relevant targets has been completed.")
+        reporter.success("Check for mocks' extensension declaration places has passed.")
     }
 }
 
