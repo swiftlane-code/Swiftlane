@@ -429,5 +429,48 @@ public enum DependenciesFactory {
         DependencyResolver.shared.register(WinSizeReading.self) {
             WinSizeReader()
         }
+        
+        DependencyResolver.shared.register(XCTestRunFinding.self) {
+            XCTestRunFinder(filesManager: resolve())
+        }
+        
+        DependencyResolver.shared.register(XCTestRunParsing.self) {
+            XCTestRunParser(
+                filesManager: resolve(),
+                xcTestRunFinder: resolve()
+            )
+        }
+        
+        DependencyResolver.shared.register(XCTestPlanParsing.self) {
+            XCTestPlanParser(filesManager: resolve())
+        }
+        
+        DependencyResolver.shared.register(XCTestParsing.self) {
+            XCTestParser(
+                shell: resolve(),
+                filesManager: resolve(),
+                logger: resolve()
+            )
+        }
+        
+        DependencyResolver.shared.register(XCTestPlanServicing.self) {
+            XCTestPlanService(
+                testPlanFinder: resolve(),
+                testPlanParser: resolve()
+            )
+        }
+        
+        DependencyResolver.shared.register(XCTestServicing.self) {
+            XCTestService(
+                xctestParser: resolve(),
+                xcTestRunFinder: resolve(),
+                xcTestRunParser: resolve()
+            )
+        }
+        
+        DependencyResolver.shared.register(XcodebuildErrorParsing.self) {
+            XcodebuildErrorParser()
+        }
+        
     }
 }

@@ -19,7 +19,7 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
             scheme: params.scheme,
             derivedDataPath: paths.derivedDataDir,
             logsPath: paths.logsDir,
-            configuration: nil,
+            configuration: params.buildConfiguration,
             xcodebuildFormatterCommand: paths.xcodebuildFormatterCommand
         )
         let buildTask = TasksFactory.makeBuildAppTask(

@@ -20,7 +20,7 @@ public enum TasksFactory {
         sharedConfig: SharedConfigData,
         useRosetta: Bool = false,
         testingTimeout: TimeInterval = 3600
-    ) -> RunTestsTask {
+    ) throws -> RunTestsTask {
         let config = RunTestsTask.Config(
             projectDir: projectDir,
             projectFile: sharedConfig.paths.projectFile,
@@ -41,13 +41,116 @@ public enum TasksFactory {
             xcodebuildFormatterCommand: sharedConfig.paths.xcodebuildFormatterCommand,
             testingTimeout: testingTimeout
         )
+        
+        return try makeRunTestsTask(config: config)
+    }
+    
+    public static func makeRunTestsTask(
+        config: RunTestsTask.Config
+    ) throws -> RunTestsTask {
+        let builderConfig = Builder.Config(
+            project: config.projectFile,
+            scheme: config.scheme,
+            derivedDataPath: config.derivedDataDir,
+            logsPath: config.logsDir,
+            configuration: "Debug", // TODO: hardcode
+            xcodebuildFormatterCommand: config.xcodebuildFormatterCommand
+        )
+        
+        let runnerConfig = TestsRunner.Config(
+            builderConfig: builderConfig,
+            projectDirPath: config.projectDir,
+            testRunsDerivedDataPath: config.testRunsDerivedDataDir,
+            testRunsLogsPath: config.logsDir,
+            testPlan: config.testPlan,
+            testWithoutBuilding: config.testWithoutBuilding,
+            xcodebuildFormatterCommand: config.xcodebuildFormatterCommand,
+            testingTimeout: config.testingTimeout
+        )
+        
+        let logger: Logging = DependenciesFactory.resolve()
+        let simulatorProvider: SimulatorProviding = DependenciesFactory.resolve()
+        
+        logger.important("Using scheme: \(config.scheme), testPlan: \(config.testPlan ?? "<nil>")")
+        
+        let iphone = try simulatorProvider.getAllDevices().first {
+            $0.device.name == config.deviceModel && $0.runtime.version == config.osVersion
+        }.unwrap(
+            errorDescription: "Simulator \(config.deviceModel) with iOS \(config.osVersion) not found."
+        )
+        
+        let builder = Builder(
+            filesManager: DependenciesFactory.resolve(),
+            logPathFactory: DependenciesFactory.resolve(),
+            shell: DependenciesFactory.resolve(),
+            logger: DependenciesFactory.resolve(),
+            timeMeasurer: DependenciesFactory.resolve(),
+            xcodebuildCommand: DependenciesFactory.resolve(),
+            config: builderConfig
+        )
+        
+        let testsRunner = TestsRunner(
+            filesManager: DependenciesFactory.resolve(),
+            xcTestService: DependenciesFactory.resolve(),
+            logPathFactory: DependenciesFactory.resolve(),
+            shell: DependenciesFactory.resolve(),
+            config: runnerConfig,
+            xcodebuildCommand: DependenciesFactory.resolve(),
+            errorParser: DependenciesFactory.resolve()
+        )
+        
+        let testRunPerformer: TestRunPerforming
+        
+        if config.useMultiScan {
+            let scanConfig = MultiScan.Config(
+                builderConfig: builderConfig,
+                testsRunnerConfig: runnerConfig,
+                referenceSimulator: iphone,
+                simulatorsCount: config.simulatorsCount,
+                resultsDir: config.resultsDir,
+                mergedXCResultPath: config.mergedXCResultPath,
+                mergedJUnitPath: config.mergedJUnitPath
+            )
+            
+            testRunPerformer = MultiScan(
+                filesManager: DependenciesFactory.resolve(),
+                logPathFactory: DependenciesFactory.resolve(),
+                simulatorProvider: DependenciesFactory.resolve(),
+                testPlanService: DependenciesFactory.resolve(),
+                junitService: DependenciesFactory.resolve(),
+                shell: DependenciesFactory.resolve(),
+                logger: DependenciesFactory.resolve(),
+                timeMeasurer: DependenciesFactory.resolve(),
+                config: scanConfig,
+                builder: builder,
+                runner: testsRunner,
+                projectDir: config.projectDir
+            )
+        } else {
+            let scanConfig = Scan.Config(
+                referenceSimulator: iphone,
+                resultsDir: config.resultsDir,
+                logsPath: config.logsDir,
+                scheme: config.scheme,
+                mergedXCResultPath: config.mergedXCResultPath,
+                mergedJUnitPath: config.mergedJUnitPath
+            )
+            
+            testRunPerformer = Scan(
+                filesManager: DependenciesFactory.resolve(),
+                logPathFactory: DependenciesFactory.resolve(),
+                shell: DependenciesFactory.resolve(),
+                logger: DependenciesFactory.resolve(),
+                timeMeasurer: DependenciesFactory.resolve(),
+                config: scanConfig,
+                runner: testsRunner
+            )
+        }
 
         let task = RunTestsTask(
-            simulatorProvider: DependenciesFactory.resolve(),
             logger: DependenciesFactory.resolve(),
-            shell: DependenciesFactory.resolve(),
             exitor: DependenciesFactory.resolve(),
-            config: config
+            testRunPerformer: testRunPerformer
         )
 
         return task
@@ -217,15 +320,32 @@ public enum TasksFactory {
     public static func makeArchiveAndExportIPATask(
         taskConfig: ArchiveAndExportIPATaskConfig
     ) -> ArchiveAndExportIPATask {
+        let builderConfig = Builder.Config(
+            project: taskConfig.projectFile,
+            scheme: taskConfig.scheme,
+            derivedDataPath: taskConfig.derivedDataDir,
+            logsPath: taskConfig.logsDir,
+            configuration: taskConfig.buildConfiguration,
+            xcodebuildFormatterCommand: taskConfig.xcodebuildFormatterCommand
+        )
+        
+        let builder = Builder(
+            filesManager: DependenciesFactory.resolve(),
+            logPathFactory: DependenciesFactory.resolve(),
+            shell: DependenciesFactory.resolve(),
+            logger: DependenciesFactory.resolve(),
+            timeMeasurer: DependenciesFactory.resolve(),
+            xcodebuildCommand: DependenciesFactory.resolve(),
+            config: builderConfig
+        )
+        
         let task = ArchiveAndExportIPATask(
             simulatorProvider: DependenciesFactory.resolve(),
-            logger: DependenciesFactory.resolve(),
-            shell: DependenciesFactory.resolve(),
             archiveProcessor: DependenciesFactory.resolve(),
-            filesManager: DependenciesFactory.resolve(),
             xcodeProjectPatcher: DependenciesFactory.resolve(),
             dsymsExtractor: DependenciesFactory.resolve(),
             provisioningProfilesService: DependenciesFactory.resolve(),
+            builder: builder,
             config: taskConfig
         )
 

@@ -9,7 +9,7 @@ public extension Builder {
         public let scheme: String
         public let derivedDataPath: AbsolutePath
         public let logsPath: AbsolutePath
-        public let configuration: String?
+        public let configuration: String
         public let xcodebuildFormatterCommand: String
 
         /// Xcodebuild `build` or `build-for-testing` configuration.
@@ -24,7 +24,7 @@ public extension Builder {
             scheme: String,
             derivedDataPath: AbsolutePath,
             logsPath: AbsolutePath,
-            configuration: String?,
+            configuration: String,
             xcodebuildFormatterCommand: String
         ) {
             self.project = project

@@ -15,10 +15,7 @@ public protocol BuilderProtocol {
     func buildForTesting(simulator: Simulator) throws
     func buildForRunning(simulator: Simulator) throws
     func build(forTesting: Bool, destination: BuildDestination) throws
-    func archive(
-        buildConfiguration: String,
-        archivePath: AbsolutePath
-    ) throws
+    func archive(archivePath: AbsolutePath) throws
 }
 
 public enum BuildDestination {
@@ -123,7 +120,7 @@ public class Builder: BuilderProtocol {
                     "-project", config.project.string.quoted,
                     "-derivedDataPath", config.derivedDataPath.string.quoted,
                     destination.xcodebuildDestinationOption,
-                    config.configuration.map { "-configuration " + $0 } ?? "",
+                    "-configuration " + config.configuration.quoted,
                     forTesting ? "-enableCodeCoverage YES" : "",
                     forTesting ? "build-for-testing" : "build",
                     "| tee '\(logsPaths.stdout)'",
@@ -144,14 +141,13 @@ public class Builder: BuilderProtocol {
     }
 
     public func archive(
-        buildConfiguration: String,
         archivePath: AbsolutePath
     ) throws {
-        try timeMeasurer.measure(description: "Archiving \(buildConfiguration) configuration of scheme '\(config.scheme)'") {
+        try timeMeasurer.measure(description: "Archiving \(config.configuration.quoted) configuration of scheme '\(config.scheme)'") {
             let logsPaths = logPathFactory.makeArchiveLogPath(
                 logsDir: config.logsPath,
                 scheme: config.scheme,
-                configuration: buildConfiguration
+                configuration: config.configuration
             )
 
             try shell.run(
@@ -161,7 +157,7 @@ public class Builder: BuilderProtocol {
                     "-project", config.project.string.quoted,
                     "-derivedDataPath", config.derivedDataPath.string.quoted,
                     BuildDestination.genericIOSDevice.xcodebuildDestinationOption,
-                    "-configuration " + buildConfiguration.quoted,
+                    "-configuration " + config.configuration.quoted,
                     "-archivePath " + archivePath.string.quoted,
                     "clean archive",
                     "| tee '\(logsPaths.stdout)'",

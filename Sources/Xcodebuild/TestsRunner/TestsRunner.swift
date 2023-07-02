@@ -6,7 +6,12 @@ import Foundation
 import Simulator
 import SwiftlaneCore
 
-public class TestsRunner {
+public protocol TestsRunnerProtocol {
+    func getBuiltTests() throws -> AnyPublisher<[XCTestFunction], Error>
+    func runTests(simulator: Simulator, tests: [XCTestFunction]) -> TestsRunner.TestRunResult
+}
+
+public class TestsRunner: TestsRunnerProtocol {
     let filesManager: FSManaging
     let xcTestService: XCTestServicing
     let logPathFactory: LogPathFactory

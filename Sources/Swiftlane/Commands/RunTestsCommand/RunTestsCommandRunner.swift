@@ -66,13 +66,7 @@ public struct RunTestsCommandRunner: CommandRunnerProtocol {
             testingTimeout: params.testingTimeout
         )
 
-        let task = RunTestsTask(
-            simulatorProvider: DependenciesFactory.resolve(),
-            logger: DependenciesFactory.resolve(),
-            shell: DependenciesFactory.resolve(),
-            exitor: DependenciesFactory.resolve(),
-            config: config
-        )
+        let task = try TasksFactory.makeRunTestsTask(config: config)
 
         try task.run()
     }

@@ -29,7 +29,6 @@ public class ArchiveAndExportIPACommandRunner: CommandRunnerProtocol {
             exportMethod: exportMethod,
             compileBitcode: params.compileBitcode,
             manageAppVersionAndBuildNumber: nil,
-            isUseRosetta: params.rosettaOption.isUseRosetta,
             xcodebuildFormatterCommand: paths.xcodebuildFormatterCommand
         )
         let task = TasksFactory.makeArchiveAndExportIPATask(
