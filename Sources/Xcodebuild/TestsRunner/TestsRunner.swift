@@ -14,7 +14,7 @@ public protocol TestsRunnerProtocol {
 public class TestsRunner: TestsRunnerProtocol {
     let filesManager: FSManaging
     let xcTestService: XCTestServicing
-    let logPathFactory: LogPathFactory
+    let logPathFactory: LogPathFactoring
     let shell: ShellExecuting
     let xcodebuildCommand: XcodebuildCommandProducing
     let errorParser: XcodebuildErrorParsing
@@ -24,7 +24,7 @@ public class TestsRunner: TestsRunnerProtocol {
     public init(
         filesManager: FSManaging,
         xcTestService: XCTestServicing,
-        logPathFactory: LogPathFactory,
+        logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         config: Config,
         xcodebuildCommand: XcodebuildCommandProducing,

@@ -17,7 +17,7 @@ public protocol ScanProtocol {}
 
 public class Scan: ScanProtocol {
     private let filesManager: FSManager
-    private let logPathFactory: LogPathFactory
+    private let logPathFactory: LogPathFactoring
     private let shell: ShellExecuting
     private let logger: Logging
     private let timeMeasurer: TimeMeasuring
@@ -27,7 +27,7 @@ public class Scan: ScanProtocol {
 
     public init(
         filesManager: FSManager,
-        logPathFactory: LogPathFactory,
+        logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         logger: Logging,
         timeMeasurer: TimeMeasuring,

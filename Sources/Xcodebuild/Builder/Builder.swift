@@ -43,7 +43,7 @@ public enum BuildDestination {
 
 public class Builder: BuilderProtocol {
     let filesManager: FSManaging
-    let logPathFactory: LogPathFactory
+    let logPathFactory: LogPathFactoring
     let shell: ShellExecuting
     let logger: Logging
     let timeMeasurer: TimeMeasuring
@@ -52,7 +52,7 @@ public class Builder: BuilderProtocol {
 
     public init(
         filesManager: FSManaging,
-        logPathFactory: LogPathFactory,
+        logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         logger: Logging,
         timeMeasurer: TimeMeasuring,
