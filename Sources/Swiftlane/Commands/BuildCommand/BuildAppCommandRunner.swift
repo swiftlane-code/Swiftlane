@@ -25,8 +25,7 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
         let buildTask = TasksFactory.makeBuildAppTask(
             builderConfig: builderConfig,
             buildForTesting: params.buildForTesting,
-            buildDestination: .genericIOSDevice,
-            isUseRosetta: params.rosettaOption.isUseRosetta
+            buildDestination: .genericIOSDevice
         )
         try buildTask.run()
     }

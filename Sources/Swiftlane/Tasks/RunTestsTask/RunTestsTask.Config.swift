@@ -20,7 +20,6 @@ public extension RunTestsTask {
         public let mergedJUnitPath: AbsolutePath
         public let testWithoutBuilding: Bool
         public let useMultiScan: Bool
-        public let isUseRosetta: Bool
         public let xcodebuildFormatterCommand: String
         public let testingTimeout: TimeInterval
     }

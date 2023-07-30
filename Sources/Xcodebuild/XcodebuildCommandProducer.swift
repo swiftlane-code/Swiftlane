@@ -8,17 +8,21 @@ public protocol XcodebuildCommandProducing {
 }
 
 public struct XcodebuildCommandProducer {
-    let isUseRosetta: Bool
+    let shouldUseRosetta: Bool
 
     public init(isUseRosetta: Bool) {
-        self.isUseRosetta = isUseRosetta
+        self.shouldUseRosetta = isUseRosetta
     }
 }
 
 extension XcodebuildCommandProducer: XcodebuildCommandProducing {
     public func produce() -> String {
-        let rosettaInjection = isUseRosetta ? "arch -x86_64" : ""
-
-        return "env NSUnbufferedIO=YES \(rosettaInjection) xcodebuild"
+        [
+            "env NSUnbufferedIO=YES",
+            shouldUseRosetta ? "arch -x86_64" : nil,
+            "xcodebuild"
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
     }
 }

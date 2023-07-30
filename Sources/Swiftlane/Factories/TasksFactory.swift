@@ -37,7 +37,6 @@ public enum TasksFactory {
             mergedJUnitPath: sharedConfig.paths.mergedJUnit,
             testWithoutBuilding: commandConfig.useMultiScan,
             useMultiScan: commandConfig.useMultiScan,
-            isUseRosetta: useRosetta,
             xcodebuildFormatterCommand: sharedConfig.paths.xcodebuildFormatterCommand,
             testingTimeout: testingTimeout
         )
@@ -293,10 +292,9 @@ public enum TasksFactory {
     public static func makeBuildAppTask(
         builderConfig: Builder.Config,
         buildForTesting: Bool,
-        buildDestination: BuildDestination,
-        isUseRosetta: Bool
+        buildDestination: BuildDestination
     ) -> BuildAppTask {
-        let xcodebuildCommand = XcodebuildCommandProducer(isUseRosetta: isUseRosetta)
+        let xcodebuildCommand: XcodebuildCommandProducing = DependenciesFactory.resolve()
 
         let builder = Builder(
             filesManager: DependenciesFactory.resolve(),

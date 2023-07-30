@@ -6,7 +6,6 @@ import SwiftlaneCore
 
 public protocol RunTestsCommandParamsAccessing {
     var sharedConfigOptions: SharedConfigOptions { get }
-    var rosettaOption: RosettaGlobalOption { get }
     var configPath: AbsolutePath { get }
     var testPlan: String? { get }
     var scheme: String? { get }
@@ -25,8 +24,6 @@ public struct RunTestsCommand: ParsableCommand, RunTestsCommandParamsAccessing {
     )
 
     @OptionGroup public var sharedConfigOptions: SharedConfigOptions
-
-    @OptionGroup public var rosettaOption: RosettaGlobalOption
 
     @Option(
         name: [.customLong("config")],

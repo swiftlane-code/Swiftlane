@@ -6,7 +6,6 @@ import SwiftlaneCore
 
 public protocol MeasureBuildTimeCommandParamsAccessing {
     var sharedConfigOptions: SharedConfigOptions { get }
-    var rosettaOption: RosettaGlobalOption { get }
     var projectName: Path { get }
     var scheme: String { get }
     var configuration: String { get }
@@ -23,7 +22,6 @@ public struct MeasureBuildTimeCommand: ParsableCommand, MeasureBuildTimeCommandP
     )
 
     @OptionGroup public var sharedConfigOptions: SharedConfigOptions
-    @OptionGroup public var rosettaOption: RosettaGlobalOption
 
     @Option(help: "Project name.")
     public var projectName: Path

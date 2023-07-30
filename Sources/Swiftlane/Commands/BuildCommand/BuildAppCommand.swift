@@ -6,7 +6,6 @@ import SwiftlaneCore
 
 public protocol BuildAppCommandParamsAccessing {
     var sharedConfigOptions: SharedConfigOptions { get }
-    var rosettaOption: RosettaGlobalOption { get }
 
     var scheme: String { get }
     var buildConfiguration: String { get }
@@ -20,8 +19,6 @@ public struct BuildAppCommand: ParsableCommand, BuildAppCommandParamsAccessing {
     )
 
     @OptionGroup public var sharedConfigOptions: SharedConfigOptions
-
-    @OptionGroup public var rosettaOption: RosettaGlobalOption
 
     @Option(help: "Scheme to build.")
     public var scheme: String

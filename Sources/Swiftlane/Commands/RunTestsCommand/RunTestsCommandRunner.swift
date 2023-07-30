@@ -61,7 +61,6 @@ public struct RunTestsCommandRunner: CommandRunnerProtocol {
             mergedJUnitPath: sharedConfig.paths.mergedJUnit,
             testWithoutBuilding: useMultiScan,
             useMultiScan: useMultiScan,
-            isUseRosetta: params.rosettaOption.isUseRosetta,
             xcodebuildFormatterCommand: sharedConfig.paths.xcodebuildFormatterCommand,
             testingTimeout: params.testingTimeout
         )
