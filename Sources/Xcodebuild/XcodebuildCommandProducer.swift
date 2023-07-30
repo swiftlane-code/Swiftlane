@@ -10,8 +10,8 @@ public protocol XcodebuildCommandProducing {
 public struct XcodebuildCommandProducer {
     let shouldUseRosetta: Bool
 
-    public init(isUseRosetta: Bool) {
-        self.shouldUseRosetta = isUseRosetta
+    public init(shouldUseRosetta: Bool) {
+        self.shouldUseRosetta = shouldUseRosetta
     }
 }
 

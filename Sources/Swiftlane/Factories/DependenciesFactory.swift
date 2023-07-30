@@ -227,7 +227,7 @@ public enum DependenciesFactory {
         }
 
         DependencyResolver.shared.register(XcodebuildCommandProducing.self) {
-            XcodebuildCommandProducer(isUseRosetta: false)
+            XcodebuildCommandProducer(shouldUseRosetta: false)
         }
 
         DependencyResolver.shared.register(TimeMeasuring.self) {
