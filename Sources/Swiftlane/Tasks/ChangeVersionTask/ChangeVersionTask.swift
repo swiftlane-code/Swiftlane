@@ -1,7 +1,6 @@
 
 import Foundation
 import Git
-import GitLabAPI
 import Guardian
 import Networking
 import SwiftlaneCore
