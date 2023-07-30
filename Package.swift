@@ -146,7 +146,7 @@ let package = Package(
         .package(url: "https://github.com/nstmrt/SwiftyMocky.git", from: "4.1.1"),
         .package(url: "https://github.com/MaxDesiatov/XMLCoder", from: "0.13.1"),
         .package(url: "https://github.com/swiftlane-code/AppStoreConnectJWT.git", from: "0.9.0"),
-        .package(url: "https://github.com/swiftlane-code/SwiftlaneCore.git", from: "0.9.0"),
+        .package(url: "https://github.com/swiftlane-code/SwiftlaneCore.git", from: "0.9.1"),
         .package(url: "https://github.com/tuist/XcodeProj.git", from: "8.7.1"),
         .package(url: "https://github.com/MortenGregersen/Bagbutik", from: "3.0.1"),
     ],
