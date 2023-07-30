@@ -19,7 +19,7 @@ public enum MultiScanError: Error {
 public protocol MultiScanProtocol {}
 
 public class MultiScan: MultiScanProtocol {
-    private let filesManager: FSManager
+    private let filesManager: FSManaging
     private let logPathFactory: LogPathFactoring
     private let simulatorProvider: SimulatorProviding
     private let shell: ShellExecuting
@@ -34,7 +34,7 @@ public class MultiScan: MultiScanProtocol {
     public let runner: TestsRunner
 
     public init(
-        filesManager: FSManager,
+        filesManager: FSManaging,
         logPathFactory: LogPathFactoring,
         simulatorProvider: SimulatorProviding,
         testPlanService: XCTestPlanServicing,

@@ -16,7 +16,7 @@ public enum ScanError: Error {
 public protocol ScanProtocol {}
 
 public class Scan: ScanProtocol {
-    private let filesManager: FSManager
+    private let filesManager: FSManaging
     private let logPathFactory: LogPathFactoring
     private let shell: ShellExecuting
     private let logger: Logging
@@ -26,7 +26,7 @@ public class Scan: ScanProtocol {
     private let runner: TestsRunner
 
     public init(
-        filesManager: FSManager,
+        filesManager: FSManaging,
         logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         logger: Logging,
