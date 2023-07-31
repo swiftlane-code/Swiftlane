@@ -102,10 +102,10 @@ public class TargetsCoverageLimitChecker {
     }
 
     private func printTotalCoverage(targets: [CalculatedTargetCoverage]) {
-        // This is parsed by gitlab from job logs.
-        // Regex is configured in "Gitlab Repo -> Settings -> CI/CD -> General Pipelines -> Test coverage parsing".
-        // Regex: "DANGER_TOTAL_CODE_COVERAGE: (\d+.\d+)%".
-        print("DANGER_TOTAL_CODE_COVERAGE: \(calcTotalCoverage(targets: targets) * 100)%")
+        guard let prefix = config.decodableConfig.totalCodeCoverageMessagePrefix else {
+            return
+        }
+        logger.log(.important, prefix + "\(calcTotalCoverage(targets: targets) * 100)%")
     }
 }
 

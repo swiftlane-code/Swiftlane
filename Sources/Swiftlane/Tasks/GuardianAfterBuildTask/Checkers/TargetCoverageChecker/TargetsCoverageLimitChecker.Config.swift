@@ -32,17 +32,27 @@ public extension TargetsCoverageLimitChecker {
 
         /// Do not check code coverage of targets with these names.
         public let excludeTargetsNames: [StringMatcher]
+        
+        /// This can be useful as for example GitLab can parse the number from job logs.
+        /// If you set the value to `"GITLAB_PARSED_TOTAL_CODE_COVERAGE: "`
+        /// then you can set the regex in GitLab settings to `GITLAB_PARSED_TOTAL_CODE_COVERAGE: (\d+.\d+)%`.
+        /// Regex is configured in Gitlab Repo -> Settings -> CI/CD -> General Pipelines -> Test coverage parsing.
+        ///
+        /// Set this to `nil` to disable the total coverage message in logs.
+        public let totalCodeCoverageMessagePrefix: String?
 
         public init(
             excludeFilesFilters: [String: [StringMatcher]]? = nil,
             targetCoverageLimits: [String: TargetsCoverageLimitChecker.DecodableConfig.TargetSetting],
             allowedProductNameSuffixes: [String],
-            excludeTargetsNames: [StringMatcher]
+            excludeTargetsNames: [StringMatcher],
+            totalCodeCoverageMessagePrefix: String?
         ) {
             self.excludeFilesFilters = excludeFilesFilters
             self.targetCoverageLimits = targetCoverageLimits
             self.allowedProductNameSuffixes = allowedProductNameSuffixes
             self.excludeTargetsNames = excludeTargetsNames
+            self.totalCodeCoverageMessagePrefix = totalCodeCoverageMessagePrefix
         }
 
         public struct TargetSetting: Decodable {
