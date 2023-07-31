@@ -10,4 +10,5 @@ public struct WarningLimitsCheckerConfig {
     public let loweringWarningLimitsCommitMessage: String
     public let committeeName: String
     public let committeeEmail: String
+    public let testableTargetsListFile: Path
 }

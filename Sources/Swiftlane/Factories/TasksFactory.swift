@@ -186,7 +186,8 @@ public enum TasksFactory {
             changesCoverageLimitCheckerConfig: .init(
                 decodableConfig: commandConfig.changesCoverageLimitCheckerConfig,
                 projectDir: projectDir,
-                excludedFileNameMatchers: commandConfig.targetsCoverageLimitCheckerConfig.defaultFilters
+                excludedFileNameMatchers: commandConfig.targetsCoverageLimitCheckerConfig.defaultFilters,
+                slatherReportFilePath: commandConfig.slatherReportFilePath
             ),
             targetsCoverageLimitCheckerConfig: .init(
                 decodableConfig: commandConfig.targetsCoverageLimitCheckerConfig,
@@ -594,7 +595,8 @@ public enum TasksFactory {
                 pattern: commandConfig.stubsDeclarations.testsTargetsPath,
                 options: [.anchorsMatchLines]
             ),
-            ignoredFiles: commandConfig.stubsDeclarations.ignoredFiles
+            ignoredFiles: commandConfig.stubsDeclarations.ignoredFiles,
+            testableTargetsListFilePath: commandConfig.testableTargetsListFilePath
         )
 
         let stubDeclarationChecker = StubDeclarationChecker(
@@ -640,7 +642,8 @@ public enum TasksFactory {
                 remoteName: commandConfig.trackingPushRemoteName,
                 committeeName: sharedConfig.values.gitAuthorName,
                 committeeEmail: sharedConfig.values.gitAuthorEmail,
-                warningsStorageConfig: warningsStorageConfig
+                warningsStorageConfig: warningsStorageConfig,
+                testableTargetsListFile: commandConfig.testableTargetsListFilePath
             ),
             gitlabCIEnvironmentReader: DependenciesFactory.resolve()
         )

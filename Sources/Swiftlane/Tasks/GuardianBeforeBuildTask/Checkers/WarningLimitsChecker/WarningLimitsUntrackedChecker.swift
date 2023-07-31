@@ -49,9 +49,9 @@ public class WarningLimitsUntrackedChecker {
 extension WarningLimitsUntrackedChecker: WarningLimitsUntrackedChecking {
     public func checkUntrackedLimits(config: WarningLimitsCheckerConfig) throws {
         let trackedDirectories = try warningsStorage.readListOfDirectories()
+
         let allDirectories = try slather.readTestableTargetsNames(
-            projectDir: config.projectDir,
-            fileName: ".testable.targets.generated.txt"
+            filePath: config.testableTargetsListFile.makeAbsoluteIfIsnt(relativeTo: config.projectDir)
         )
         let untrackedDirectories = Set(allDirectories).subtracting(Set(trackedDirectories)).sorted()
 

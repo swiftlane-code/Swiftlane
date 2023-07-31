@@ -8,6 +8,19 @@ public extension ChangesCoverageLimitChecker {
         public let decodableConfig: DecodableConfig
         public let projectDir: AbsolutePath
         public let excludedFileNameMatchers: [StringMatcher]
+        public let slatherReportFilePath: Path
+        
+        init(
+            decodableConfig: DecodableConfig,
+            projectDir: AbsolutePath,
+            excludedFileNameMatchers: [StringMatcher],
+            slatherReportFilePath: Path
+        ) {
+            self.decodableConfig = decodableConfig
+            self.projectDir = projectDir
+            self.excludedFileNameMatchers = excludedFileNameMatchers
+            self.slatherReportFilePath = slatherReportFilePath
+        }
     }
 
     struct DecodableConfig: Decodable {

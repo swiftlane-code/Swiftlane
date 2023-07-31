@@ -61,7 +61,8 @@ public final class GuardianBeforeBuildTask: GuardianBaseTask {
             trackingNewFoldersCommitMessage: jiraTask + " " + config.trackingNewFoldersCommitMessage,
             loweringWarningLimitsCommitMessage: jiraTask + " " + config.loweringWarningLimitsCommitMessage,
             committeeName: config.committeeName,
-            committeeEmail: config.committeeEmail
+            committeeEmail: config.committeeEmail,
+            testableTargetsListFile: config.testableTargetsListFile
         )
 
         try warningLimitsUntrackedChecker.checkUntrackedLimits(config: warningLimitsCheckerConfig)

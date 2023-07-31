@@ -15,6 +15,7 @@ public struct StubDeclarationConfig {
     public let mocksTargetsPath: NSRegularExpression
     public let testsTargetsPath: NSRegularExpression
     public let ignoredFiles: [StringMatcher]
+    public let testableTargetsListFilePath: Path
 }
 
 public struct StubDeclarationViolation: Equatable {
@@ -53,8 +54,7 @@ public final class StubDeclarationChecker {
     /// - Returns: Dictionary where key is name of a type and value is set of targets names a type with such name is defined in.
     private func scanDefinitions(allFiles: [(AbsolutePath, RelativePath)]) throws -> [String: Set<String>] {
         let testableTargetsNames = try slatherService.readTestableTargetsNames(
-            projectDir: config.projectDir,
-            fileName: ".testable.targets.generated.txt"
+            filePath: config.testableTargetsListFilePath.makeAbsoluteIfIsnt(relativeTo: config.projectDir)
         )
 
         func targetName(filePath: RelativePath) -> String {

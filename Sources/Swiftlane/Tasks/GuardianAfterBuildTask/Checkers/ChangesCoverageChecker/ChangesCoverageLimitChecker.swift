@@ -63,9 +63,7 @@ public class ChangesCoverageLimitChecker {
 
         logger.verbose("call generateCoverageJSONForLines()")
         let filesLinesCoverage = try slather.parseCoverageJSON(
-            projectDir: config.projectDir,
-            reportFileName: "coverage.json",
-            outputDirPath: try! Path("builds/results")
+            filePath: config.slatherReportFilePath.makeAbsoluteIfIsnt(relativeTo: config.projectDir)
         )
 
         var filesWithLowChangesCoverage = [(String, Double)]()

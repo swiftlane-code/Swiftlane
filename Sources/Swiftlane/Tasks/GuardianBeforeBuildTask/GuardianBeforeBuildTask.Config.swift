@@ -14,5 +14,6 @@ public extension GuardianBeforeBuildTask {
         public let committeeName: String
         public let committeeEmail: String
         public let warningsStorageConfig: WarningsStorage.Config
+        public let testableTargetsListFile: Path
     }
 }

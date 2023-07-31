@@ -13,6 +13,7 @@ public struct GuardianBeforeBuildCommandConfig: Decodable {
     public let expiringTODOs: ExpiringToDos
     public let stubsDeclarations: StubDeclarationConfig
     public let filesNamingConfig: FilesNamingConfig
+    public let testableTargetsListFilePath: Path
 
     public struct ExpiringToDos: Decodable {
         public let enabled: Bool
