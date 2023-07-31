@@ -57,6 +57,8 @@ public enum DependenciesFactory {
             DependencyResolver.shared.register(Logging.self) {
                 compositeLogger
             }
+            
+            DependencyResolver.shared.logConfig.loggerInstance = compositeLogger
         } catch {
             mainLogger.logError(error)
             Exitor().exit(with: 1)

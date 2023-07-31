@@ -183,12 +183,14 @@ public enum TasksFactory {
                 projectDir: projectDir,
                 logsDir: sharedConfig.paths.logsDir
             ),
-            changesCoverageLimitCheckerConfig: .init(
-                decodableConfig: commandConfig.changesCoverageLimitCheckerConfig,
-                projectDir: projectDir,
-                excludedFileNameMatchers: commandConfig.targetsCoverageLimitCheckerConfig.defaultFilters,
-                slatherReportFilePath: commandConfig.slatherReportFilePath
-            ),
+            changesCoverageLimitCheckerConfig: commandConfig.changesCoverageLimitCheckerConfig.map {
+                ChangesCoverageLimitChecker.Config(
+                    decodableConfig: $0,
+                    projectDir: projectDir,
+                    excludedFileNameMatchers: commandConfig.targetsCoverageLimitCheckerConfig.defaultFilters,
+                    slatherReportFilePath: commandConfig.slatherReportFilePath
+                )
+            },
             targetsCoverageLimitCheckerConfig: .init(
                 decodableConfig: commandConfig.targetsCoverageLimitCheckerConfig,
                 projectDir: projectDir,
@@ -218,14 +220,16 @@ public enum TasksFactory {
             config: config.targetsCoverageLimitCheckerConfig
         )
 
-        let changesCoverageChecker = ChangesCoverageLimitChecker(
-            logger: DependenciesFactory.resolve(),
-            gitlabCIEnvironmentReader: DependenciesFactory.resolve(.shared),
-            git: DependenciesFactory.resolve(.shared),
-            slather: DependenciesFactory.resolve(.shared),
-            reporter: DependenciesFactory.resolve(.shared),
-            config: config.changesCoverageLimitCheckerConfig
-        )
+        let changesCoverageChecker = config.changesCoverageLimitCheckerConfig.map {
+            ChangesCoverageLimitChecker(
+                logger: DependenciesFactory.resolve(),
+                gitlabCIEnvironmentReader: DependenciesFactory.resolve(.shared),
+                git: DependenciesFactory.resolve(.shared),
+                slather: DependenciesFactory.resolve(.shared),
+                reporter: DependenciesFactory.resolve(.shared),
+                config: $0
+            )
+        }
 
         let buildErrorsChecker = BuildErrorsChecker(
             xclogparser: DependenciesFactory.resolve(.shared),

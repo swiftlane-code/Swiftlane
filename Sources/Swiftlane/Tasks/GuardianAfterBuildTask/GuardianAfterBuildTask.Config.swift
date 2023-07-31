@@ -10,7 +10,7 @@ public extension GuardianAfterBuildTask {
         public let buildWarningsCheckerConfig: BuildWarningsChecker.Config
         public let unitTestsResultsCheckerConfig: UnitTestsResultsChecker.Config
         public let exitCodeCheckerConfig: UnitTestsExitCodeChecker.Config
-        public let changesCoverageLimitCheckerConfig: ChangesCoverageLimitChecker.Config
+        public let changesCoverageLimitCheckerConfig: ChangesCoverageLimitChecker.Config?
         public let targetsCoverageLimitCheckerConfig: TargetsCoverageLimitChecker.Config
     }
 }

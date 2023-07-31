@@ -14,7 +14,7 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
     // MARK: Checkers
 
     private let targetCoverageChecker: TargetsCoverageLimitChecking
-    private let changesCoverageChecker: ChangesCoverageLimitChecking
+    private let changesCoverageChecker: ChangesCoverageLimitChecking?
     private let buildErrorsChecker: BuildErrorsChecking
     private let buildWarningsChecker: BuildWarningsChecking
     private let unitTestsChecker: UnitTestsResultsChecking
@@ -26,7 +26,7 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         logger: Logging,
         mergeRequestReporter: MergeRequestReporting,
         targetCoverageChecker: TargetsCoverageLimitChecking,
-        changesCoverageChecker: ChangesCoverageLimitChecking,
+        changesCoverageChecker: ChangesCoverageLimitChecking?,
         buildErrorsChecker: BuildErrorsChecking,
         buildWarningsChecker: BuildWarningsChecking,
         unitTestsChecker: UnitTestsResultsChecking,
@@ -63,7 +63,7 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
     }
 
     private func validateChangesCoverage() throws {
-        try changesCoverageChecker.checkChangedFilesCoverageLimits()
+        try changesCoverageChecker?.checkChangedFilesCoverageLimits()
     }
 
     override public func executeChecksOnly() throws {
