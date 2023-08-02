@@ -31,7 +31,8 @@ private enum SwiftlaneGifs: String, CaseIterable {
     case turningAround = "https://media2.giphy.com/media/4YZNUwXuo8XYJDKnun/giphy.gif"
 }
 
-public final class GuardianInitialNoteTask: GuardianBaseTask {
+public final class GuardianInitialNoteTask {
+    private let logger: Logging
     private let reporter: MergeRequestReporting
     private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
 
@@ -40,12 +41,12 @@ public final class GuardianInitialNoteTask: GuardianBaseTask {
         mergeRequestReporter: MergeRequestReporting,
         gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
     ) {
-        reporter = mergeRequestReporter
+        self.logger = logger
+        self.reporter = mergeRequestReporter
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
-        super.init(reporter: reporter, logger: logger)
     }
 
-    override public func executeChecksOnly() throws {
+    public func run() throws {
         let url = try SwiftlaneGifs.allCases.randomElement().unwrap().rawValue
         let text = "<img src=\(url.quoted) width=\"100%\"/>"
         reporter.markdown(text)

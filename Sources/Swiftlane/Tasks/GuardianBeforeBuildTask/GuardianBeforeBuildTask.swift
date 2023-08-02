@@ -5,7 +5,8 @@ import Git
 import Guardian
 import SwiftlaneCore
 
-public final class GuardianBeforeBuildTask: GuardianBaseTask {
+public final class GuardianBeforeBuildTask {
+    private let logger: Logging
     private let reporter: MergeRequestReporting
     private let warningLimitsChecker: WarningLimitsChecking
     private let warningLimitsUntrackedChecker: WarningLimitsUntrackedChecking
@@ -27,7 +28,8 @@ public final class GuardianBeforeBuildTask: GuardianBaseTask {
         config: WarningLimitsConfig,
         gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
     ) {
-        reporter = mergeRequestReporter
+        self.logger = logger
+        self.reporter = mergeRequestReporter
         self.warningLimitsChecker = warningLimitsChecker
         self.warningLimitsUntrackedChecker = warningLimitsUntrackedChecker
         self.expiredToDoChecker = expiredToDoChecker
@@ -35,7 +37,6 @@ public final class GuardianBeforeBuildTask: GuardianBaseTask {
         self.filePathChecker = filePathChecker
         self.config = config
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
-        super.init(reporter: reporter, logger: logger)
     }
 
     private func jiraTask() throws -> String {
@@ -74,7 +75,7 @@ public final class GuardianBeforeBuildTask: GuardianBaseTask {
         try stubDeclarationChecker.checkMocksDeclarations()
     }
 
-    override public func executeChecksOnly() throws {
+    public func run() throws {
         try verifyExpiredToDos()
         try validateWarningLimits()
         try checkMocksDeclarations()

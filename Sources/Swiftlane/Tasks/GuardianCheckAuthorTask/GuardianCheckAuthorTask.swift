@@ -5,7 +5,8 @@ import Git
 import Guardian
 import SwiftlaneCore
 
-public final class GuardianCheckAuthorTask: GuardianBaseTask {
+public final class GuardianCheckAuthorTask {
+    private let logger: Logging
     private let reporter: MergeRequestReporting
     private let mergeRequestAuthorChecker: MergeRequestAuthorChecking
     private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
@@ -16,13 +17,13 @@ public final class GuardianCheckAuthorTask: GuardianBaseTask {
         mergeRequestAuthorChecker: MergeRequestAuthorChecking,
         gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
     ) {
-        reporter = mergeRequestReporter
+        self.logger = logger
+        self.reporter = mergeRequestReporter
         self.mergeRequestAuthorChecker = mergeRequestAuthorChecker
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
-        super.init(reporter: reporter, logger: logger)
     }
 
-    override public func executeChecksOnly() throws {
+    public func run() throws {
         try mergeRequestAuthorChecker.check()
     }
 }

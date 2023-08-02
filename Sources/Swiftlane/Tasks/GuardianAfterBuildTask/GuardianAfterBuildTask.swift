@@ -5,9 +5,10 @@ import Git
 import Guardian
 import SwiftlaneCore
 
-public final class GuardianAfterBuildTask: GuardianBaseTask {
+public final class GuardianAfterBuildTask {
     // MARK: Services
 
+    private let logger: Logging
     private let reporter: MergeRequestReporting
     private let environmentValueReader: EnvironmentValueReading
 
@@ -34,7 +35,8 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         config: Config,
         environmentValueReader: EnvironmentValueReading
     ) {
-        reporter = mergeRequestReporter
+        self.reporter = mergeRequestReporter
+        self.logger = logger
         self.targetCoverageChecker = targetCoverageChecker
         self.changesCoverageChecker = changesCoverageChecker
         self.buildErrorsChecker = buildErrorsChecker
@@ -43,7 +45,6 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         self.exitCodeChecker = exitCodeChecker
         self.config = config
         self.environmentValueReader = environmentValueReader
-        super.init(reporter: reporter, logger: logger)
     }
 
     /// Returns `true` if any error is found in build log.
@@ -66,7 +67,7 @@ public final class GuardianAfterBuildTask: GuardianBaseTask {
         try changesCoverageChecker?.checkChangedFilesCoverageLimits()
     }
 
-    override public func executeChecksOnly() throws {
+    public func run() throws {
         if try findBuildErrors() {
             // Do nothing more
         } else if try findUnitTestsErrors() {
