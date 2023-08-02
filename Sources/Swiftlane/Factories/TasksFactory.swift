@@ -509,7 +509,6 @@ public enum TasksFactory {
 
     public static func makeGuardianBeforeBuildTask(
         projectDir: AbsolutePath,
-        expiringToDoBlockingConfig: ExpiringToDoBlockingConfig,
         commandConfig: GuardianBeforeBuildCommandConfig,
         sharedConfig: SharedConfigData
     ) throws -> GuardianBeforeBuildTask {
@@ -555,7 +554,9 @@ public enum TasksFactory {
             needFail: commandConfig.expiringTODOs.needFail
         )
 
-        let responsibilityProvider = ExpiringToDoResponsibilityProvider(config: expiringToDoBlockingConfig)
+        let responsibilityProvider = ExpiringToDoResponsibilityProvider(
+            config: commandConfig.expiringTODOs.blockingConfig
+        )
 
         let expiringToDoVerifier = ExpiringToDoVerifier(
             dateFormat: commandConfig.expiringTODOs.todoDateFormat,
@@ -592,11 +593,11 @@ public enum TasksFactory {
             fail: commandConfig.stubsDeclarations.fail,
             projectDir: projectDir,
             mocksTargetsPath: try NSRegularExpression(
-                pattern: commandConfig.stubsDeclarations.mocksTargetsPath,
+                pattern: commandConfig.stubsDeclarations.mocksTargetsPathRegex,
                 options: [.anchorsMatchLines]
             ),
             testsTargetsPath: try NSRegularExpression(
-                pattern: commandConfig.stubsDeclarations.testsTargetsPath,
+                pattern: commandConfig.stubsDeclarations.testsTargetsPathRegex,
                 options: [.anchorsMatchLines]
             ),
             ignoredFiles: commandConfig.stubsDeclarations.ignoredFiles,
