@@ -571,8 +571,7 @@ public enum TasksFactory {
             excludeFilesNames: commandConfig.expiringTODOs.excludeFilesNames,
             maxFutureDays: commandConfig.expiringTODOs.maxFutureDays,
             ignoreCheckForSourceBranches: commandConfig.expiringTODOs.ignoreCheckForSourceBranches,
-            ignoreCheckForTargetBranches: commandConfig.expiringTODOs.ignoreCheckForTargetBranches,
-            gitlabGroupIDToFetchMembersFrom: commandConfig.expiringTODOs.gitlabGroupIDToFetchMembersFrom
+            ignoreCheckForTargetBranches: commandConfig.expiringTODOs.ignoreCheckForTargetBranches
         )
 
         let expiredToDoChecker = ExpiringToDoChecker(
@@ -580,8 +579,8 @@ public enum TasksFactory {
             reporter: expiringToDoReporter,
             expiringToDoParser: DependenciesFactory.resolve(),
             expiringToDoVerifier: expiringToDoVerifier,
-            gitlabCIEnvironmentReader: DependenciesFactory.resolve(),
-            gitlabApi: DependenciesFactory.resolve(),
+            expiringToDoAllowedAuthorsProvider: DependenciesFactory.resolve(),
+            mergeRequestInfo: DependenciesFactory.resolve(),
             logger: DependenciesFactory.resolve(),
             config: expiringToDoConfig
         )

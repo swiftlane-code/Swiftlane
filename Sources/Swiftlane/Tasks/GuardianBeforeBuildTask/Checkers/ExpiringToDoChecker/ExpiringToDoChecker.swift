@@ -21,9 +21,6 @@ public struct ExpiringToDoConfig {
 
     /// Do not check when Merge Request Target Branch is one of these.
     public let ignoreCheckForTargetBranches: [StringMatcher]
-
-    /// Used to fetch list of users who can be assigned as an author of a TODO
-    public let gitlabGroupIDToFetchMembersFrom: Int
 }
 
 public final class ExpiringToDoChecker {
@@ -32,8 +29,8 @@ public final class ExpiringToDoChecker {
     private let config: ExpiringToDoConfig
     private let expiringToDoParser: ExpiringToDoParsing
     private let expiringToDoVerifier: ExpiringToDoVerifiing
-    private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
-    private let gitlabApi: GitLabAPIClientProtocol
+    private let expiringToDoAllowedAuthorsProvider: ExpiringToDoAllowedAuthorsProviding
+    private let mergeRequestInfo: MergeRequestInfoProviding
     private let logger: Logging
 
     public init(
@@ -41,8 +38,8 @@ public final class ExpiringToDoChecker {
         reporter: ExpiringToDoReporting,
         expiringToDoParser: ExpiringToDoParsing,
         expiringToDoVerifier: ExpiringToDoVerifiing,
-        gitlabCIEnvironmentReader: GitLabCIEnvironmentReading,
-        gitlabApi: GitLabAPIClientProtocol,
+        expiringToDoAllowedAuthorsProvider: ExpiringToDoAllowedAuthorsProviding,
+        mergeRequestInfo: MergeRequestInfoProviding,
         logger: Logging,
         config: ExpiringToDoConfig
     ) {
@@ -50,44 +47,10 @@ public final class ExpiringToDoChecker {
         self.reporter = reporter
         self.expiringToDoParser = expiringToDoParser
         self.expiringToDoVerifier = expiringToDoVerifier
-        self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
-        self.gitlabApi = gitlabApi
+        self.expiringToDoAllowedAuthorsProvider = expiringToDoAllowedAuthorsProvider
+        self.mergeRequestInfo = mergeRequestInfo
         self.logger = logger
         self.config = config
-    }
-
-    private func groupMembers() throws -> [Member] {
-        try gitlabApi.groupMembers(
-            group: .init(id: config.gitlabGroupIDToFetchMembersFrom)
-        ).await()
-    }
-
-    private func groupDetails() throws -> Group {
-        try gitlabApi.groupDetails(
-            group: .init(id: config.gitlabGroupIDToFetchMembersFrom)
-        ).await()
-    }
-
-    private func mergeRequestAuthor() throws -> Member {
-        let mergeRequest = try gitlabApi.mergeRequest(
-            projectId: try gitlabCIEnvironmentReader.int(.CI_PROJECT_ID),
-            mergeRequestIid: try gitlabCIEnvironmentReader.int(.CI_MERGE_REQUEST_IID),
-            loadChanges: false
-        ).await()
-
-        let author = try mergeRequest.author
-            .unwrap(errorDescription: "Unable to get Merge Request author")
-
-        return author
-    }
-
-    private func allowedToDoAuthors() throws -> [String] {
-        let gitlabMembers = try groupMembers()
-            .filter { !$0.username.contains("r2d2") }
-            .map(\.username)
-
-        logger.debug("GitLab group has \(gitlabMembers.count) members: \(gitlabMembers)")
-        return gitlabMembers
     }
 }
 
@@ -98,8 +61,8 @@ extension ExpiringToDoChecker: ExpiringToDoChecking {
             return
         }
 
-        let sourceBranch = try gitlabCIEnvironmentReader.string(.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME)
-        let targetBranch = try gitlabCIEnvironmentReader.string(.CI_MERGE_REQUEST_TARGET_BRANCH_NAME)
+        let sourceBranch = try mergeRequestInfo.sourceBranch()
+        let targetBranch = try mergeRequestInfo.targetBranch()
 
         guard !config.ignoreCheckForSourceBranches.isMatching(string: sourceBranch) else {
             reporter.reportCheckIsDisabledForSourceBranch(sourceBranch: sourceBranch)
@@ -125,7 +88,7 @@ extension ExpiringToDoChecker: ExpiringToDoChecking {
                     && !config.excludeFilesNames.isMatching(string: relative.lastComponent.string)
             }
 
-        let mergeRequestAuthor = try mergeRequestAuthor()
+        let mergeRequestAuthor = try mergeRequestInfo.author()
         logger.important("Merge Request author: \(mergeRequestAuthor.username.quoted)")
 
         logger.important("Parsing \(swiftFiles.count) swift files...")
@@ -139,7 +102,7 @@ extension ExpiringToDoChecker: ExpiringToDoChecking {
             try expiringToDoVerifier.verify(
                 todo: $0,
                 maxFutureDays: config.maxFutureDays,
-                allowedAuthors: try allowedToDoAuthors(),
+                allowedAuthors: try expiringToDoAllowedAuthorsProvider.allowedToDoAuthors(),
                 userToBeBlocked: mergeRequestAuthor.username
             )
         }

@@ -473,6 +473,5 @@ public enum DependenciesFactory {
         DependencyResolver.shared.register(XcodebuildErrorParsing.self) {
             XcodebuildErrorParser()
         }
-        
     }
 }
