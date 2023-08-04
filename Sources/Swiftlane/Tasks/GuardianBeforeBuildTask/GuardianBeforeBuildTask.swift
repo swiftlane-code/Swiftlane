@@ -39,10 +39,6 @@ public final class GuardianBeforeBuildTask {
         self.issueKeySearcher = issueKeySearcher
     }
 
-    private func verifyExpiredToDos() throws {
-        try expiredToDoChecker.checkExpiringToDos()
-    }
-
     private func validateWarningLimits() throws {
         let jiraTask = try issueKeySearcher.searchIssueKeys().first.unwrap()
 
@@ -62,18 +58,14 @@ public final class GuardianBeforeBuildTask {
         try warningLimitsChecker.checkLimits(config: warningLimitsCheckerConfig)
     }
 
-    private func checkMocksDeclarations() throws {
-        try stubDeclarationChecker.checkMocksDeclarations()
-    }
-
     public func run() throws {
-        try verifyExpiredToDos()
+        try expiredToDoChecker.checkExpiringToDos()
         try validateWarningLimits()
-        try checkMocksDeclarations()
+        try stubDeclarationChecker.checkMocksDeclarations()
         try filePathChecker.checkFilesPaths()
 
         if !reporter.hasFails() {
-            reporter.markdown("#### Running tests...")
+            reporter.success("All pre-build checks passed.")
         }
     }
 }
