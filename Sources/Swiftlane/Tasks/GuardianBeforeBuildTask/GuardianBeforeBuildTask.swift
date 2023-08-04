@@ -15,7 +15,7 @@ public final class GuardianBeforeBuildTask {
     private let filePathChecker: AllowedFilePathChecking
 
     private let config: WarningLimitsConfig
-    private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
+    private let issueKeySearcher: JiraIssueKeySearching
 
     public init(
         logger: Logging,
@@ -26,7 +26,7 @@ public final class GuardianBeforeBuildTask {
         stubDeclarationChecker: StubDeclarationChecking,
         filePathChecker: AllowedFilePathChecking,
         config: WarningLimitsConfig,
-        gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
+        issueKeySearcher: JiraIssueKeySearching
     ) {
         self.logger = logger
         self.reporter = mergeRequestReporter
@@ -36,16 +36,7 @@ public final class GuardianBeforeBuildTask {
         self.stubDeclarationChecker = stubDeclarationChecker
         self.filePathChecker = filePathChecker
         self.config = config
-        self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
-    }
-
-    private func jiraTask() throws -> String {
-        let regex = try NSRegularExpression(pattern: config.jiraTaskRegex)
-        let sourceBranch = try gitlabCIEnvironmentReader.string(.CI_MERGE_REQUEST_SOURCE_BRANCH_NAME)
-        let match = regex.firstMatchString(in: sourceBranch)
-        return try match.unwrap(
-            errorDescription: "Unable to get jira task id from source branch name \"\(sourceBranch)\""
-        )
+        self.issueKeySearcher = issueKeySearcher
     }
 
     private func verifyExpiredToDos() throws {
@@ -53,7 +44,7 @@ public final class GuardianBeforeBuildTask {
     }
 
     private func validateWarningLimits() throws {
-        let jiraTask = try jiraTask()
+        let jiraTask = try issueKeySearcher.searchIssueKeys().first.unwrap()
 
         let warningLimitsCheckerConfig = WarningLimitsCheckerConfig(
             projectDir: config.projectDir,

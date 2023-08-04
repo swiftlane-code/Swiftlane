@@ -639,7 +639,6 @@ public enum TasksFactory {
             filePathChecker: filePathChecker,
             config: GuardianBeforeBuildTask.WarningLimitsConfig(
                 projectDir: projectDir,
-                jiraTaskRegex: sharedConfig.values.jiraProjectKey + "-\\d+",
                 swiftlintConfigPath: sharedConfig.paths.swiftlintConfig,
                 loweringWarningLimitsCommitMessage: commandConfig.loweringWarningLimitsCommitMessage,
                 trackingNewFoldersCommitMessage: commandConfig.trackingNewFoldersCommitMessage,
@@ -649,7 +648,7 @@ public enum TasksFactory {
                 warningsStorageConfig: warningsStorageConfig,
                 testableTargetsListFile: commandConfig.testableTargetsListFilePath
             ),
-            gitlabCIEnvironmentReader: DependenciesFactory.resolve()
+            issueKeySearcher: DependenciesFactory.resolve()
         )
 
         return task

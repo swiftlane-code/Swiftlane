@@ -337,16 +337,16 @@ public enum DependenciesFactory {
             )
         }
 
-        DependencyResolver.shared.register(IssueKeySearching.self) {
-            IssueKeySearcher(
+        DependencyResolver.shared.register(JiraIssueKeySearching.self) {
+            JiraIssueKeySearcher(
                 logger: resolve(),
                 issueKeyParser: resolve(),
                 gitlabCIEnvironmentReader: resolve()
             )
         }
 
-        DependencyResolver.shared.register(IssueKeyParsing.self) {
-            IssueKeyParser(jiraProjectKey: "[A-Z]{3,}")
+        DependencyResolver.shared.register(JiraIssueKeyParsing.self) {
+            JiraIssueKeyParser(jiraProjectKey: "[A-Z]{3,}")
         }
 
         DependencyResolver.shared.register(JiraAPIClientProtocol.self) {

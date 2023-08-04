@@ -4,7 +4,7 @@ import Foundation
 import Guardian
 import SwiftlaneCore
 
-public extension IssueKeySearcher {
+public extension JiraIssueKeySearcher {
     enum Errors: Error {
         case requiredEnvironmentsAreMissing(description: String)
         case notFoundIssueKey
@@ -12,23 +12,23 @@ public extension IssueKeySearcher {
 }
 
 // sourcery: AutoMockable
-public protocol IssueKeySearching {
+public protocol JiraIssueKeySearching {
     func searchIssueKeys() throws -> [String]
 }
 
-public struct IssueKeySearcher: IssueKeySearching {
+public struct JiraIssueKeySearcher: JiraIssueKeySearching {
     public let logger: Logging
-    public let issueKeyParser: IssueKeyParsing
+    public let issueKeyParser: JiraIssueKeyParsing
     public let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
 
-    public init(logger: Logging, issueKeyParser: IssueKeyParsing, gitlabCIEnvironmentReader: GitLabCIEnvironmentReading) {
+    public init(logger: Logging, issueKeyParser: JiraIssueKeyParsing, gitlabCIEnvironmentReader: GitLabCIEnvironmentReading) {
         self.logger = logger
         self.issueKeyParser = issueKeyParser
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader
     }
 
     /// Returns array of Jira issue keys.
-    /// **Never returns empty array, instead throws a error in such case.**
+    /// **Never returns empty array, instead throws an error in such case.**
     public func searchIssueKeys() throws -> [String] {
         let possibleStringsWithIssueKeys = [
             try? gitlabCIEnvironmentReader.string(.CI_MERGE_REQUEST_TITLE),

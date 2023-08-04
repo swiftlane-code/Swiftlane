@@ -14,13 +14,13 @@ public extension ChangeJiraIssueLabelsTask {
 public final class ChangeJiraIssueLabelsTask {
     private let logger: Logging
     private let jiraClient: JiraAPIClientProtocol
-    private let issueKeySearcher: IssueKeySearcher
+    private let issueKeySearcher: JiraIssueKeySearcher
     private let config: Config
 
     public init(
         logger: Logging,
         jiraClient: JiraAPIClientProtocol,
-        issueKeySearcher: IssueKeySearcher,
+        issueKeySearcher: JiraIssueKeySearcher,
         config: Config
     ) {
         self.logger = logger
