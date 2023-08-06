@@ -473,5 +473,12 @@ public enum DependenciesFactory {
         DependencyResolver.shared.register(XcodebuildErrorParsing.self) {
             XcodebuildErrorParser()
         }
+        
+        DependencyResolver.shared.register(MergeRequestInfoProviding.self) {
+            GitLabMergeRequestInfoProvider(
+                gitlabCIEnvironmentReader: resolve(),
+                gitlabApi: resolve()
+            )
+        }
     }
 }
