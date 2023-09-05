@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlane-code/SwiftlaneCore.git",
       "state" : {
-        "revision" : "f41fee29511809b9b5a9cdc68c327cb1c58e4257",
-        "version" : "0.9.0"
+        "revision" : "34d29d337f2b6a160c2e23d05a1b09efd553adeb",
+        "version" : "0.9.1"
       }
     },
     {

@@ -11,7 +11,7 @@ import XCTest
 @testable import Guardian
 
 class MergeRequestReporterTests: XCTestCase {
-    var reporter: MergeRequestReporter!
+    var reporter: GitLabMergeRequestReporter!
     var logger: LoggingMock!
     var gitlabApi: GitLabAPIClientProtocolMock!
     var gitlabCIEnvironment: GitLabCIEnvironmentReadingMock!
@@ -198,7 +198,7 @@ class MergeRequestReporterTests: XCTestCase {
         let projectURL = "projectURL_" + .random()
 
         let createdNote = MergeRequest.Note.stub()
-        let expectedError = MergeRequestReporter.Errors.failsReported(
+        let expectedError = GitLabMergeRequestReporter.Errors.failsReported(
             reportURL: "\(projectURL)/-/merge_requests/\(mergeRequestIid)#note_\(createdNote.id)"
         )
 
@@ -251,7 +251,7 @@ class MergeRequestReporterTests: XCTestCase {
         // when
         XCTAssertThrowsError(try reporter.createOrUpdateReport()) { error in
             // then
-            XCTAssertEqual(error as! MergeRequestReporter.Errors, expectedError)
+            XCTAssertEqual(error as! GitLabMergeRequestReporter.Errors, expectedError)
         }
     }
 

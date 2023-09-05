@@ -15,19 +15,8 @@ public struct PatchTestPlanEnvCommandRunner: CommandRunnerProtocol {
     public func run(
         params: PatchTestPlanEnvCommandParamsAccessing,
         commandConfig: PatchTestPlanEnvCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
-        let filesManager = FSManager(logger: logger, fileManager: FileManager.default)
-
-        let environmentValueReader = EnvironmentValueReader()
-
-        let testPlanPatcher = XCTestPlanPatcher(
-            logger: logger,
-            filesManager: filesManager,
-            environmentReader: environmentValueReader
-        )
-
         let config = PatchTestPlanEnvTaskConfig(
             testPlanName: params.testPlanName,
             projectDir: params.sharedConfigOptions.projectDir,
@@ -40,13 +29,7 @@ public struct PatchTestPlanEnvCommandRunner: CommandRunnerProtocol {
             }
         )
 
-        let task = PatchTestPlanEnvTask(
-            logger: logger,
-            filesManager: filesManager,
-            environmentReader: environmentValueReader,
-            patcher: testPlanPatcher,
-            config: config
-        )
+        let task = try TasksFactory.makePatchTestPlanEnvTask(config: config)
 
         try task.run()
     }

@@ -12,56 +12,12 @@ public struct GuardianCheckAuthorCommandConfig: Decodable {
 }
 
 public struct GuardianCheckAuthorCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: GuardianCheckAuthorCommandParamsAccessing,
-        commandConfig _: GuardianCheckAuthorCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        let _ = try GitLabAPIClient(logger: logger)
-        return true
-    }
-
     public func run(
         params _: GuardianCheckAuthorCommandParamsAccessing,
         commandConfig: GuardianCheckAuthorCommandConfig,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-
-        let gitlabAPIClient = try GitLabAPIClient(logger: logger)
-
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(
-            environmentValueReading: environmentValueReader
-        )
-
-        let mergeRequestReporter = MergeRequestReporter(
-            logger: logger,
-            gitlabApi: gitlabAPIClient,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            reportFactory: MergeRequestReportFactory(),
-            publishEmptyReport: true
-        )
-
-        let reporter = MergeRequestAuthorCheckerReporter(
-            reporter: mergeRequestReporter
-        )
-
-        let mergeRequestAuthorChecker = MergeRequestAuthorChecker(
-            reporter: reporter,
-            gitlabApi: gitlabAPIClient,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            validGitLabUserName: commandConfig.validGitLabUserName,
-            validCommitAuthorName: commandConfig.validCommitAuthorName
-        )
-
-        let task = GuardianCheckAuthorTask(
-            logger: logger,
-            mergeRequestReporter: mergeRequestReporter,
-            mergeRequestAuthorChecker: mergeRequestAuthorChecker,
-            gitlabCIEnvironmentReader: gitlabCIEnvironmentReader
-        )
+        let task = try TasksFactory.makeGuardianCheckAuthorTask(commandConfig: commandConfig)
 
         try task.run()
     }

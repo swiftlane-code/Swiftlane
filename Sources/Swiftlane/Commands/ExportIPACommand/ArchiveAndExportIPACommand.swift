@@ -7,8 +7,6 @@ import SwiftlaneCore
 public protocol ArchiveAndExportIPACommandParamsAccessing {
     var sharedConfigOptions: SharedConfigOptions { get }
 
-    var rosettaOption: RosettaGlobalOption { get }
-
     var scheme: String { get }
     var buildConfiguration: String { get }
     var ipaName: String { get }
@@ -25,8 +23,6 @@ public struct ArchiveAndExportIPACommand: ParsableCommand, ArchiveAndExportIPACo
 	)
 
 	@OptionGroup public var sharedConfigOptions: SharedConfigOptions
-
-	@OptionGroup public var rosettaOption: RosettaGlobalOption
 
 	// MARK: Build config
 

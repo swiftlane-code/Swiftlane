@@ -9,7 +9,7 @@ public extension GitLabAPIClient {
     convenience init(
         logger: Logging,
         logLevel: LoggingLevel = .silent,
-        environmentReader: EnvironmentValueReading = EnvironmentValueReader(),
+        environmentReader: EnvironmentValueReading,
         baseURLEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.GITLAB_API_ENDPOINT,
         accessTokenEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.PROJECT_ACCESS_TOKEN,
         accessTokenHeaderKey: String = "PRIVATE-TOKEN"

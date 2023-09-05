@@ -35,7 +35,7 @@ open class GuardianBaseTask {
     public func run() throws {
         do {
             try executeChecksOnly()
-        } catch let error as MergeRequestReporter.Errors {
+        } catch let error as GitLabMergeRequestReporter.Errors {
             /// ignore errors produced by MergeRequestReporter
             /// because it means we are running ``GuardianBaseTask`` inside ``GuardianBaseTask``
             /// and report has already been published.

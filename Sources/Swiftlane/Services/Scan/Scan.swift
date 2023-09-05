@@ -16,21 +16,21 @@ public enum ScanError: Error {
 public protocol ScanProtocol {}
 
 public class Scan: ScanProtocol {
-    private let filesManager: FSManager
-    private let logPathFactory: LogPathFactory
+    private let filesManager: FSManaging
+    private let logPathFactory: LogPathFactoring
     private let shell: ShellExecuting
     private let logger: Logging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
 
     private let config: Config
     private let runner: TestsRunner
 
     public init(
-        filesManager: FSManager,
-        logPathFactory: LogPathFactory,
+        filesManager: FSManaging,
+        logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         config: Config,
         runner: TestsRunner
     ) {

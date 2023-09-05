@@ -15,10 +15,7 @@ public protocol BuilderProtocol {
     func buildForTesting(simulator: Simulator) throws
     func buildForRunning(simulator: Simulator) throws
     func build(forTesting: Bool, destination: BuildDestination) throws
-    func archive(
-        buildConfiguration: String,
-        archivePath: AbsolutePath
-    ) throws
+    func archive(archivePath: AbsolutePath) throws
 }
 
 public enum BuildDestination {
@@ -46,19 +43,19 @@ public enum BuildDestination {
 
 public class Builder: BuilderProtocol {
     let filesManager: FSManaging
-    let logPathFactory: LogPathFactory
+    let logPathFactory: LogPathFactoring
     let shell: ShellExecuting
     let logger: Logging
-    let timeMeasurer: TimeMeasurer
+    let timeMeasurer: TimeMeasuring
     let xcodebuildCommand: XcodebuildCommandProducing
     public let config: Config
 
     public init(
         filesManager: FSManaging,
-        logPathFactory: LogPathFactory,
+        logPathFactory: LogPathFactoring,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         xcodebuildCommand: XcodebuildCommandProducing,
         config: Config
     ) {
@@ -123,11 +120,11 @@ public class Builder: BuilderProtocol {
                     "-project", config.project.string.quoted,
                     "-derivedDataPath", config.derivedDataPath.string.quoted,
                     destination.xcodebuildDestinationOption,
-                    config.configuration.map { "-configuration " + $0 } ?? "",
+                    "-configuration " + config.configuration.quoted,
                     forTesting ? "-enableCodeCoverage YES" : "",
                     forTesting ? "build-for-testing" : "build",
                     "| tee '\(logsPaths.stdout)'",
-                    "| \(config.xcodebuildFormatterPath.string)",
+                    "| \(config.xcodebuildFormatterCommand)",
                 ],
                 log: .commandAndOutput(outputLogLevel: .verbose),
                 logStdErrToFile: logsPaths.stderr
@@ -144,14 +141,13 @@ public class Builder: BuilderProtocol {
     }
 
     public func archive(
-        buildConfiguration: String,
         archivePath: AbsolutePath
     ) throws {
-        try timeMeasurer.measure(description: "Archiving \(buildConfiguration) configuration of scheme '\(config.scheme)'") {
+        try timeMeasurer.measure(description: "Archiving \(config.configuration.quoted) configuration of scheme '\(config.scheme)'") {
             let logsPaths = logPathFactory.makeArchiveLogPath(
                 logsDir: config.logsPath,
                 scheme: config.scheme,
-                configuration: buildConfiguration
+                configuration: config.configuration
             )
 
             try shell.run(
@@ -161,11 +157,11 @@ public class Builder: BuilderProtocol {
                     "-project", config.project.string.quoted,
                     "-derivedDataPath", config.derivedDataPath.string.quoted,
                     BuildDestination.genericIOSDevice.xcodebuildDestinationOption,
-                    "-configuration " + buildConfiguration.quoted,
+                    "-configuration " + config.configuration.quoted,
                     "-archivePath " + archivePath.string.quoted,
                     "clean archive",
                     "| tee '\(logsPaths.stdout)'",
-                    "| \(config.xcodebuildFormatterPath.string)",
+                    "| \(config.xcodebuildFormatterCommand)",
                 ],
                 log: .commandAndOutput(outputLogLevel: .verbose),
                 logStdErrToFile: logsPaths.stderr

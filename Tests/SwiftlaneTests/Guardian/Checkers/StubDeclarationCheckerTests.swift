@@ -39,7 +39,8 @@ class StubDeclarationCheckerTests: XCTestCase {
                 projectDir: projectDir,
                 mocksTargetsPath: try NSRegularExpression(pattern: "^mocks/(\\w+)", options: .anchorsMatchLines),
                 testsTargetsPath: try NSRegularExpression(pattern: "^tests/(\\w+)", options: .anchorsMatchLines),
-                ignoredFiles: [.equals("mocks/Target1/test_file_1.swift")]
+                ignoredFiles: [.equals("mocks/Target1/test_file_1.swift")], 
+                testableTargetsListFilePath: try .relative(RelativePath("testableTargetsListFilePath"))
             )
         )
 
@@ -82,8 +83,7 @@ class StubDeclarationCheckerTests: XCTestCase {
 
         slatherService.given(
             .readTestableTargetsNames(
-                projectDir: .value(projectDir),
-                fileName: ".testable.targets.generated.txt",
+                filePath: .value(try! projectDir.appending(path: "testableTargetsListFilePath")),
                 willReturn: [
                     "Target1",
                     "Target2",

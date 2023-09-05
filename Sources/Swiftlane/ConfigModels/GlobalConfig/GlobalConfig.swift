@@ -6,6 +6,14 @@ import SwiftlaneCore
 public struct SharedConfigModel: Decodable {
     public let sharedValues: SharedConfigValues
     public let pathsConfig: PathsConfig
+
+    public init(
+        sharedValues: SharedConfigValues,
+        pathsConfig: PathsConfig
+    ) {
+        self.sharedValues = sharedValues
+        self.pathsConfig = pathsConfig
+    }
 }
 
 public struct SharedConfigValues: Decodable {
@@ -18,10 +26,8 @@ public struct SharedConfigValues: Decodable {
     public let gitAuthorName: String
     public let gitAuthorEmail: String
 
-    public let availableProjects: [StringMatcher]
-
     private enum CodingKeys: String, CodingKey {
-        case jiraProjectKey, jiraRequestsTimeout, gitAuthorName, availableProjects, gitAuthorEmail
+        case jiraProjectKey, jiraRequestsTimeout, gitAuthorName, gitAuthorEmail
     }
 
     public init(from decoder: Decoder) throws {
@@ -29,7 +35,6 @@ public struct SharedConfigValues: Decodable {
         jiraProjectKey = try container.decode(String.self, forKey: .jiraProjectKey)
         jiraRequestsTimeout = try container.decode(TimeInterval.self, forKey: .jiraRequestsTimeout)
         gitAuthorName = try container.decode(String.self, forKey: .gitAuthorName)
-        availableProjects = try container.decode([StringMatcher].self, forKey: .availableProjects)
 
         let decodedGitAuthorEmail = try container.decodeIfPresent(String.self, forKey: .gitAuthorEmail)
         gitAuthorEmail = try decodedGitAuthorEmail ?? EnvironmentValueReader().string(ShellEnvKey.GIT_AUTHOR_EMAIL)
@@ -39,14 +44,12 @@ public struct SharedConfigValues: Decodable {
         jiraProjectKey: String,
         jiraRequestsTimeout: TimeInterval,
         gitAuthorName: String,
-        gitAuthorEmail: String,
-        availableProjects: [StringMatcher]
+        gitAuthorEmail: String
     ) {
         self.jiraProjectKey = jiraProjectKey
         self.jiraRequestsTimeout = jiraRequestsTimeout
         self.gitAuthorName = gitAuthorName
         self.gitAuthorEmail = gitAuthorEmail
-        self.availableProjects = availableProjects
     }
 }
 
@@ -80,5 +83,39 @@ public struct PathsConfig: Decodable {
 
     public let tempDir: Path
 
-    public let xcodebuildFormatterPath: Path
+    public let xcodebuildFormatterCommand: String
+
+    public init(
+        xclogparserJSONReportName: RelativePath,
+        xclogparserHTMLReportDirName: RelativePath,
+        mergedJUnitName: RelativePath,
+        mergedXCResultName: RelativePath?,
+        xccovFileName: RelativePath,
+        projectFile: RelativePath,
+        derivedDataDir: Path,
+        testRunsDerivedDataDir: Path,
+        logsDir: Path,
+        resultsDir: Path,
+        archivesDir: Path,
+        swiftlintConfigPath: Path,
+        swiftlintWarningsJsonsFolder: Path,
+        tempDir: Path,
+        xcodebuildFormatterCommand: String
+    ) {
+        self.xclogparserJSONReportName = xclogparserJSONReportName
+        self.xclogparserHTMLReportDirName = xclogparserHTMLReportDirName
+        self.mergedJUnitName = mergedJUnitName
+        self.mergedXCResultName = mergedXCResultName
+        self.xccovFileName = xccovFileName
+        self.projectFile = projectFile
+        self.derivedDataDir = derivedDataDir
+        self.testRunsDerivedDataDir = testRunsDerivedDataDir
+        self.logsDir = logsDir
+        self.resultsDir = resultsDir
+        self.archivesDir = archivesDir
+        self.swiftlintConfigPath = swiftlintConfigPath
+        self.swiftlintWarningsJsonsFolder = swiftlintWarningsJsonsFolder
+        self.tempDir = tempDir
+        self.xcodebuildFormatterCommand = xcodebuildFormatterCommand
+    }
 }

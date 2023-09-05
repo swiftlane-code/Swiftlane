@@ -13,32 +13,14 @@ public struct ChangeVersionCommandConfig: Decodable {
     public let prefixUpdateCommitMessage: String
 }
 
-public struct ChangeVersionCommandRunner<GenericProjectVersionConverter>: CommandRunnerProtocol where
-    GenericProjectVersionConverter: Initable & ProjectVersionConverting
-{
+public struct ChangeVersionCommandRunner: CommandRunnerProtocol {
     public init() {}
 
     public func run(
         params: ChangeVersionCommandParamsAccessing,
         commandConfig: ChangeVersionCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: SigIntHandler(logger: logger),
-            logger: logger,
-            xcodeChecker: XcodeChecker(),
-            filesManager: filesManager
-        )
-
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
-
         let bumpStrategy: ChangeVersionTask.Config.ChangeVersionStrategy = {
             switch params.action {
             case .bumpMajor:
@@ -50,55 +32,25 @@ public struct ChangeVersionCommandRunner<GenericProjectVersionConverter>: Comman
             }
         }()
 
+        let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading = DependenciesFactory.resolve()
+
         let taskConfig = ChangeVersionTask.Config(
-            projectDir: params.sharedConfigOptions.projectDir,
             sourceBranchName: try gitlabCIEnvironmentReader.string(.CI_COMMIT_REF_NAME),
-            bumpStrategy: bumpStrategy,
-            infoPlistPath: commandConfig.infoPlistPath,
-            prefixUpdateCommitMessage: commandConfig.prefixUpdateCommitMessage,
+            bumpStrategy: bumpStrategy
+        )
+
+        let versioningConfig = ProjectVersioningService.Config(
+            projectDir: params.sharedConfigOptions.projectDir,
+            commitMessagePrefix: commandConfig.prefixUpdateCommitMessage,
             committeeName: sharedConfig.values.gitAuthorName,
-            committeeEmail: sharedConfig.values.gitAuthorEmail
+            committeeEmail: sharedConfig.values.gitAuthorEmail,
+            infoPlistPath: commandConfig.infoPlistPath
         )
 
-        let git = Git(
-            shell: shell,
-            filesManager: filesManager,
-            diffParser: GitDiffParser(logger: logger)
+        let task = try TasksFactory.makeChangeVersionTask(
+            versioningConfig: versioningConfig,
+            taskConfig: taskConfig
         )
-
-        let projectService = GenericProjectVersionConverter()
-        let projectPatcher = XcodeProjectPatcher(
-            logger: logger,
-            shell: shell,
-            plistBuddyService: PlistBuddyService(shell: shell)
-        )
-
-        let versioningService = ProjectVersioningService(
-            logger: logger,
-            filesManager: filesManager,
-            versionConverter: projectService,
-            projectPatcher: projectPatcher,
-            git: git,
-            config: ProjectVersioningService.Config(
-                projectDir: params.sharedConfigOptions.projectDir,
-                commitMessagePrefix: commandConfig.prefixUpdateCommitMessage,
-                committeeName: sharedConfig.values.gitAuthorName,
-                committeeEmail: sharedConfig.values.gitAuthorEmail,
-                infoPlistPath: commandConfig.infoPlistPath
-            )
-        )
-
-        let task = ChangeVersionTask(
-            logger: logger,
-            versioningService: versioningService,
-            config: taskConfig
-        )
-
-        let projectPath = try gitlabCIEnvironmentReader.string(.CI_PROJECT_PATH)
-        guard sharedConfig.values.availableProjects.isMatching(string: projectPath) else {
-            logger.warn("Skipped run task about project with path \(projectPath.quoted)")
-            return
-        }
 
         try task.run()
     }

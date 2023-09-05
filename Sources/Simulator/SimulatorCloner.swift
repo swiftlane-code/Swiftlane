@@ -7,12 +7,12 @@ import SwiftlaneCore
 public struct SimulatorCloner {
     public let original: SimulatorProtocol
     let simulatorProvider: SimulatorProviding
-    let timeMeasurer: TimeMeasurer
+    let timeMeasurer: TimeMeasuring
 
     public init(
         original: SimulatorProtocol,
         simulatorProvider: SimulatorProviding,
-        timeMeasurer: TimeMeasurer
+        timeMeasurer: TimeMeasuring
     ) {
         self.original = original
         self.simulatorProvider = simulatorProvider

@@ -12,24 +12,20 @@ import Yams
 public class BuildAppCommandRunner: CommandRunnerProtocol {
     private func build(
         params: BuildAppCommandParamsAccessing,
-        paths: PathsFactoring,
-        logger: Logging
+        paths: PathsFactoring
     ) throws {
         let builderConfig = Builder.Config(
             project: paths.projectFile,
             scheme: params.scheme,
             derivedDataPath: paths.derivedDataDir,
             logsPath: paths.logsDir,
-            configuration: nil,
-            xcodebuildFormatterPath: paths.xcodebuildFormatterPath
+            configuration: params.buildConfiguration,
+            xcodebuildFormatterCommand: paths.xcodebuildFormatterCommand
         )
-        let buildTask = BuildAppTaskAssembly().assemble(
-            paths: paths,
+        let buildTask = TasksFactory.makeBuildAppTask(
             builderConfig: builderConfig,
             buildForTesting: params.buildForTesting,
-            buildDestination: .genericIOSDevice, // hardcode for now
-            isUseRosetta: params.rosettaOption.isUseRosetta,
-            logger: logger
+            buildDestination: .genericIOSDevice
         )
         try buildTask.run()
     }
@@ -37,9 +33,8 @@ public class BuildAppCommandRunner: CommandRunnerProtocol {
     public func run(
         params: BuildAppCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        try build(params: params, paths: sharedConfig.paths, logger: logger)
+        try build(params: params, paths: sharedConfig.paths)
     }
 }

@@ -10,31 +10,11 @@ import Xcodebuild
 import Yams
 
 public struct UploadGitLabPackageCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: UploadGitLabPackageCommandParamsAccessing,
-        commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
-    ) throws -> Bool {
-        let _ = try GitLabAPIClient(logger: logger)
-        return true
-    }
-
     public func run(
         params: UploadGitLabPackageCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
-        let progressLogger = ProgressLogger(
-            winsizeReader: WinSizeReader()
-        )
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
         let taskConfig = UploadGitLabPackageTask.Config(
             projectID: params.projectID,
             packageName: params.packageName,
@@ -44,14 +24,7 @@ public struct UploadGitLabPackageCommandRunner: CommandRunnerProtocol {
             timeoutSeconds: params.timeoutSeconds
         )
 
-        let task = UploadGitLabPackageTask(
-            logger: logger,
-            progressLogger: NetworkingProgressLogger(progressLogger: progressLogger),
-            filesManager: filesManager,
-            gitlabApi: try GitLabAPIClient(logger: logger),
-            timeMeasurer: TimeMeasurer(logger: logger),
-            config: taskConfig
-        )
+        let task = try TasksFactory.makeUploadGitLabPackageTask(taskConfig: taskConfig)
 
         try task.run()
     }

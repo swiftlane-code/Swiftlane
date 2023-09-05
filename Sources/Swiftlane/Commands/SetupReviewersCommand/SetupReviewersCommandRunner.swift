@@ -15,13 +15,10 @@ public struct SetupReviewersCommandRunner: CommandRunnerProtocol {
     public func run(
         params _: SetupReviewersCommandParamsAccessing,
         commandConfig: SetupReviewersCommandConfig,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig _: SharedConfigData
     ) throws {
-        let environmentValueReader = EnvironmentValueReader()
-        let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
-
-        let filesManager = FSManager(logger: logger, fileManager: FileManager.default)
+        let environmentValueReader: EnvironmentValueReading = DependenciesFactory.resolve()
+        let filesManager: FSManaging = DependenciesFactory.resolve()
 
         let expandedReviewersConfigPath = try environmentValueReader.expandVariables(
             in: commandConfig.reviewersConfigPath
@@ -41,17 +38,11 @@ public struct SetupReviewersCommandRunner: CommandRunnerProtocol {
         )
 
         let task = SetupReviewersTask(
-            logger: logger,
+            logger: DependenciesFactory.resolve(),
             config: taskConfig,
-            gitlabCIEnvironment: gitlabCIEnvironmentReader,
-            gitlabApi: try GitLabAPIClient(logger: logger)
+            gitlabCIEnvironment: DependenciesFactory.resolve(),
+            gitlabApi: DependenciesFactory.resolve()
         )
-
-        let projectPath = try gitlabCIEnvironmentReader.string(.CI_PROJECT_PATH)
-        guard sharedConfig.values.availableProjects.isMatching(string: projectPath) else {
-            logger.warn("Skipped run task about project with path \(projectPath.quoted)")
-            return
-        }
 
         try task.run()
     }

@@ -5,38 +5,12 @@ import SwiftlaneCore
 import Xcodebuild
 
 public class BuildNumberSetCommandRunner: CommandRunnerProtocol {
-    public func verifyConfigs(
-        params _: BuildNumberSetCommandParamsAccessing,
-        commandConfig _: Void,
-        sharedConfig _: SharedConfigData,
-        logger _: Logging
-    ) throws -> Bool {
-        true
-    }
-
     public func run(
         params: BuildNumberSetCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: SigIntHandler(logger: logger),
-            logger: logger,
-            xcodeChecker: XcodeChecker(),
-            filesManager: filesManager
-        )
-
-        let projectPatcher = XcodeProjectPatcher(
-            logger: logger,
-            shell: shell,
-            plistBuddyService: PlistBuddyService(shell: shell)
-        )
+        let projectPatcher: XcodeProjectPatching = DependenciesFactory.resolve()
 
         if params.buildSettings {
             try projectPatcher.setCurrentProjectVersion(

@@ -6,9 +6,9 @@ import SwiftlaneCore
 
 public protocol MeasureBuildTimeCommandParamsAccessing {
     var sharedConfigOptions: SharedConfigOptions { get }
-    var rosettaOption: RosettaGlobalOption { get }
     var projectName: Path { get }
     var scheme: String { get }
+    var configuration: String { get }
     var deviceModel: String { get }
     var osVersion: String { get }
     var iterations: Int { get }
@@ -22,13 +22,15 @@ public struct MeasureBuildTimeCommand: ParsableCommand, MeasureBuildTimeCommandP
     )
 
     @OptionGroup public var sharedConfigOptions: SharedConfigOptions
-    @OptionGroup public var rosettaOption: RosettaGlobalOption
 
     @Option(help: "Project name.")
     public var projectName: Path
 
     @Option(help: "Project scheme.")
     public var scheme: String
+
+    @Option(help: "Configuration to build (usually Debug or Release).")
+    public var configuration: String
 
     @Option(help: "Name of original simulator to be cloned.")
     public var deviceModel: String = "iPhone 11"

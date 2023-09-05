@@ -13,6 +13,11 @@ public protocol ExpiringToDoResponsibilityProviding {
 public struct ExpiringToDoBlockingConfig: Codable {
     public let strategy: StrategyParams
     public let teams: [String: [String]]
+    
+    public init(strategy: StrategyParams, teams: [String : [String]]) {
+        self.strategy = strategy
+        self.teams = teams
+    }
 
     public struct StrategyParams: Codable {
         public let listedUsersBlock: BlockingStrategy
@@ -20,6 +25,20 @@ public struct ExpiringToDoBlockingConfig: Codable {
         public let unlistedTODOAuthorsAllowed: Bool
         public let unauthoredTODOAllowed: Bool
         public let unauthoredTODOBlockEveryone: Bool
+        
+        public init(
+            listedUsersBlock: BlockingStrategy,
+            unlistedTODOAuthorsBlockEveryone: Bool,
+            unlistedTODOAuthorsAllowed: Bool,
+            unauthoredTODOAllowed: Bool,
+            unauthoredTODOBlockEveryone: Bool
+        ) {
+            self.listedUsersBlock = listedUsersBlock
+            self.unlistedTODOAuthorsBlockEveryone = unlistedTODOAuthorsBlockEveryone
+            self.unlistedTODOAuthorsAllowed = unlistedTODOAuthorsAllowed
+            self.unauthoredTODOAllowed = unauthoredTODOAllowed
+            self.unauthoredTODOBlockEveryone = unauthoredTODOBlockEveryone
+        }
     }
 
     public enum BlockingStrategy: String, Codable {

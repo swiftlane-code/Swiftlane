@@ -45,7 +45,8 @@ class ChangesCoverageLimitCheckerTests: XCTestCase {
                 ignoreCheckForTargetBranches: ignoredTargetBranches
             ),
             projectDir: AbsolutePath.random(lastComponent: "projectDir"),
-            excludedFileNameMatchers: excludedFileNameMatchers
+            excludedFileNameMatchers: excludedFileNameMatchers, 
+            slatherReportFilePath: Path.randomAbsolute()
         )
 
         checker = .init(
@@ -110,9 +111,7 @@ class ChangesCoverageLimitCheckerTests: XCTestCase {
 
         slather.given(
             .parseCoverageJSON(
-                projectDir: .value(config.projectDir),
-                reportFileName: "coverage.json",
-                outputDirPath: .value(try! Path("builds/results")),
+                filePath: .value(config.slatherReportFilePath.makeAbsoluteIfIsnt(relativeTo: .random())),
                 willReturn: slatherFileCodeCoverage
             )
         )

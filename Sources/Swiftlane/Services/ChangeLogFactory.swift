@@ -13,13 +13,13 @@ public final class ChangelogFactory {
     private let logger: Logging
     private let gitlabCIEnvironmentReader: GitLabCIEnvironmentReading
     private let jiraClient: JiraAPIClientProtocol
-    private let issueKeySearcher: IssueKeySearching
+    private let issueKeySearcher: JiraIssueKeySearching
 
     public init(
         logger: Logging,
         gitlabCIEnvironmentReader: GitLabCIEnvironmentReading,
         jiraClient: JiraAPIClientProtocol,
-        issueKeySearcher: IssueKeySearching
+        issueKeySearcher: JiraIssueKeySearching
     ) {
         self.logger = logger
         self.gitlabCIEnvironmentReader = gitlabCIEnvironmentReader

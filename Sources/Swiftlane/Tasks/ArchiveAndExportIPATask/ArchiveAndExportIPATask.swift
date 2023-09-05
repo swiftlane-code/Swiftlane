@@ -21,80 +21,45 @@ public struct ArchiveAndExportIPATaskConfig {
     public let exportMethod: XCArchiveExportOptions.ExportMethod
     public let compileBitcode: Bool
     public let manageAppVersionAndBuildNumber: Bool?
-    public let isUseRosetta: Bool
-    public let xcodebuildFormatterPath: AbsolutePath
+    public let xcodebuildFormatterCommand: String
 }
 
 /// Archive and export `.ipa`.
 public final class ArchiveAndExportIPATask {
     private let simulatorProvider: SimulatorProviding
-    private let logger: Logging
-    private let shell: ShellExecuting
     private let archiveProcessor: XCArchiveExporting
-    private let filesManager: FSManaging
     private let xcodeProjectPatcher: XcodeProjectPatching
     private let dsymsExtractor: XCArchiveDSYMsExtracting
     private let provisioningProfilesService: ProvisioningProfilesServicing
+    private let builder: BuilderProtocol
 
     private let config: ArchiveAndExportIPATaskConfig
 
     public init(
         simulatorProvider: SimulatorProviding,
-        logger: Logging,
-        shell: ShellExecuting,
         archiveProcessor: XCArchiveExporting,
-        filesManager: FSManaging,
         xcodeProjectPatcher: XcodeProjectPatching,
         dsymsExtractor: XCArchiveDSYMsExtracting,
         provisioningProfilesService: ProvisioningProfilesServicing,
+        builder: BuilderProtocol,
         config: ArchiveAndExportIPATaskConfig
     ) {
         self.simulatorProvider = simulatorProvider
-        self.logger = logger
-        self.shell = shell
         self.archiveProcessor = archiveProcessor
-        self.filesManager = filesManager
         self.xcodeProjectPatcher = xcodeProjectPatcher
         self.dsymsExtractor = dsymsExtractor
         self.provisioningProfilesService = provisioningProfilesService
+        self.builder = builder
         self.config = config
-    }
-
-    private func makeBuilder() throws -> BuilderProtocol {
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let builderConfig = Builder.Config(
-            project: config.projectFile,
-            scheme: config.scheme,
-            derivedDataPath: config.derivedDataDir,
-            logsPath: config.logsDir,
-            configuration: nil,
-            xcodebuildFormatterPath: config.xcodebuildFormatterPath
-        )
-
-        let logPathFactory = LogPathFactory(filesManager: filesManager)
-
-        let xcodebuildCommand = XcodebuildCommandProducer(isUseRosetta: config.isUseRosetta)
-
-        return Builder(
-            filesManager: filesManager,
-            logPathFactory: logPathFactory,
-            shell: shell,
-            logger: logger,
-            timeMeasurer: TimeMeasurer(logger: logger),
-            xcodebuildCommand: xcodebuildCommand,
-            config: builderConfig
-        )
     }
 
     /// - Returns: path to exported `.ipa`.
     public func run() throws -> (ipaPath: AbsolutePath, dsymsZipPath: AbsolutePath) {
         let date = Date().full_custom
         let rootDir = try config.archivesDir.appending(path: date)
-        let archivePath = try rootDir.appending(path: "\(config.scheme)-\(config.buildConfiguration).xcarchive")
+        let archivePath = try rootDir.appending(
+            path: "\(builder.config.scheme)-\(builder.config.configuration).xcarchive"
+        )
         let exportedIpaPath = try rootDir.appending(path: "exported").appending(path: config.ipaName)
         let dsymsZipName = archivePath.lastComponent.deletingExtension.string + ".dSYM.zip"
         let dsymsZipPath = try archivePath.deletingLastComponent.appending(path: dsymsZipName)
@@ -113,11 +78,7 @@ public final class ArchiveAndExportIPATask {
         //		)
 
         // Create .xcarchive
-        let builder = try makeBuilder()
-        try builder.archive(
-            buildConfiguration: config.buildConfiguration,
-            archivePath: archivePath
-        )
+        try builder.archive(archivePath: archivePath)
 
         // Export ipa from .xcarchive
         var exportConfig = XCArchiveExportOptions()

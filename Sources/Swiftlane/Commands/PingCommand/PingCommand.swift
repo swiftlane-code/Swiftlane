@@ -25,9 +25,10 @@ private class Runner: CommandRunnerProtocol {
     public func run(
         params _: PingCommand,
         commandConfig _: Void,
-        sharedConfig _: Void,
-        logger: Logging
+        sharedConfig _: Void
     ) throws {
+        let logger: Logging = DependenciesFactory.resolve()
+        
         logger.error("logger.error")
         logger.warn("logger.warn")
         logger.important("logger.important")

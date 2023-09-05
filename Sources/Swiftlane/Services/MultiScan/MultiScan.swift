@@ -19,12 +19,12 @@ public enum MultiScanError: Error {
 public protocol MultiScanProtocol {}
 
 public class MultiScan: MultiScanProtocol {
-    private let filesManager: FSManager
-    private let logPathFactory: LogPathFactory
+    private let filesManager: FSManaging
+    private let logPathFactory: LogPathFactoring
     private let simulatorProvider: SimulatorProviding
     private let shell: ShellExecuting
     private let logger: Logging
-    private let timeMeasurer: TimeMeasurer
+    private let timeMeasurer: TimeMeasuring
     private let testPlanService: XCTestPlanServicing
     private let junitService: JUnitServicing
 
@@ -34,14 +34,14 @@ public class MultiScan: MultiScanProtocol {
     public let runner: TestsRunner
 
     public init(
-        filesManager: FSManager,
-        logPathFactory: LogPathFactory,
+        filesManager: FSManaging,
+        logPathFactory: LogPathFactoring,
         simulatorProvider: SimulatorProviding,
         testPlanService: XCTestPlanServicing,
         junitService: JUnitServicing,
         shell: ShellExecuting,
         logger: Logging,
-        timeMeasurer: TimeMeasurer,
+        timeMeasurer: TimeMeasuring,
         config: Config,
         builder: Builder,
         runner: TestsRunner,

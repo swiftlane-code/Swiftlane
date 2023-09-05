@@ -13,7 +13,7 @@ public extension TestsRunner {
         public let testRunsLogsPath: AbsolutePath
         public let testPlan: String?
         public let testWithoutBuilding: Bool
-        public let xcodebuildFormatterPath: AbsolutePath
+        public let xcodebuildFormatterCommand: String
         public let testingTimeout: TimeInterval
 
         public init(
@@ -23,7 +23,7 @@ public extension TestsRunner {
             testRunsLogsPath: AbsolutePath,
             testPlan: String?,
             testWithoutBuilding: Bool,
-            xcodebuildFormatterPath: AbsolutePath,
+            xcodebuildFormatterCommand: String,
             testingTimeout: TimeInterval
         ) {
             project = builderConfig.project
@@ -34,7 +34,7 @@ public extension TestsRunner {
             self.testRunsLogsPath = testRunsLogsPath
             self.testPlan = testPlan
             self.testWithoutBuilding = testWithoutBuilding
-            self.xcodebuildFormatterPath = xcodebuildFormatterPath
+            self.xcodebuildFormatterCommand = xcodebuildFormatterCommand
             self.testingTimeout = testingTimeout
         }
     }

@@ -5,7 +5,7 @@ import XCTest
 
 final class IssueKeyParserTests: XCTestCase {
     func test_parsingCommentInGitLab() throws {
-        let parser = IssueKeyParser(jiraProjectKey: "ABCD")
+        let parser = JiraIssueKeyParser(jiraProjectKey: "ABCD")
 
         try XCTAssertEqual(
             parser.parse(from: "ABCD-0000 test"),

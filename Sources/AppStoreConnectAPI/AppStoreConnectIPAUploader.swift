@@ -24,7 +24,7 @@ public final class AppStoreConnectIPAUploader {
         public let authKeyIssuerID: String
 
         /// If you specify a filename, Transporter logs the output to the specified file, as well as to standard out.
-        public let logFile: AbsolutePath?
+        public let logDir: AbsolutePath?
 
         /// - Parameter authKeyPath: Path to your `AuthKey_XXXXXX.p8` file.
         /// - Parameter authKeyIssuerID: Your issuer ID from the API Keys page in App Store Connect;
@@ -32,11 +32,11 @@ public final class AppStoreConnectIPAUploader {
         public init(
             authKeyPath: AbsolutePath,
             authKeyIssuerID: String,
-            logFile: AbsolutePath?
+            logDir: AbsolutePath?
         ) {
             self.authKeyPath = authKeyPath
             self.authKeyIssuerID = authKeyIssuerID
-            self.logFile = logFile
+            self.logDir = logDir
         }
     }
 
@@ -70,8 +70,12 @@ extension AppStoreConnectIPAUploader: AppStoreConnectIPAUploading {
 
         switch uploader {
         case .iTMSTransporter:
-            config.logFile.map {
-                try? filesManager.mkdir($0.deletingLastComponent)
+            let logFile = try config.logDir?.appending(
+                path: "\(ipaPath.lastComponent.string)_\(Date().full_custom).log"
+            )
+
+            config.logDir.map {
+                try? filesManager.mkdir($0)
             }
 
             let token = try tokenGenerator.token(lifetime: 20 * 60)
@@ -86,7 +90,7 @@ extension AppStoreConnectIPAUploader: AppStoreConnectIPAUploading {
                     "-assetFile " + ipaPath.string.quoted,
                     "-k 100000", // throttle speed is a required option so we set it to 100mbit/s
                     "-throughput",
-                    config.logFile.map {
+                    logFile.map {
                         "-o " + $0.string.quoted
                     },
                 ].compactMap { $0 },

@@ -22,18 +22,9 @@ public class CommonRunner {
 
     private func makeGuardianRunnerIfPossible() -> GuardianCommonRunner? {
         do {
-            let environmentValueReader = EnvironmentValueReader()
-            let gitlabCIEnvironmentReader = GitLabCIEnvironmentReader(environmentValueReading: environmentValueReader)
+            let mergeRequestReporter: MergeRequestReporting = DependenciesFactory.resolve()
 
-            let mergeRequestReporter = MergeRequestReporter(
-                logger: logger,
-                gitlabApi: try GitLabAPIClient(logger: logger),
-                gitlabCIEnvironment: gitlabCIEnvironmentReader,
-                reportFactory: MergeRequestReportFactory(),
-                publishEmptyReport: false
-            )
-
-            try mergeRequestReporter.checkEnvironmentCorrect()
+            try (mergeRequestReporter as? GitLabMergeRequestReporter)?.checkEnvironmentCorrect()
 
             logger.success("Running under Guardian.")
             return GuardianCommonRunner(reporter: mergeRequestReporter, logger: logger)
@@ -50,7 +41,6 @@ public class CommonRunner {
             } else {
                 try closure()
             }
-            logger.success("Swiftlane is finishing execution with `0` exit code.")
         } catch {
             logger.logError(error)
             exitor.exit(with: 1)

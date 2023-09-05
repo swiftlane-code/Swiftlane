@@ -3,52 +3,32 @@
 import Foundation
 import Simulator
 import SwiftlaneCore
+import Xcodebuild
 import Yams
 
 public class MeasureBuildTimeCommandRunner: CommandRunnerProtocol {
     public func run(
         params: MeasureBuildTimeCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        let sigIntHandler = SigIntHandler(logger: logger)
-        let xcodeChecker = XcodeChecker()
-
-        let filesManager = FSManager(
-            logger: logger,
-            fileManager: FileManager.default
-        )
-
-        let shell = ShellExecutor(
-            sigIntHandler: sigIntHandler,
-            logger: logger,
-            xcodeChecker: xcodeChecker,
-            filesManager: filesManager
-        )
-
-        let runtimesMiner = RuntimesMiner(shell: shell)
-        let simulatorProvider = SimulatorProvider(
-            runtimesMiner: runtimesMiner,
-            shell: shell,
-            logger: logger
-        )
-
-        let task = MeasureBuildTimeTask(
-            simulatorProvider: simulatorProvider,
-            logger: logger,
-            shell: shell,
-            projectFile: sharedConfig.paths.projectFile,
-            derivedDataDir: sharedConfig.paths.derivedDataDir,
-            logsDir: sharedConfig.paths.logsDir,
+        let builderConfig = Builder.Config(
+            project: sharedConfig.paths.projectFile,
             scheme: params.scheme,
+            derivedDataPath: sharedConfig.paths.derivedDataDir,
+            logsPath: sharedConfig.paths.logsDir,
+            configuration: params.configuration,
+            xcodebuildFormatterCommand: sharedConfig.paths.xcodebuildFormatterCommand
+        )
+
+        let config = MeasureBuildTimeTask.Config(
             deviceModel: params.deviceModel,
             osVersion: params.osVersion,
             iterations: params.iterations,
-            buildForTesting: params.buildForTesting,
-            isUseRosetta: params.rosettaOption.isUseRosetta,
-            xcodebuildFormatterPath: sharedConfig.paths.xcodebuildFormatterPath
+            buildForTesting: params.buildForTesting
         )
+
+        let task = try TasksFactory.makeMeasureBuildTimeTask(builderConfig: builderConfig, config: config)
 
         try task.run()
     }

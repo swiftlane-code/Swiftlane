@@ -12,8 +12,7 @@ import Yams
 public class SetProvisioningCommandRunner: CommandRunnerProtocol {
     private func updateProvisioning(
         params: SetProvisioningCommandParamsAccessing,
-        paths: PathsFactoring,
-        logger: Logging
+        paths: PathsFactoring
     ) throws {
         let taskConfig = SetProvisioningTaskConfig(
             xcodeprojPath: paths.projectFile,
@@ -21,20 +20,17 @@ public class SetProvisioningCommandRunner: CommandRunnerProtocol {
             buildConfigurationName: params.buildConfiguration,
             provisionProfileName: params.provisionProfileName
         )
-        let updateProvisioningTask = SetProvisioningTaskAssembly()
-            .assemble(
-                config: taskConfig,
-                logger: logger
-            )
+        let updateProvisioningTask = TasksFactory.makeSetProvisioningTask(
+            taskConfig: taskConfig
+        )
         try updateProvisioningTask.run()
     }
 
     public func run(
         params: SetProvisioningCommandParamsAccessing,
         commandConfig _: Void,
-        sharedConfig: SharedConfigData,
-        logger: Logging
+        sharedConfig: SharedConfigData
     ) throws {
-        try updateProvisioning(params: params, paths: sharedConfig.paths, logger: logger)
+        try updateProvisioning(params: params, paths: sharedConfig.paths)
     }
 }
