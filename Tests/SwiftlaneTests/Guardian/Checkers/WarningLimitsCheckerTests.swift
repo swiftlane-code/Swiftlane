@@ -326,7 +326,8 @@ class WarningLimitsCheckerTests: XCTestCase {
             trackingNewFoldersCommitMessage: "trackingNewFoldersCommitMessage",
             loweringWarningLimitsCommitMessage: "loweringWarningLimitsCommitMessage",
             committeeName: "committeeName",
-            committeeEmail: "committeeEmail"
+            committeeEmail: "committeeEmail",
+            testableTargetsListFile: .relative(try! RelativePath("testableTargetsListFile"))
         )
     }
 

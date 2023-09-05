@@ -462,6 +462,14 @@ public enum DependenciesFactory {
             )
         }
         
+        DependencyResolver.shared.register(XCTestPlanFinding.self) {
+            XCTestPlanFinder(
+                filesManager: resolve(),
+                xctestRunFinder: resolve(),
+                xcTestRunParser: resolve()
+            )
+        }
+        
         DependencyResolver.shared.register(XCTestServicing.self) {
             XCTestService(
                 xctestParser: resolve(),

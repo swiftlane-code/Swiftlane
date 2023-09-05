@@ -142,8 +142,7 @@ class WarningLimitsUntrackedCheckerTests: XCTestCase {
 
         slather.given(
             .readTestableTargetsNames(
-                projectDir: .value(config.projectDir),
-                fileName: ".testable.targets.generated.txt",
+                filePath: .value(try! config.projectDir.appending(path: ".testable.targets.generated.txt")),
                 willReturn: actualWarnings.keys.asArray
             )
         )
@@ -181,7 +180,8 @@ class WarningLimitsUntrackedCheckerTests: XCTestCase {
             trackingNewFoldersCommitMessage: "trackingNewFoldersCommitMessage",
             loweringWarningLimitsCommitMessage: "loweringWarningLimitsCommitMessage",
             committeeName: "committeeName",
-            committeeEmail: "committeeEmail"
+            committeeEmail: "committeeEmail",
+            testableTargetsListFile: .relative(try! RelativePath(".testable.targets.generated.txt"))
         )
     }
 

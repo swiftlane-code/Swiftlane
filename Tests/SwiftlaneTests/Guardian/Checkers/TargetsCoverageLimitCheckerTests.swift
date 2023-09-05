@@ -32,7 +32,8 @@ class TargetsCoverageLimitCheckerTests: XCTestCase {
                 excludeFilesFilters: ["base": []],
                 targetCoverageLimits: [:],
                 allowedProductNameSuffixes: [".app", ".framework"],
-                excludeTargetsNames: [.equals("EXCLUDE_1"), .equals("EXCLUDE_2")]
+                excludeTargetsNames: [.equals("EXCLUDE_1"), .equals("EXCLUDE_2")], 
+                totalCodeCoverageMessagePrefix: nil
             ),
             projectDir: AbsolutePath.random(lastComponent: "projectDir"),
             xcresultDir: AbsolutePath.random(lastComponent: "xcresultDir"),

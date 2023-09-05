@@ -17,7 +17,7 @@ class ChangelogFactoryTests: XCTestCase {
     var logger: LoggingMock!
     var gitlabCIEnvironmentReader: GitLabCIEnvironmentReadingMock!
     var jiraClient: JiraAPIClientProtocolMock!
-    var issueKeySearcher: IssueKeySearchingMock!
+    var issueKeySearcher: JiraIssueKeySearchingMock!
 
     override func setUp() {
         super.setUp()
@@ -25,7 +25,7 @@ class ChangelogFactoryTests: XCTestCase {
         logger = LoggingMock()
         gitlabCIEnvironmentReader = GitLabCIEnvironmentReadingMock()
         jiraClient = JiraAPIClientProtocolMock()
-        issueKeySearcher = IssueKeySearchingMock()
+        issueKeySearcher = JiraIssueKeySearchingMock()
 
         factory = ChangelogFactory(
             logger: logger,
