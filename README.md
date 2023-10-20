@@ -107,21 +107,26 @@ We have implemented a few services to use 3rd party CLIs in safe, convenient and
 
 Most of the commands require path to so-called shared config along with additional options. We are going to provide an example of such config soon.
 
-## Build from source
+## Installation
 
-Clone the repo and build CLI target.
-
-```bash
-$ git clone https://github.com/swiftlane-code/Swiftlane
-$ cd Swiftlane
-$ swift build --product SwiftlaneCLI -c release
+Using [Mint](https://github.com/yonaskolb/mint):
+```sh
+$ mint install swiftlane-code/Swiftlane
 ```
 
-Now you can move the built binary `.build/release/SwiftlaneCLI` wherever you want.
+Using the Swift Package Manager:
+```sh
+$ git clone https://github.com/swiftlane-code/Swiftlane.git
+$ cd Swiftlane
+$ swift build -c release
+$ cp -f .build/release/SwiftlaneCLI /usr/local/bin/
+```
 
 Check out the builtin help. We tried our best to make a good description for all commands and options.
 
 ```bash
+$ mint run Swiftlane --help
+# OR
 $ .build/release/SwiftlaneCLI --help
 ```
 
