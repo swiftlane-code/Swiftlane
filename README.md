@@ -23,9 +23,9 @@ In the past we used to use fastlane + [danger/swift](https://github.com/danger/s
 
 # Status
 
-⚠️ We are still preparing this repo to be usable by public, now it's in beta.
+The project is not in the active development state. But all the implemented code has been running on our CI for a long time so we can definately call it stable and working.
 
-Instructions are not yet complete and they are missing some important steps to use the tool. But you can already check the "Getting Started" section while we are preparing all the info 😸.
+Instructions are mostly complete, check the "Getting Started" section.
 
 ## Closest Plans
 
@@ -68,7 +68,7 @@ Some of the features of Swiftlane include:
 
 ## What is implemented under the hood
 
-Swiftlane is built around modular architecture 
+Swiftlane is built around modular architecture
 
 ### Integration with CLIs
 
@@ -103,9 +103,10 @@ We have implemented a few services to use 3rd party CLIs in safe, convenient and
 
 # Getting Started
 
-⚠️ Instructions are not complete yet but you can already take a look!
+This repo contains implementation of all the functionality described in the "Features" section above.
 
-Most of the commands require path to so-called shared config along with additional options. We are going to provide an example of such config soon.
+> [!IMPORTANT]  
+> Take a look at example runner here https://github.com/swiftlane-code/SwiftlaneCI.
 
 ## Build from source
 
@@ -124,6 +125,16 @@ Check out the builtin help. We tried our best to make a good description for all
 ```bash
 $ .build/release/SwiftlaneCLI --help
 ```
+
+## Running unit tests
+
+Before running tests you need to generate mocks.
+
+```bash
+$ ./bootstrap
+```
+
+[Script](Scripts/bootstrap_project.sh) will clone and build SwiftyMocky and then use it to generate mocks.
 
 # Customisation
 
