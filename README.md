@@ -108,21 +108,26 @@ This repo contains implementation of all the functionality described in the "Fea
 > [!IMPORTANT]  
 > Take a look at example runner here https://github.com/swiftlane-code/SwiftlaneCI.
 
-## Build from source
+## Installation
 
-Clone the repo and build CLI target.
-
-```bash
-$ git clone https://github.com/swiftlane-code/Swiftlane
-$ cd Swiftlane
-$ swift build --product SwiftlaneCLI -c release
+Using [Mint](https://github.com/yonaskolb/mint):
+```sh
+$ mint install swiftlane-code/Swiftlane
 ```
 
-Now you can move the built binary `.build/release/SwiftlaneCLI` wherever you want.
+Using the Swift Package Manager:
+```sh
+$ git clone https://github.com/swiftlane-code/Swiftlane.git
+$ cd Swiftlane
+$ swift build -c release
+$ cp -f .build/release/SwiftlaneCLI /usr/local/bin/
+```
 
 Check out the builtin help. We tried our best to make a good description for all commands and options.
 
 ```bash
+$ mint run Swiftlane --help
+# OR
 $ .build/release/SwiftlaneCLI --help
 ```
 
