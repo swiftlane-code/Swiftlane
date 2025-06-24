@@ -187,7 +187,8 @@ public final class MacOSSecurity: MacOSSecurityProtocol {
         let output = try shell.run(
             [
                 "security find-identity",
-                "-p codesigning",
+                // Turns out, "Developer ID Installer" cert is not a "codesigning" cert.
+                // "-p codesigning",
                 "-v",
                 keychainPath?.string.quoted,
             ].compactMap { $0 },
