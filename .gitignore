@@ -12,3 +12,5 @@ DerivedData/
 
 /*.log
 report.md
+.vscode
+_*.sh
