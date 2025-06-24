@@ -38,7 +38,7 @@ public struct CertsInstallCommand: ParsableCommand, CertsInstallCommandParamsAcc
 			"Note: AppleWWDRCAG3.cer is Developer Relations Intermediate Certificate which is the issuer of your codesigning certificates."
 		)
 	)
-	public var additionalCertificates: String = "https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer"
+	public var additionalCertificates: String = ""
 
 	public init() {}
 
