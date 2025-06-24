@@ -28,6 +28,7 @@ public struct CertsCommand: ParsableCommand {
             CertsInstallCommand.self,
             CertsUpdateCommand.self,
             CertsChangePasswordCommand.self,
+            CertsImportCommand.self,
         ],
         defaultSubcommand: CertsInstallCommand.self
     )

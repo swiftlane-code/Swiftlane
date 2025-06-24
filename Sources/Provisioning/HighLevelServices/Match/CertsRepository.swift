@@ -6,6 +6,11 @@ import SwiftlaneCore
 
 // sourcery: AutoMockable
 public protocol CertsRepositoryProtocol {
+    func markFileAsChanged(
+        clonedRepoPath: AbsolutePath,
+        filePath: RelativePath
+    )
+
     func encryptRepoAndCommitChanges(
         clonedRepoPath: AbsolutePath,
         encryptionPassword: String,
@@ -146,6 +151,14 @@ public class CertsRepository {
 }
 
 extension CertsRepository: CertsRepositoryProtocol {
+    public func markFileAsChanged(
+        clonedRepoPath: AbsolutePath,
+        filePath: RelativePath
+    ) {
+        changedFiles[clonedRepoPath, default: []]
+            .append(clonedRepoPath.appending(path: filePath))
+    }
+
     public func encryptRepoAndCommitChanges(
         clonedRepoPath: AbsolutePath,
         encryptionPassword: String,
@@ -167,6 +180,7 @@ extension CertsRepository: CertsRepositoryProtocol {
 
         try (certs + profiles)
             .filter { filesManager.fileExists($0) } // skip directories
+            .filter { $0.lastComponent.string != "placeholder" }
             .forEach { file in
                 logger.debug("Encrypting file \(file.string.quoted)")
 
