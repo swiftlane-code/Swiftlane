@@ -8,7 +8,7 @@ import SwiftlaneCore
 import Yams
 
 public struct CertsCommandConfig: Codable {
-    public static var repoURLEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.ADP_ARTIFACTS_REPO
+    public static var repoURLEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.CODESIGNING_CERTS_REPO_URL
 
     public let repoURL: URL
     public let repoBranch: String

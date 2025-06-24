@@ -9,7 +9,7 @@ public enum ShellEnvKey: String {
     case JIRA_API_ENDPOINT
     case GIT_AUTHOR_EMAIL
     case GITLAB_GROUP_DEV_TEAM_ID_TO_FETCH_MEMBERS
-    case ADP_ARTIFACTS_REPO
+    case CODESIGNING_CERTS_REPO_URL
 }
 
 extension ShellEnvKey: ShellEnvKeyRepresentable {
