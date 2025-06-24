@@ -119,7 +119,7 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 			logger.important("Uninstalling \(file.lastComponent.string.quoted)...")
 			let fingerprint = try openssl.x509Fingerprint(
 			    inFile: file,
-			    format: .der,
+			    format: nil,
 			    msgDigest: .sha1
 			).replacingOccurrences(of: ":", with: "")
 
@@ -178,7 +178,7 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 		let expectedFingerprints = try certificatesFiles.map {
 			try openssl.x509Fingerprint(
 			    inFile: $0,
-			    format: .der,
+			    format: nil,
 			    msgDigest: .sha1
 			).replacingOccurrences(of: ":", with: "")
 		}
