@@ -90,8 +90,12 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 		try security.unlockKeychain(keychainPath, password: keychainPassword)
 
 		let allFiles = try filesManager.find(certificatesDir)
-		let certificatesFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.certificateFileExtension) }
-		let privateKeysFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.privateKeyExtension) }
+    let certificatesFiles = allFiles.filter { file in
+      CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
+    }
+    let privateKeysFiles = allFiles.filter { file in
+      CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
+    }
 
 		// swiftformat:disable:next wrap
 		logger.important("Going to install \(certificatesFiles.count) certificates and \(privateKeysFiles.count) private keys into \(keychainPath.lastComponent.deletingExtension.string.quoted) keychain.")

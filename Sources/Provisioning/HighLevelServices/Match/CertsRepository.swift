@@ -361,8 +361,12 @@ extension CertsRepository: CertsRepositoryProtocol {
         )
 
         let allFiles = (try? filesManager.find(certsDir)) ?? []
-        let certificatesFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.certificateFileExtension) }
-        let privateKeysFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.privateKeyExtension) }
+        let certificatesFiles = allFiles.filter { file in
+            CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
+        }
+        let privateKeysFiles = allFiles.filter { file in
+            CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
+        }
 
         logger.debug("Found \(certificatesFiles.count) certificates and \(privateKeysFiles.count) private keys...")
 
@@ -386,21 +390,22 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // Filter only cert+key pairs.
+        // todo: REFACTOR THIS
         let certsWithPrivateKeysIDs = certificatesFiles.filter {
-            let privateKeyPath = $0.replacingExtension(with: CertificatesConstants.privateKeyExtension)
+            let privateKeyPath = $0.replacingExtension(with: "")
             return privateKeysFiles.contains(privateKeyPath)
         }.map(\.lastComponent.deletingExtension.string)
 
         // Delete non paired keys and certs.
-        try (certificatesFiles + privateKeysFiles)
+        (certificatesFiles + privateKeysFiles)
             .filter { file in
                 !certsWithPrivateKeysIDs.contains { id in
                     file.lastComponent.deletingExtension.string == id
                 }
             }.forEach {
-                logger.warn("Deleting \($0) because it has no its cert/key counterpart.")
-                try filesManager.delete($0)
-                changedFiles[clonedRepoPath, default: []].append($0)
+                logger.warn("\($0) has no its cert/key counterpart.")
+//                try filesManager.delete($0)
+//                changedFiles[clonedRepoPath, default: []].append($0)
             }
 
         return certsWithPrivateKeysIDs
@@ -418,8 +423,8 @@ extension CertsRepository: CertsRepositoryProtocol {
             certificateType: certificateType
         )
 
-        let certPath = try certsDir.appending(path: certID + CertificatesConstants.certificateFileExtension)
-        let privateKeyPath = try certsDir.appending(path: certID + CertificatesConstants.privateKeyExtension)
+        let certPath = try certsDir.appending(path: certID + "." + CertificatesConstants.certificateFileExtensions[0])
+        let privateKeyPath = try certsDir.appending(path: certID + "." + CertificatesConstants.privateKeyExtensions[0])
 
         try filesManager.write(certPath, data: cert)
         changedFiles[clonedRepoPath, default: []].append(certPath)
