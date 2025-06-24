@@ -9,7 +9,7 @@ pathsConfig:
   mergedJUnitName: "_merged_result.junit"
   mergedXCResultName: null
   xccovFileName: "xccov_report.json"
-  projectFile: "Project.xcodeproj"
+  projectFile: "Ask.xcodeproj"
   derivedDataDir: "../swiftlane_builds/derived_data"
   testRunsDerivedDataDir: "../swiftlane_builds/test_runs_derived_data"
   logsDir: "../swiftlane_builds/logs"
