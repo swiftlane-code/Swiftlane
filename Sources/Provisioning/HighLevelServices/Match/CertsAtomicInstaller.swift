@@ -52,6 +52,12 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 		from profilesDir: AbsolutePath
 	) throws -> [(MobileProvision, installPath: AbsolutePath)] {
 		let validExtension = [".mobileprovision"]
+
+    guard filesManager.directoryExists(profilesDir) else {
+      logger.warn("profiles directory \(profilesDir.string.quoted) does not exist.")
+      return []
+    }
+
 		let profilesFiles = try filesManager.find(profilesDir)
 			.filter { file in
 				validExtension.contains { file.hasSuffix($0) }
@@ -101,6 +107,9 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 		if certificatesFiles.count != privateKeysFiles.count {
 			logger.error("Count of certificates and count private keys aren't equal.")
 		}
+
+    logger.info("certificatesFiles: \(certificatesFiles)")
+    logger.info("privateKeysFiles: \(privateKeysFiles)")
 
 		func uninstall(certificateFile file: AbsolutePath) throws {
 			logger.important("Uninstalling \(file.lastComponent.string.quoted)...")

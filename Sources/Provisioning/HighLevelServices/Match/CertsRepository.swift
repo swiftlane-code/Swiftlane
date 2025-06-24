@@ -261,6 +261,7 @@ extension CertsRepository: CertsRepositoryProtocol {
 
         try (certs + profiles)
             .filter { filesManager.fileExists($0) }
+            .filter { $0.lastComponent.string != "placeholder" }
             .forEach { file in
                 logger.debug("Decrypting file \(file.string.quoted)")
 
