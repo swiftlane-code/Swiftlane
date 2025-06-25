@@ -212,7 +212,7 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
             try security.allowSigningUsingKeysFromKeychain(
                 keychainPath,
                 password: keychainPassword,
-                timeout: 20
+                timeout: 120
             )
         } catch {
             logger.logError(error)
