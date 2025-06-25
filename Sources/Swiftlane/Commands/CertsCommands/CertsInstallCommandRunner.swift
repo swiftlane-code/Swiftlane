@@ -8,18 +8,22 @@ import SwiftlaneCore
 import Yams
 
 public struct CertsCommandConfig: Codable {
-    public static var repoURLEnvKey: ShellEnvKeyRepresentable = ShellEnvKey.CODESIGNING_CERTS_REPO_URL
+    public static var repoURLEnvKey = ShellEnvKey.CODESIGNING_CERTS_REPO_URL
+    public static var repoPasswordEnvKey = ShellEnvKey.CODESIGNING_CERTS_REPO_PASS
 
     public let repoURL: URL
     public let repoBranch: String
     public let keychainName: String
+    public let repoPassword: SensitiveData<String>?
 
     private enum CodingKeys: String, CodingKey {
         case repoBranch, keychainName
     }
 
     public init(from decoder: Decoder) throws {
-        repoURL = try EnvironmentValueReader().url(Self.repoURLEnvKey)
+        let envReader = DependencyResolver.shared.resolve(EnvironmentValueReading.self, .shared)
+        repoURL = try envReader.url(Self.repoURLEnvKey)
+        repoPassword = (try? envReader.string(Self.repoPasswordEnvKey)).map(SensitiveData.init)
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
         repoBranch = try container.decode(String.self, forKey: .repoBranch)
@@ -42,6 +46,7 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
         let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
 
         let repoPassword = try params.options.repoPassword?.sensitiveValue ??
+            commandConfig.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
 
         let keychainPassword = try params.keychainPassword?.sensitiveValue ??

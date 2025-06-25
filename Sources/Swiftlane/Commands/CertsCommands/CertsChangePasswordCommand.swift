@@ -39,6 +39,7 @@ private class Runner: CommandRunnerProtocol {
         let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
 
         let repoPassword = try params.options.repoPassword?.sensitiveValue ??
+            commandConfig.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
 
         let config = CertsChangePasswordTaskConfig(
