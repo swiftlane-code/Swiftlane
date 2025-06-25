@@ -24,7 +24,7 @@ public struct CertsInstallCommand: ParsableCommand, CertsInstallCommandParamsAcc
 
 	@OptionGroup public var options: CertsCommandOptions
 
-	@Option(help: "Keychain password.")
+	@Option(help: "Keychain password. Can be passed via \(CertsCommandConfig.keychainPasswordEnvKey)")
 	public var keychainPassword: SensitiveData<String>?
 
 	@Flag(help: "Force reinstall of certificates and private keys into keychain.")

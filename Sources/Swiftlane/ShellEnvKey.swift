@@ -4,6 +4,8 @@ import SwiftlaneCore
 
 public enum ShellEnvKey: String {
     case CI
+    /// Typically user password is provided this way on CI
+    case CI_USER_PASSWORD
     case GITLAB_API_ENDPOINT
     case PROJECT_ACCESS_TOKEN
     case JIRA_API_TOKEN
