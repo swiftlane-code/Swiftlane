@@ -37,6 +37,7 @@ public enum DependenciesFactory {
             DependencyResolver.shared.register(Logging.self) {
                 mainLogger
             }
+            DependencyResolver.shared.logConfig.loggerInstance = mainLogger
             return
         }
 
