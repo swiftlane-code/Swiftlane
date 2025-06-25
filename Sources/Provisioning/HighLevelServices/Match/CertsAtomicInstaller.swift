@@ -14,7 +14,7 @@ public protocol CertsAtomicInstalling {
         timeout: TimeInterval,
         reinstall: Bool,
         keychainName: String,
-        keychainPassword: String
+        keychainPassword: String?
     ) throws
 }
 
@@ -84,18 +84,22 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 	    timeout: TimeInterval,
 	    reinstall: Bool,
 	    keychainName: String,
-	    keychainPassword: String
+	    keychainPassword: String?
 	) throws {
 		let keychainPath = try security.getKeychainPath(keychainName: keychainName)
-		try security.unlockKeychain(keychainPath, password: keychainPassword)
+        if let keychainPassword {
+            try security.unlockKeychain(keychainPath, password: keychainPassword)
+        } else {
+            logger.warn("Keychain password is not set, keychain will not be unlocked.")
+        }
 
-		let allFiles = try filesManager.find(certificatesDir)
-    let certificatesFiles = allFiles.filter { file in
-      CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
-    }
-    let privateKeysFiles = allFiles.filter { file in
-      CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
-    }
+        let allFiles = try filesManager.find(certificatesDir)
+        let certificatesFiles = allFiles.filter { file in
+            CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
+        }
+        let privateKeysFiles = allFiles.filter { file in
+            CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
+        }
 
 		// swiftformat:disable:next wrap
 		logger.important("Going to install \(certificatesFiles.count) certificates and \(privateKeysFiles.count) private keys into \(keychainPath.lastComponent.deletingExtension.string.quoted) keychain.")
@@ -112,8 +116,8 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 			logger.error("Count of certificates and count private keys aren't equal.")
 		}
 
-    logger.info("certificatesFiles: \(certificatesFiles)")
-    logger.info("privateKeysFiles: \(privateKeysFiles)")
+        logger.info("certificatesFiles: \(certificatesFiles)")
+        logger.info("privateKeysFiles: \(privateKeysFiles)")
 
 		func uninstall(certificateFile file: AbsolutePath) throws {
 			logger.important("Uninstalling \(file.lastComponent.string.quoted)...")
@@ -203,11 +207,16 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 
 		logger.important("Allowing Apple apps to sign things using private keys in keychain...")
 
-		// This can be really time consuming, so we run it only if needed.
-		try security.allowSigningUsingKeysFromKeychain(
-		    keychainPath,
-		    password: keychainPassword
-		)
+        // This can be really time consuming, so we run it only if needed.
+        do {
+            try security.allowSigningUsingKeysFromKeychain(
+                keychainPath,
+                password: keychainPassword,
+                timeout: 20
+            )
+        } catch {
+            logger.logError(error)
+        }
 	}
 }
 

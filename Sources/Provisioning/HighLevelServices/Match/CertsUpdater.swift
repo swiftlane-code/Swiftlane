@@ -11,14 +11,14 @@ public struct CertsInstallConfig {
     public let forceReinstall: Bool
     public let additionalCertificates: [URL]
     public let keychainName: String
-    public let keychainPassword: String
+    public let keychainPassword: String?
 
     public init(
         common: CertsCommonConfig,
         forceReinstall: Bool,
         additionalCertificates: [URL],
         keychainName: String,
-        keychainPassword: String
+        keychainPassword: String?
     ) {
         self.common = common
         self.forceReinstall = forceReinstall

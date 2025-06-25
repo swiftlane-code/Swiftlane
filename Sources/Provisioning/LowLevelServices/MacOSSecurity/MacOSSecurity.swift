@@ -36,7 +36,8 @@ public protocol MacOSSecurityProtocol {
     /// See: https://stackoverflow.com/questions/39868578/security-codesign-in-sierra-keychain-ignores-access-control-settings-and-ui-p
     func allowSigningUsingKeysFromKeychain(
         _ keychainPath: AbsolutePath?,
-        password: String
+        password: String?,
+        timeout: TimeInterval
     ) throws
 
     /// Returns paths to all existing keychains.
@@ -165,19 +166,21 @@ public final class MacOSSecurity: MacOSSecurityProtocol {
     /// See: https://stackoverflow.com/questions/39868578/security-codesign-in-sierra-keychain-ignores-access-control-settings-and-ui-p
     public func allowSigningUsingKeysFromKeychain(
         _ keychainPath: AbsolutePath?,
-        password: String
+        password: String?,
+        timeout: TimeInterval
     ) throws {
         try shell.run(
             [
                 "security set-key-partition-list",
                 "-S apple-tool:,apple:",
                 "-s",
-                "-k '\(password)'",
+                password.map { "-k '\($0)'" },
                 keychainPath?.string.quoted,
-                "1> /dev/null", // Proccessing tons of meaningless stdout text takes a lot of time so we suppress it.
+//                "1> /dev/null", // Proccessing tons of meaningless stdout text takes a lot of time so we suppress it.
             ].compactMap { $0 },
             log: .commandOnly,
-            maskSubstringsInLog: [password]
+            maskSubstringsInLog: [password].compactMap { $0 },
+            executionTimeout: timeout // Prevents being stuck on "Enter password" system UI popup.
         )
     }
 

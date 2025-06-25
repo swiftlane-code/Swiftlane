@@ -44,13 +44,35 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
             }
 
         let passwordReader = DependencyResolver.shared.resolve(PasswordReading.self, .shared)
+        let envReader = DependencyResolver.shared.resolve(EnvironmentValueReading.self, .shared)
+        let logger = DependencyResolver.shared.resolve(Logging.self, .shared)
 
-        let repoPassword = try params.options.repoPassword?.sensitiveValue ??
-            commandConfig.repoPassword?.sensitiveValue ??
-            passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
+        let isCI = (try? envReader.bool(ShellEnvKey.CI)) != nil
 
-        let keychainPassword = try params.keychainPassword?.sensitiveValue ??
-            passwordReader.readPassword(hint: "Enter keychain passwod:")
+        let repoPassword: String = try {
+            if let password = params.options.repoPassword?.sensitiveValue ??
+                commandConfig.repoPassword?.sensitiveValue {
+                return password
+            }
+            if !isCI {
+                return try passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
+            } else {
+                struct BadConfiguration: Error {
+                    var description: String = "CI mode requires --repo-password option. Interactive password prompt on CI is not allowed."
+                }
+                throw BadConfiguration()
+            }
+        }()
+
+        let keychainPassword: String? = try {
+            if !isCI {
+                return try params.keychainPassword?.sensitiveValue ??
+                passwordReader.readPassword(hint: "Enter keychain passwod:")
+            } else {
+                logger.warn("Interactive password prompt on CI is not allowed.")
+                return params.keychainPassword?.sensitiveValue
+            }
+        }()
 
         let installConfig = CertsInstallConfig(
             common: CertsCommonConfig(

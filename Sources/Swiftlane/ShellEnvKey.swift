@@ -3,6 +3,7 @@
 import SwiftlaneCore
 
 public enum ShellEnvKey: String {
+    case CI
     case GITLAB_API_ENDPOINT
     case PROJECT_ACCESS_TOKEN
     case JIRA_API_TOKEN
