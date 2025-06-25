@@ -390,7 +390,7 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // Filter only cert+key pairs.
-        // todo: REFACTOR THIS
+        // TODO: REFACTOR THIS
         let certsWithPrivateKeysIDs = certificatesFiles.filter {
             let privateKeyPath = $0.replacingExtension(with: "")
             return privateKeysFiles.contains(privateKeyPath)

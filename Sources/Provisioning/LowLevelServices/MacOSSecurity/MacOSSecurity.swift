@@ -49,6 +49,8 @@ public protocol MacOSSecurityProtocol {
 
     func getKeychainPath(keychainName: String) throws -> AbsolutePath
 
+    func verifyCertificate(path: AbsolutePath, keychainPath: AbsolutePath) throws -> ShellOutput
+
     func validCodesigningIdentities(
         _ keychainPath: AbsolutePath?
     ) throws -> [CodesigningIdentity]
@@ -58,12 +60,36 @@ public protocol MacOSSecurityProtocol {
 ///
 /// Hint: `$ security help`.
 public final class MacOSSecurity: MacOSSecurityProtocol {
+    public enum CertificateVerificationError: Error, CustomStringConvertible {
+        case verificationFailed(certificate: String, keychain: String, output: String)
+
+        public var description: String {
+            switch self {
+            case let .verificationFailed(certificate, keychain, output):
+                return "Certificate verification failed for \(certificate.quoted) against keychain \(keychain.quoted). Output: \(output)"
+            }
+        }
+    }
+
     private let shell: ShellExecuting
 
     public init(
         shell: ShellExecuting
     ) {
         self.shell = shell
+    }
+
+    public func verifyCertificate(path: AbsolutePath, keychainPath: AbsolutePath) throws -> ShellOutput {
+        try shell.run(
+            [
+                "security",
+                "verify-cert",
+                "-c", path.string,
+                "-k", keychainPath.string,
+            ],
+            log: .commandAndOutput(outputLogLevel: .important),
+            shouldIgnoreNonZeroExitCode: { _, _ in false }
+        )
     }
 
     /// Delete certificate and it's private key from keychain.

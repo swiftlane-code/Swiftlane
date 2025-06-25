@@ -176,15 +176,31 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 				try install(file: file)
 			}
 			.contains(true)
-
+		
+		for cert in certificatesFiles {
+			do {
+				logger.important("Verifying the certificate file post-install...")
+				let output = try security.verifyCertificate(path: cert, keychainPath: keychainPath)
+				logger.important("Result: \(output.stdoutText ?? output.stderrText ?? "No output")")
+			} catch {
+				logger.warn("Warning: Failed to verify the certificate \(cert.string.quoted) post-install.")
+				logger.logError(error)
+			}
+		}
+		
 		let validIdentities = try security.validCodesigningIdentities(keychainPath)
 
-		let expectedFingerprints = try certificatesFiles.map {
-			try openssl.x509Fingerprint(
-			    inFile: $0,
-			    format: nil,
-			    msgDigest: .sha1
-			).replacingOccurrences(of: ":", with: "")
+		let expectedFingerprints: [String] = certificatesFiles.map {
+			do {
+				return try openssl.x509Fingerprint(
+					inFile: $0,
+					format: nil,
+					msgDigest: .sha1
+				).replacingOccurrences(of: ":", with: "")
+			} catch {
+				logger.logError(error)
+				return "unknown"
+			}
 		}
 
 		let allInstalledAreValid = Set(validIdentities.map(\.fingerprint)).isSuperset(of: Set(expectedFingerprints))
