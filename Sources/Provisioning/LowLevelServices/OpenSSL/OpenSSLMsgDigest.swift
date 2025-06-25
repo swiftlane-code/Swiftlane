@@ -18,6 +18,7 @@ public enum OpenSSLMsgDigest: String {
     case sha384
     case sha512
     case whirlpool
+    case pbkdf2
 
     /// Returns `"-" + rawValue`
     public var asCliOption: String {

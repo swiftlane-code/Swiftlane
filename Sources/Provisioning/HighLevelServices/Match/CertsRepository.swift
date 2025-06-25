@@ -190,7 +190,7 @@ extension CertsRepository: CertsRepositoryProtocol {
                     cipher: .aes_256_cbc,
                     password: encryptionPassword,
                     base64: true,
-                    msgDigest: .md5
+                    msgDigest: .pbkdf2
                 )
 
                 if supposeEverythingChanged {
@@ -285,7 +285,7 @@ extension CertsRepository: CertsRepositoryProtocol {
                     cipher: .aes_256_cbc,
                     password: encryptionPassword,
                     base64: true,
-                    msgDigest: .md5
+                    msgDigest: .pbkdf2
                 )
             }
 
