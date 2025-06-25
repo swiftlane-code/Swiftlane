@@ -91,7 +91,8 @@ public class CertsInstallCommandRunner: CommandRunnerProtocol {
             forceReinstall: params.forceReinstall,
             additionalCertificates: additionalCertificates,
             keychainName: commandConfig.keychainName,
-            keychainPassword: keychainPassword
+            keychainPassword: keychainPassword,
+            authKeyOutputDirectory: params.authKeyOutputDirectory
         )
 
         let task = TasksFactory.makeCertsInstallTask(

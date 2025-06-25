@@ -15,19 +15,22 @@ public class CertsInstaller: CertsInstalling {
     private let atomicInstaller: CertsAtomicInstalling
     private let filesManager: FSManaging
     private let remoteCertInstaller: RemoteCertificateInstalling
+    private let authKeysInstaller: AuthKeysInstalling
 
     public init(
         logger: Logging,
         repo: CertsRepositoryProtocol,
         atomicInstaller: CertsAtomicInstalling,
         filesManager: FSManaging,
-        remoteCertInstaller: RemoteCertificateInstalling
+        remoteCertInstaller: RemoteCertificateInstalling,
+        authKeysInstaller: AuthKeysInstalling
     ) {
         self.logger = logger
         self.repo = repo
         self.atomicInstaller = atomicInstaller
         self.filesManager = filesManager
         self.remoteCertInstaller = remoteCertInstaller
+        self.authKeysInstaller = authKeysInstaller
     }
 
     public func installCertificatesAndProfiles(config: CertsInstallConfig) throws
@@ -79,6 +82,21 @@ public class CertsInstaller: CertsInstalling {
         )
 
         logger.success("Done installing profiles and certificates.")
+
+        let authKeysPath = try clonedRepoPath.appending(path: "authKeys")
+        if filesManager.directoryExists(authKeysPath) {
+            if let authKeyOutputDirectory = config.authKeyOutputDirectory {
+                _ = try authKeysInstaller.installAuthKeys(
+                    from: authKeysPath,
+                    to: authKeyOutputDirectory,
+                    overwrite: config.forceReinstall
+                )
+            } else {
+                logger.error("Directory \(authKeysPath) exists but no output directory was specified for auth keys.")
+            }
+        } else {
+            logger.debug("\(authKeysPath) does not exist. Skipping auth keys installation.")
+        }
 
         return installedProfiles
     }

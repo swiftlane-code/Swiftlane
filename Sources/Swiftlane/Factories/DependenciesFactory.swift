@@ -314,7 +314,15 @@ public enum DependenciesFactory {
                 repo: resolve(), // problem
                 atomicInstaller: resolve(),
                 filesManager: resolve(),
-                remoteCertInstaller: resolve()
+                remoteCertInstaller: resolve(),
+                authKeysInstaller: resolve()
+            )
+        }
+
+        DependencyResolver.shared.register(AuthKeysInstalling.self) {
+            AuthKeysInstaller(
+                logger: resolve(),
+                filesManager: resolve()
             )
         }
 

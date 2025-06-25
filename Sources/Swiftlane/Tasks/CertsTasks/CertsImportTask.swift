@@ -69,10 +69,11 @@ public final class CertsImportTask {
 
         for filePath in config.certsToImport {
             let filePathAbs = filePath.makeAbsoluteIfIsnt(relativeTo: try filesManager.pwd())
-            let importedPathPart = try RelativePath("certs").appending(path: filePath.lastComponent)
+            let targetDir = filePath.pathExtension == "p8" ? "authKeys" : "certs"
+            let importedPathPart = try RelativePath(targetDir).appending(path: filePath.lastComponent)
             let importedPath: AbsolutePath = clonedRepoPath.appending(path: importedPathPart)
 
-            logger.important("Will copy \(filePathAbs.string.quoted) to \(importedPath.string.quoted)")
+            logger.important("Will add \(filePathAbs.string.quoted) to \(importedPath.string.quoted)")
 
             if filesManager.fileExists(importedPath) {
                 if config.allowOverwrite {
@@ -83,6 +84,9 @@ public final class CertsImportTask {
                 }
             }
 
+            if !filesManager.directoryExists(importedPath.deletingLastComponent) {
+                try filesManager.mkdir(importedPath.deletingLastComponent)
+            }
             try filesManager.copy(filePathAbs, to: importedPath)
             repo.markFileAsChanged(clonedRepoPath: clonedRepoPath, filePath: importedPathPart)
         }

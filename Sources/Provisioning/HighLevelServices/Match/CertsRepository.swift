@@ -92,6 +92,8 @@ public class CertsRepository {
     private let config: Config
     private var changedFiles: [AbsolutePath: [AbsolutePath]] = [:]
 
+    private let directoriesToEncrypt: [String] = ["certs", "profiles", "authKeys"]
+
     public init(
         git: GitProtocol,
         openssl: OpenSSLServicing,
@@ -159,6 +161,24 @@ extension CertsRepository: CertsRepositoryProtocol {
             .append(clonedRepoPath.appending(path: filePath))
     }
 
+    private func findAllFiles(in clonedRepoPath: AbsolutePath) throws -> [AbsolutePath] {
+        let allFiles = try directoriesToEncrypt
+            .flatMap { name in
+                let path = try clonedRepoPath.appending(path: name)
+                if filesManager.directoryExists(path) {
+                    return try filesManager.find(path)
+                }
+                return []
+            }
+            .filter { filesManager.fileExists($0) } // skip directories
+            .filter { $0.lastComponent.string != "placeholder" }
+
+        logger.debug("Repo contains \(allFiles.count) files.")
+        logger.verbose(allFiles.description)
+
+        return allFiles
+    }
+
     public func encryptRepoAndCommitChanges(
         clonedRepoPath: AbsolutePath,
         encryptionPassword: String,
@@ -172,15 +192,9 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // encrypt
-        let certsPath = try clonedRepoPath.appending(path: "certs")
-        let profilesPath = try clonedRepoPath.appending(path: "profiles")
+        let allFiles = try findAllFiles(in: clonedRepoPath)
 
-        let certs = try filesManager.directoryExists(certsPath) ? filesManager.find(certsPath) : []
-        let profiles = try filesManager.directoryExists(profilesPath) ? filesManager.find(profilesPath) : []
-
-        try (certs + profiles)
-            .filter { filesManager.fileExists($0) } // skip directories
-            .filter { $0.lastComponent.string != "placeholder" }
+        try allFiles
             .forEach { file in
                 logger.debug("Encrypting file \(file.string.quoted)")
 
@@ -267,15 +281,9 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // decrypt
-        let certsPath = try clonedRepoPath.appending(path: "certs")
-        let profilesPath = try clonedRepoPath.appending(path: "profiles")
+        let allFiles = try findAllFiles(in: clonedRepoPath)
 
-        let certs = try filesManager.directoryExists(certsPath) ? filesManager.find(certsPath) : []
-        let profiles = try filesManager.directoryExists(profilesPath) ? filesManager.find(profilesPath) : []
-
-        try (certs + profiles)
-            .filter { filesManager.fileExists($0) }
-            .filter { $0.lastComponent.string != "placeholder" }
+        try allFiles
             .forEach { file in
                 logger.debug("Decrypting file \(file.string.quoted)")
 

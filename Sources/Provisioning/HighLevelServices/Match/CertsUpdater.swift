@@ -12,19 +12,22 @@ public struct CertsInstallConfig {
     public let additionalCertificates: [URL]
     public let keychainName: String
     public let keychainPassword: String?
+    public var authKeyOutputDirectory: AbsolutePath?
 
     public init(
         common: CertsCommonConfig,
         forceReinstall: Bool,
         additionalCertificates: [URL],
         keychainName: String,
-        keychainPassword: String?
+        keychainPassword: String?,
+        authKeyOutputDirectory: AbsolutePath?
     ) {
         self.common = common
         self.forceReinstall = forceReinstall
         self.additionalCertificates = additionalCertificates
         self.keychainName = keychainName
         self.keychainPassword = keychainPassword
+        self.authKeyOutputDirectory = authKeyOutputDirectory
     }
 }
 
