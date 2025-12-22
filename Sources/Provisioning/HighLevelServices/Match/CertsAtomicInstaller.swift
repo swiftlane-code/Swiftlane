@@ -45,13 +45,13 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 	/// Recursively traverses `profilesDir`
 	/// and copies all found profiles into `~/Library/MobileDevice/Provisioning Profiles/`.
 	///
-	///    Valid profile extensions: `".mobileprovision"`.
+	///    Valid profile extensions: `".mobileprovision"` (iOS), `".provisionprofile"` (macOS).
 	///
 	/// - Parameter profilesDir: directory where to look (recursively) for profiles.
 	public func installProvisionProfiles(
 		from profilesDir: AbsolutePath
 	) throws -> [(MobileProvision, installPath: AbsolutePath)] {
-		let validExtension = [".mobileprovision"]
+		let validExtension = [".mobileprovision", ".provisionprofile"]
 
     guard filesManager.directoryExists(profilesDir) else {
       logger.warn("profiles directory \(profilesDir.string.quoted) does not exist.")

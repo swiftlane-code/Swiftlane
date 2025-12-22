@@ -3,13 +3,11 @@
 import Foundation
 import SwiftlaneCore
 
-/// iOS Mobile Provisioning Profile data model.
+/// Mobile Provisioning Profile data model.
 ///
-/// Can be parsed from `.mobileprovision` file (see `MobileProvisionParser`).
+/// Can be parsed from `.mobileprovision` (iOS) or `.provisionprofile` (macOS) file (see `MobileProvisionParser`).
 ///
-/// Info: MacOS Provisioning Profile have different file extension `.provisionprofile`.
-/// MacOS Provisioning Profiles have slightly different data structure
-/// and they should be installed in a different way.
+/// Supports both iOS and macOS provisioning profiles.
 public struct MobileProvision: Codable, Equatable {
     public let AppIDName: String
     public let ApplicationIdentifierPrefix: [String]

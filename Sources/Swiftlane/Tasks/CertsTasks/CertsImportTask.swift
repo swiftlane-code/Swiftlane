@@ -69,7 +69,15 @@ public final class CertsImportTask {
 
         for filePath in config.certsToImport {
             let filePathAbs = filePath.makeAbsoluteIfIsnt(relativeTo: try filesManager.pwd())
-            let targetDir = filePath.pathExtension == "p8" ? "authKeys" : "certs"
+            let targetDir: String
+            switch filePath.pathExtension {
+            case "p8":
+                targetDir = "authKeys"
+            case "mobileprovision", "provisionprofile":
+                targetDir = "profiles"
+            default:
+                targetDir = "certs"
+            }
             let importedPathPart = try RelativePath(targetDir).appending(path: filePath.lastComponent)
             let importedPath: AbsolutePath = clonedRepoPath.appending(path: importedPathPart)
 

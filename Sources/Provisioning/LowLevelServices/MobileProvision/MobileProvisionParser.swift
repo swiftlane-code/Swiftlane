@@ -22,14 +22,14 @@ public final class MobileProvisionParser {
 }
 
 extension MobileProvisionParser: MobileProvisionParsing {
-    /// Parses a `.mobileprovision` file.
-    /// - Parameter provisionPath: path to `.mobileprovision` file.
-    ///   Asserted that `provisionPath` has `.mobileprovision` suffix.
+    /// Parses a `.mobileprovision` (iOS) or `.provisionprofile` (macOS) file.
+    /// - Parameter provisionPath: path to provisioning profile file.
+    ///   Asserted that `provisionPath` has `.mobileprovision` or `.provisionprofile` suffix.
     public func parse(provisionPath: AbsolutePath) throws -> MobileProvision {
-        let expectedExtension = ".mobileprovision"
+        let validExtensions = [".mobileprovision", ".provisionprofile"]
 
-        if !provisionPath.hasSuffix(expectedExtension) {
-            let msg = "\(provisionPath.string.quoted) is not a path to \(expectedExtension) file."
+        if !validExtensions.contains(where: { provisionPath.hasSuffix($0) }) {
+            let msg = "\(provisionPath.string.quoted) is not a valid provisioning profile file. Expected extensions: \(validExtensions.joined(separator: ", "))"
             logger.error(msg)
             assertionFailure(msg)
         }

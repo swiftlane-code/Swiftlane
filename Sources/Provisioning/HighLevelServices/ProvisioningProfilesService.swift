@@ -49,7 +49,10 @@ public final class ProvisioningProfilesService {
     }
 
     private func validFileExtensions() -> [StringMatcher] {
-        [.hasSuffix(".mobileprovision")]
+        [
+            .hasSuffix(".mobileprovision"), // iOS, iPadOS, tvOS, watchOS
+            .hasSuffix(".provisionprofile")  // macOS
+        ]
     }
 }
 
