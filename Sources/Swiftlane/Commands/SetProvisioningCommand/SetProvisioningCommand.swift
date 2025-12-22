@@ -27,7 +27,7 @@ public struct SetProvisioningCommand: ParsableCommand, SetProvisioningCommandPar
     public var buildConfiguration: String
 
     @Option(
-        help: "Provisioning profile name. The profile should be installed in '~/Library/MobileDevice/Provisioning Profiles/'."
+        help: "Provisioning profile name. The profile should be installed in '~/Library/Developer/Xcode/UserData/Provisioning Profiles'."
     )
     public var provisionProfileName: String
 

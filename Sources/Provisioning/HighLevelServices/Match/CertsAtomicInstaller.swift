@@ -43,7 +43,7 @@ public class CertsAtomicInstaller {
 // swiftformat:disable indent
 extension CertsAtomicInstaller: CertsAtomicInstalling {
 	/// Recursively traverses `profilesDir`
-	/// and copies all found profiles into `~/Library/MobileDevice/Provisioning Profiles/`.
+	/// and copies all found profiles into `~/Library/Developer/Xcode/UserData/Provisioning Profiles`.
 	///
 	///    Valid profile extensions: `".mobileprovision"` (iOS), `".provisionprofile"` (macOS).
 	///
