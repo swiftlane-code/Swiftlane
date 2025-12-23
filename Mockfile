@@ -28,6 +28,7 @@ mocky.Swiftlane:
   - Networking
   - Guardian
   - PerfectRainbow
+  - SwiftyMockyXCTest
   
 mocky.Guardian:
   sources:
@@ -55,6 +56,7 @@ mocky.Guardian:
   - Combine
   - Networking
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.Git:
   sources:
@@ -70,6 +72,7 @@ mocky.Git:
   - Foundation
   - SwiftlaneCore
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.GitLabAPI:
   sources:
@@ -88,6 +91,7 @@ mocky.GitLabAPI:
   - Combine
   - Networking
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.JiraAPI:
   sources:
@@ -106,6 +110,7 @@ mocky.JiraAPI:
   - Combine
   - Networking
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.Networking:
   sources:
@@ -121,6 +126,7 @@ mocky.Networking:
   - Networking
   - Foundation
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.Simulator:
   sources:
@@ -135,6 +141,7 @@ mocky.Simulator:
   - SwiftlaneCore
   - Foundation
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.Xcodebuild:
   sources:
@@ -151,6 +158,7 @@ mocky.Xcodebuild:
   - Combine
   - SwiftlaneCore
   - PerfectRainbow
+  - SwiftyMockyXCTest
 
 mocky.Provisioning:
   sources:
@@ -170,4 +178,5 @@ mocky.Provisioning:
   - Git
   - AppStoreConnectAPI
   - PerfectRainbow
+  - SwiftyMockyXCTest
 

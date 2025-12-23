@@ -5,6 +5,7 @@ import SwiftlaneCore
 import SwiftlaneCoreMocks
 import SwiftlaneUnitTestTools
 import SwiftyMocky
+import SwiftyMockyXCTest
 import XCTest
 
 @testable import Simulator
