@@ -72,5 +72,14 @@ public class RemoteCertificateInstaller: RemoteCertificateInstalling {
         } else {
             logger.success("Certificate from \(url.absoluteString.quoted) already exists in \(keychainPath).")
         }
+
+        do {
+            logger.important("Verifying the certificate file post-install...")
+            let output = try security.verifyCertificate(path: tmpPath, keychainPath: keychainPath)
+            logger.important("Result: \(output.stdoutText ?? output.stderrText ?? "No output")")
+        } catch {
+            logger.warn("Warning: Failed to verify the certificate \(url.absoluteString.quoted) post-install.")
+            logger.logError(error)
+        }
     }
 }

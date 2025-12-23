@@ -42,8 +42,8 @@ class OpenSSLServiceTests: XCTestCase {
         let certPath = try Bundle.module.getStubURL(path: "self-signed-ssl.cer").path
 
         // when
-        let fingerprint_sha1 = try openssl.x509Fingerprint(inFile: AbsolutePath(certPath), format: .der, msgDigest: .sha1)
-        let fingerprint_md5 = try openssl.x509Fingerprint(inFile: AbsolutePath(certPath), format: .der, msgDigest: .md5)
+        let fingerprint_sha1 = try openssl.x509Fingerprint(inFile: AbsolutePath(certPath), format: nil, msgDigest: .sha1)
+        let fingerprint_md5 = try openssl.x509Fingerprint(inFile: AbsolutePath(certPath), format: nil, msgDigest: .md5)
 
         // then
         XCTAssertEqual(fingerprint_sha1, "A2:4C:95:25:30:EC:CF:00:30:B0:C4:C8:1E:B4:7F:19:A7:EF:1D:8B")

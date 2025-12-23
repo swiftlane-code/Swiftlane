@@ -6,6 +6,11 @@ import SwiftlaneCore
 
 // sourcery: AutoMockable
 public protocol CertsRepositoryProtocol {
+    func markFileAsChanged(
+        clonedRepoPath: AbsolutePath,
+        filePath: RelativePath
+    )
+
     func encryptRepoAndCommitChanges(
         clonedRepoPath: AbsolutePath,
         encryptionPassword: String,
@@ -87,6 +92,8 @@ public class CertsRepository {
     private let config: Config
     private var changedFiles: [AbsolutePath: [AbsolutePath]] = [:]
 
+    private let directoriesToEncrypt: [String] = ["certs", "profiles", "authKeys"]
+
     public init(
         git: GitProtocol,
         openssl: OpenSSLServicing,
@@ -146,6 +153,32 @@ public class CertsRepository {
 }
 
 extension CertsRepository: CertsRepositoryProtocol {
+    public func markFileAsChanged(
+        clonedRepoPath: AbsolutePath,
+        filePath: RelativePath
+    ) {
+        changedFiles[clonedRepoPath, default: []]
+            .append(clonedRepoPath.appending(path: filePath))
+    }
+
+    private func findAllFiles(in clonedRepoPath: AbsolutePath) throws -> [AbsolutePath] {
+        let allFiles = try directoriesToEncrypt
+            .flatMap { name in
+                let path = try clonedRepoPath.appending(path: name)
+                if filesManager.directoryExists(path) {
+                    return try filesManager.find(path)
+                }
+                return []
+            }
+            .filter { filesManager.fileExists($0) } // skip directories
+            .filter { $0.lastComponent.string != "placeholder" }
+
+        logger.debug("Repo contains \(allFiles.count) files.")
+        logger.verbose(allFiles.description)
+
+        return allFiles
+    }
+
     public func encryptRepoAndCommitChanges(
         clonedRepoPath: AbsolutePath,
         encryptionPassword: String,
@@ -159,14 +192,9 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // encrypt
-        let certsPath = try clonedRepoPath.appending(path: "certs")
-        let profilesPath = try clonedRepoPath.appending(path: "profiles")
+        let allFiles = try findAllFiles(in: clonedRepoPath)
 
-        let certs = try filesManager.directoryExists(certsPath) ? filesManager.find(certsPath) : []
-        let profiles = try filesManager.directoryExists(profilesPath) ? filesManager.find(profilesPath) : []
-
-        try (certs + profiles)
-            .filter { filesManager.fileExists($0) } // skip directories
+        try allFiles
             .forEach { file in
                 logger.debug("Encrypting file \(file.string.quoted)")
 
@@ -176,7 +204,7 @@ extension CertsRepository: CertsRepositoryProtocol {
                     cipher: .aes_256_cbc,
                     password: encryptionPassword,
                     base64: true,
-                    msgDigest: .md5
+                    msgDigest: .pbkdf2
                 )
 
                 if supposeEverythingChanged {
@@ -253,14 +281,9 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // decrypt
-        let certsPath = try clonedRepoPath.appending(path: "certs")
-        let profilesPath = try clonedRepoPath.appending(path: "profiles")
+        let allFiles = try findAllFiles(in: clonedRepoPath)
 
-        let certs = try filesManager.directoryExists(certsPath) ? filesManager.find(certsPath) : []
-        let profiles = try filesManager.directoryExists(profilesPath) ? filesManager.find(profilesPath) : []
-
-        try (certs + profiles)
-            .filter { filesManager.fileExists($0) }
+        try allFiles
             .forEach { file in
                 logger.debug("Decrypting file \(file.string.quoted)")
 
@@ -270,7 +293,7 @@ extension CertsRepository: CertsRepositoryProtocol {
                     cipher: .aes_256_cbc,
                     password: encryptionPassword,
                     base64: true,
-                    msgDigest: .md5
+                    msgDigest: .pbkdf2
                 )
             }
 
@@ -346,8 +369,12 @@ extension CertsRepository: CertsRepositoryProtocol {
         )
 
         let allFiles = (try? filesManager.find(certsDir)) ?? []
-        let certificatesFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.certificateFileExtension) }
-        let privateKeysFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.privateKeyExtension) }
+        let certificatesFiles = allFiles.filter { file in
+            CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
+        }
+        let privateKeysFiles = allFiles.filter { file in
+            CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
+        }
 
         logger.debug("Found \(certificatesFiles.count) certificates and \(privateKeysFiles.count) private keys...")
 
@@ -371,21 +398,22 @@ extension CertsRepository: CertsRepositoryProtocol {
         }
 
         // Filter only cert+key pairs.
+        // TODO: REFACTOR THIS
         let certsWithPrivateKeysIDs = certificatesFiles.filter {
-            let privateKeyPath = $0.replacingExtension(with: CertificatesConstants.privateKeyExtension)
+            let privateKeyPath = $0.replacingExtension(with: "")
             return privateKeysFiles.contains(privateKeyPath)
         }.map(\.lastComponent.deletingExtension.string)
 
         // Delete non paired keys and certs.
-        try (certificatesFiles + privateKeysFiles)
+        (certificatesFiles + privateKeysFiles)
             .filter { file in
                 !certsWithPrivateKeysIDs.contains { id in
                     file.lastComponent.deletingExtension.string == id
                 }
             }.forEach {
-                logger.warn("Deleting \($0) because it has no its cert/key counterpart.")
-                try filesManager.delete($0)
-                changedFiles[clonedRepoPath, default: []].append($0)
+                logger.warn("\($0) has no its cert/key counterpart.")
+//                try filesManager.delete($0)
+//                changedFiles[clonedRepoPath, default: []].append($0)
             }
 
         return certsWithPrivateKeysIDs
@@ -403,8 +431,8 @@ extension CertsRepository: CertsRepositoryProtocol {
             certificateType: certificateType
         )
 
-        let certPath = try certsDir.appending(path: certID + CertificatesConstants.certificateFileExtension)
-        let privateKeyPath = try certsDir.appending(path: certID + CertificatesConstants.privateKeyExtension)
+        let certPath = try certsDir.appending(path: certID + "." + CertificatesConstants.certificateFileExtensions[0])
+        let privateKeyPath = try certsDir.appending(path: certID + "." + CertificatesConstants.privateKeyExtensions[0])
 
         try filesManager.write(certPath, data: cert)
         changedFiles[clonedRepoPath, default: []].append(certPath)

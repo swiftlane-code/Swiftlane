@@ -15,24 +15,44 @@ public class CertsInstaller: CertsInstalling {
     private let atomicInstaller: CertsAtomicInstalling
     private let filesManager: FSManaging
     private let remoteCertInstaller: RemoteCertificateInstalling
+    private let authKeysInstaller: AuthKeysInstalling
 
     public init(
         logger: Logging,
         repo: CertsRepositoryProtocol,
         atomicInstaller: CertsAtomicInstalling,
         filesManager: FSManaging,
-        remoteCertInstaller: RemoteCertificateInstalling
+        remoteCertInstaller: RemoteCertificateInstalling,
+        authKeysInstaller: AuthKeysInstalling
     ) {
         self.logger = logger
         self.repo = repo
         self.atomicInstaller = atomicInstaller
         self.filesManager = filesManager
         self.remoteCertInstaller = remoteCertInstaller
+        self.authKeysInstaller = authKeysInstaller
     }
 
     public func installCertificatesAndProfiles(config: CertsInstallConfig) throws
         -> [(MobileProvision, installPath: AbsolutePath)]
     {
+        let certificateImportTimeout: TimeInterval = 5
+
+        if !config.additionalCertificates.isEmpty {
+            logger.important("Installing additional certificates.")
+
+            try config.additionalCertificates.forEach {
+                try remoteCertInstaller.installCertificate(
+                    from: $0,
+                    downloadTimeout: 5,
+                    keychainName: config.keychainName,
+                    installTimeout: certificateImportTimeout
+                )
+            }
+
+            logger.success("Done installing additional certificates.")
+        }
+
         let clonedRepoPath = try config.common.clonedRepoDir.appending(path: "certs-repo_" + Date().full_custom)
 
         defer {
@@ -53,7 +73,6 @@ public class CertsInstaller: CertsInstalling {
             from: clonedRepoPath.appending(path: "profiles")
         )
 
-        let certificateImportTimeout: TimeInterval = 5
         try atomicInstaller.installCertificates(
             from: clonedRepoPath.appending(path: "certs"),
             timeout: certificateImportTimeout,
@@ -64,19 +83,19 @@ public class CertsInstaller: CertsInstalling {
 
         logger.success("Done installing profiles and certificates.")
 
-        if !config.additionalCertificates.isEmpty {
-            logger.important("Installing additional certificates.")
-
-            try config.additionalCertificates.forEach {
-                try remoteCertInstaller.installCertificate(
-                    from: $0,
-                    downloadTimeout: 5,
-                    keychainName: config.keychainName,
-                    installTimeout: certificateImportTimeout
+        let authKeysPath = try clonedRepoPath.appending(path: "authKeys")
+        if filesManager.directoryExists(authKeysPath) {
+            if let authKeyOutputDirectory = config.authKeyOutputDirectory {
+                _ = try authKeysInstaller.installAuthKeys(
+                    from: authKeysPath,
+                    to: authKeyOutputDirectory,
+                    overwrite: config.forceReinstall
                 )
+            } else {
+                logger.error("Directory \(authKeysPath) exists but no output directory was specified for auth keys.")
             }
-
-            logger.success("Done installing additional certificates.")
+        } else {
+            logger.debug("\(authKeysPath) does not exist. Skipping auth keys installation.")
         }
 
         return installedProfiles

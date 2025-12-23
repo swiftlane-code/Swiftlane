@@ -131,17 +131,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlane-code/SwiftlaneCore.git",
       "state" : {
-        "revision" : "34d29d337f2b6a160c2e23d05a1b09efd553adeb",
-        "version" : "0.9.1"
+        "branch" : "main",
+        "revision" : "c9eb15a59d532ecbf6be7b9eae4a60778eb9e477"
       }
     },
     {
       "identity" : "swiftymocky",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/nstmrt/SwiftyMocky.git",
+      "location" : "https://github.com/swiftlane-code/SwiftyMocky",
       "state" : {
-        "revision" : "47c5e5b9d1b9d2b25ca30e4664c53719b624ce7b",
-        "version" : "4.1.1"
+        "branch" : "master",
+        "revision" : "425e5543f09194fef732083e8b5655bf7eec6e0d"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams.git",
       "state" : {
-        "revision" : "9ff1cc9327586db4e0c8f46f064b6a82ec1566fa",
-        "version" : "4.0.6"
+        "revision" : "3d6871d5b4a5cd519adf233fbb576e0a2af71c17",
+        "version" : "5.4.0"
       }
     },
     {

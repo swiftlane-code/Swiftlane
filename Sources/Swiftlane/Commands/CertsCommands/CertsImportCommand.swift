@@ -7,21 +7,27 @@ import Provisioning
 import SwiftlaneCore
 import Yams
 
-public protocol CertsChangePasswordCommandParamsAccessing {
+public protocol CertsImportCommandParamsAccessing {
     var options: CertsCommandOptions { get }
 
     var commonOptions: CommonOptions { get }
 }
 
-public struct CertsChangePasswordCommand: ParsableCommand, CertsChangePasswordCommandParamsAccessing {
+public struct CertsImportCommand: ParsableCommand, CertsImportCommandParamsAccessing {
     public static var configuration = CommandConfiguration(
-        commandName: "changepass",
-        abstract: "Reencrypt certificates repo using a new password."
+        commandName: "add",
+        abstract: "Manually add new certificates to the repo."
     )
 
     @OptionGroup public var options: CertsCommandOptions
 
     @OptionGroup public var commonOptions: CommonOptions
+
+    @Flag(help: "Force import of certificates, even if they already exist.")
+    public var force: Bool = false
+
+    @Argument(help: "Path to the certificate to add to the repo.")
+    public var certsToImport: [Path]
 
     public init() {}
 
@@ -32,7 +38,7 @@ public struct CertsChangePasswordCommand: ParsableCommand, CertsChangePasswordCo
 
 private class Runner: CommandRunnerProtocol {
     public func run(
-        params: CertsChangePasswordCommand,
+        params: CertsImportCommand,
         commandConfig: CertsCommandConfig,
         sharedConfig _: Void
     ) throws {
@@ -42,16 +48,18 @@ private class Runner: CommandRunnerProtocol {
             commandConfig.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
 
-        let config = CertsChangePasswordTaskConfig(
+        let config = CertsImportTaskConfig(
             common: CertsCommonConfig(
                 repoURL: commandConfig.repoURL,
                 clonedRepoDir: params.options.clonedRepoDir,
                 repoBranch: commandConfig.repoBranch,
                 encryptionPassword: repoPassword
-            )
+            ),
+            certsToImport: params.certsToImport,
+            allowOverwrite: params.force
         )
 
-        let task = try TasksFactory.makeCertsChangePasswordTask(config: config)
+        let task = try TasksFactory.makeCertsImportTask(config: config)
 
         try task.run()
     }

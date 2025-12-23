@@ -14,6 +14,6 @@ public enum ProvisionProfileType: String {
 }
 
 internal enum CertificatesConstants {
-    static let certificateFileExtension = ".cer"
-    static let privateKeyExtension = ".p12"
+    static let certificateFileExtensions = ["cer", "crt"]
+    static let privateKeyExtensions = ["p12", "pem", "key"]
 }

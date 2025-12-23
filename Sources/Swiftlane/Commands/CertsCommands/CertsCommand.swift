@@ -14,7 +14,7 @@ public struct CertsCommandOptions: ParsableArguments {
     @Option(help: "Where to temporary store cloned certificates repo.")
     public var clonedRepoDir: AbsolutePath
 
-    @Option(help: "Password used to decrypt certificates repo.")
+    @Option(help: "Password used to decrypt certificates repo. Can be passed via \(CertsCommandConfig.repoPasswordEnvKey).")
     public var repoPassword: SensitiveData<String>?
 
     public init() {}
@@ -28,6 +28,7 @@ public struct CertsCommand: ParsableCommand {
             CertsInstallCommand.self,
             CertsUpdateCommand.self,
             CertsChangePasswordCommand.self,
+            CertsImportCommand.self,
         ],
         defaultSubcommand: CertsInstallCommand.self
     )

@@ -408,6 +408,21 @@ public enum TasksFactory {
         return task
     }
 
+    public static func makeCertsImportTask(
+        config: CertsImportTaskConfig
+    ) throws -> CertsImportTask {
+        let task = CertsImportTask(
+            logger: DependenciesFactory.resolve(),
+            shell: DependenciesFactory.resolve(),
+            repo: DependenciesFactory.resolve(),
+            passwordReader: DependenciesFactory.resolve(),
+            filesManager: DependenciesFactory.resolve(),
+            config: config
+        )
+
+        return task
+    }
+
     public static func makeCertsUpdateTask(
         authKeyPath: AbsolutePath,
         authKeyIssuerID: SensitiveData<String>,

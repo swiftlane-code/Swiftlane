@@ -47,7 +47,7 @@ var targets: [Target] = [
         name: "SwiftlaneTests",
         dependencies: mainTargetDependencies + [
             "Swiftlane",
-            "SwiftyMocky",
+            .product(name: "SwiftyMockyXCTest", package: "SwiftyMocky"),
             SwiftlaneCore.unitTestTools,
             SwiftlaneCore.mocks,
         ],
@@ -137,16 +137,16 @@ addProductAndTargets(
 
 let package = Package(
     name: "Swiftlane",
-    platforms: [.macOS(.v12)],
+    platforms: [.macOS("14.0")],
     products: products,
     dependencies: [
-        .package(url: "https://github.com/jpsim/Yams.git", from: "4.0.6"),
+        .package(url: "https://github.com/jpsim/Yams.git", from: "5.0.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", "1.1.4" ..< "1.2.0"), // 1.2.0 Bugs (default value for @Flag)
         .package(url: "https://github.com/nstmrt/PerfectRainbow", from: "4.0.2"),
-        .package(url: "https://github.com/nstmrt/SwiftyMocky.git", from: "4.1.1"),
+        .package(url: "https://github.com/swiftlane-code/SwiftyMocky", branch: "master"),
         .package(url: "https://github.com/MaxDesiatov/XMLCoder", from: "0.13.1"),
         .package(url: "https://github.com/swiftlane-code/AppStoreConnectJWT.git", from: "0.9.0"),
-        .package(url: "https://github.com/swiftlane-code/SwiftlaneCore.git", from: "0.9.1"),
+        .package(url: "https://github.com/swiftlane-code/SwiftlaneCore.git", branch: "main"),
         .package(url: "https://github.com/tuist/XcodeProj.git", from: "8.7.1"),
         .package(url: "https://github.com/MortenGregersen/Bagbutik", from: "3.0.1"),
     ],
@@ -172,7 +172,7 @@ func addProductAndTargets(
     testResources: [Resource]? = nil,
     testDependencies: [Target.Dependency] = [],
     testsTargetNameSuffix: String? = "Tests",
-    mocksDependency: Target.Dependency = "SwiftyMocky"
+    mocksDependency: Target.Dependency = .product(name: "SwiftyMockyXCTest", package: "SwiftyMocky")
 ) {
     products.append(.library(name: name, type: .static, targets: [name]))
 

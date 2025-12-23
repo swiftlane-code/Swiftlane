@@ -37,6 +37,7 @@ public enum DependenciesFactory {
             DependencyResolver.shared.register(Logging.self) {
                 mainLogger
             }
+            DependencyResolver.shared.logConfig.loggerInstance = mainLogger
             return
         }
 
@@ -313,7 +314,15 @@ public enum DependenciesFactory {
                 repo: resolve(), // problem
                 atomicInstaller: resolve(),
                 filesManager: resolve(),
-                remoteCertInstaller: resolve()
+                remoteCertInstaller: resolve(),
+                authKeysInstaller: resolve()
+            )
+        }
+
+        DependencyResolver.shared.register(AuthKeysInstalling.self) {
+            AuthKeysInstaller(
+                logger: resolve(),
+                filesManager: resolve()
             )
         }
 

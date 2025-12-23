@@ -3,13 +3,11 @@
 import Foundation
 import SwiftlaneCore
 
-/// iOS Mobile Provisioning Profile data model.
+/// Mobile Provisioning Profile data model.
 ///
-/// Can be parsed from `.mobileprovision` file (see `MobileProvisionParser`).
+/// Can be parsed from `.mobileprovision` (iOS) or `.provisionprofile` (macOS) file (see `MobileProvisionParser`).
 ///
-/// Info: MacOS Provisioning Profile have different file extension `.provisionprofile`.
-/// MacOS Provisioning Profiles have slightly different data structure
-/// and they should be installed in a different way.
+/// Supports both iOS and macOS provisioning profiles.
 public struct MobileProvision: Codable, Equatable {
     public let AppIDName: String
     public let ApplicationIdentifierPrefix: [String]
@@ -39,6 +37,35 @@ public struct MobileProvision: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case applicationIdentifier = "application-identifier"
+            case macApplicationIdentifier = "com.apple.application-identifier"
+        }
+
+        public init(applicationIdentifier: String) {
+            self.applicationIdentifier = applicationIdentifier
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            // Try iOS key first, then fallback to macOS key
+            if let iOSIdentifier = try? container.decode(String.self, forKey: .applicationIdentifier) {
+                applicationIdentifier = iOSIdentifier
+            } else if let macOSIdentifier = try? container.decode(String.self, forKey: .macApplicationIdentifier) {
+                applicationIdentifier = macOSIdentifier
+            } else {
+                throw DecodingError.keyNotFound(
+                    CodingKeys.applicationIdentifier,
+                    DecodingError.Context(
+                        codingPath: decoder.codingPath,
+                        debugDescription: "Expected either 'application-identifier' (iOS) or 'com.apple.application-identifier' (macOS)"
+                    )
+                )
+            }
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(applicationIdentifier, forKey: .applicationIdentifier)
         }
     }
 }

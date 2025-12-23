@@ -6,7 +6,7 @@ import SwiftlaneCore
 // sourcery: AutoMockable
 public protocol ProvisioningProfilesServicing {
     /// Installs a provisioning profile into system directory
-    /// `~/Library/MobileDevice/Provisioning Profiles/`
+    /// `~/Library/Developer/Xcode/UserData/Provisioning Profiles`
     ///
     /// - Returns: parsed profile info and it's installed path.
     @discardableResult
@@ -15,7 +15,7 @@ public protocol ProvisioningProfilesServicing {
     ) throws -> (profile: MobileProvision, installedPath: AbsolutePath)
 
     /// Looks for a provisioning profile with specified `name` in system directory
-    /// `~/Library/MobileDevice/Provisioning Profiles/`
+    /// `~/Library/Developer/Xcode/UserData/Provisioning Profiles`
     ///
     /// - Returns: parsed profile info and it's path.
     @discardableResult
@@ -44,18 +44,22 @@ public final class ProvisioningProfilesService {
     }
 
     private func installDir() throws -> AbsolutePath {
+        // Xcode 16+ uses unified location for both iOS and macOS provisioning profiles
         try filesManager.homeDirectoryForCurrentUser()
-            .appending(path: "Library/MobileDevice/Provisioning Profiles/")
+            .appending(path: "Library/Developer/Xcode/UserData/Provisioning Profiles")
     }
 
     private func validFileExtensions() -> [StringMatcher] {
-        [.hasSuffix(".mobileprovision")]
+        [
+            .hasSuffix(".mobileprovision"), // iOS, iPadOS, tvOS, watchOS
+            .hasSuffix(".provisionprofile")  // macOS
+        ]
     }
 }
 
 extension ProvisioningProfilesService: ProvisioningProfilesServicing {
     /// Installs a provisioning profile into system directory
-    /// `~/Library/MobileDevice/Provisioning Profiles/`
+    /// `~/Library/Developer/Xcode/UserData/Provisioning Profiles`
     ///
     /// - Returns: parsed profile info and it's installed path.
     @discardableResult
@@ -86,7 +90,7 @@ extension ProvisioningProfilesService: ProvisioningProfilesServicing {
     }
 
     /// Looks for a provisioning profile with specified `name` in system directory
-    /// `~/Library/MobileDevice/Provisioning Profiles/`
+    /// `~/Library/Developer/Xcode/UserData/Provisioning Profiles`
     ///
     /// - Returns: parsed profile info and it's path.
     public func findProvisioningProfile(named name: String) throws -> (profile: MobileProvision, path: AbsolutePath) {

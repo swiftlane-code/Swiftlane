@@ -36,7 +36,8 @@ public protocol MacOSSecurityProtocol {
     /// See: https://stackoverflow.com/questions/39868578/security-codesign-in-sierra-keychain-ignores-access-control-settings-and-ui-p
     func allowSigningUsingKeysFromKeychain(
         _ keychainPath: AbsolutePath?,
-        password: String
+        password: String?,
+        timeout: TimeInterval
     ) throws
 
     /// Returns paths to all existing keychains.
@@ -48,6 +49,8 @@ public protocol MacOSSecurityProtocol {
 
     func getKeychainPath(keychainName: String) throws -> AbsolutePath
 
+    func verifyCertificate(path: AbsolutePath, keychainPath: AbsolutePath) throws -> ShellOutput
+
     func validCodesigningIdentities(
         _ keychainPath: AbsolutePath?
     ) throws -> [CodesigningIdentity]
@@ -57,12 +60,35 @@ public protocol MacOSSecurityProtocol {
 ///
 /// Hint: `$ security help`.
 public final class MacOSSecurity: MacOSSecurityProtocol {
+    public enum CertificateVerificationError: Error, CustomStringConvertible {
+        case verificationFailed(certificate: String, keychain: String, output: String)
+
+        public var description: String {
+            switch self {
+            case let .verificationFailed(certificate, keychain, output):
+                return "Certificate verification failed for \(certificate.quoted) against keychain \(keychain.quoted). Output: \(output)"
+            }
+        }
+    }
+
     private let shell: ShellExecuting
 
     public init(
         shell: ShellExecuting
     ) {
         self.shell = shell
+    }
+
+    public func verifyCertificate(path: AbsolutePath, keychainPath: AbsolutePath) throws -> ShellOutput {
+        try shell.run(
+            [
+                "security verify-cert",
+                "-c", path.string.quoted,
+                "-k", keychainPath.string.quoted,
+            ].compactMap { $0 },
+            log: .commandAndOutput(outputLogLevel: .important),
+            shouldIgnoreNonZeroExitCode: { _, _ in false }
+        )
     }
 
     /// Delete certificate and it's private key from keychain.
@@ -165,19 +191,21 @@ public final class MacOSSecurity: MacOSSecurityProtocol {
     /// See: https://stackoverflow.com/questions/39868578/security-codesign-in-sierra-keychain-ignores-access-control-settings-and-ui-p
     public func allowSigningUsingKeysFromKeychain(
         _ keychainPath: AbsolutePath?,
-        password: String
+        password: String?,
+        timeout: TimeInterval
     ) throws {
         try shell.run(
             [
                 "security set-key-partition-list",
                 "-S apple-tool:,apple:",
                 "-s",
-                "-k '\(password)'",
+                password.map { "-k '\($0)'" },
                 keychainPath?.string.quoted,
-                "1> /dev/null", // Proccessing tons of meaningless stdout text takes a lot of time so we suppress it.
+//                "1> /dev/null", // Proccessing tons of meaningless stdout text takes a lot of time so we suppress it.
             ].compactMap { $0 },
             log: .commandOnly,
-            maskSubstringsInLog: [password]
+            maskSubstringsInLog: [password].compactMap { $0 },
+            executionTimeout: timeout // Prevents being stuck on "Enter password" system UI popup.
         )
     }
 
@@ -187,7 +215,8 @@ public final class MacOSSecurity: MacOSSecurityProtocol {
         let output = try shell.run(
             [
                 "security find-identity",
-                "-p codesigning",
+                // Turns out, "Developer ID Installer" cert is not a "codesigning" cert.
+                // "-p codesigning",
                 "-v",
                 keychainPath?.string.quoted,
             ].compactMap { $0 },

@@ -28,7 +28,7 @@ public protocol OpenSSLServicing {
     /// Returns fingerprint of a certificate file.
     func x509Fingerprint(
         inFile: AbsolutePath,
-        format: OpenSSLCertificateFormat,
+        format: OpenSSLCertificateFormat?,
         msgDigest: OpenSSLMsgDigest
     ) throws -> String
 
@@ -92,7 +92,7 @@ public final class OpenSSLService: OpenSSLServicing {
                     "-in '\(inFile)'",
                     "-out '\(encryptedFile)'",
                     base64 ? "-base64" : nil,
-                    msgDigest.map { "-md \($0.rawValue)" },
+                    msgDigest.map { $0.asCliOption },
                     "-e",
                 ].compactMap { $0 },
                 log: .commandAndOutput(outputLogLevel: .debug),
@@ -133,7 +133,7 @@ public final class OpenSSLService: OpenSSLServicing {
                     "-in '\(inFile)'",
                     "-out '\(decryptedFile)'",
                     base64 ? "-base64" : nil,
-                    msgDigest != nil ? "-md \(msgDigest!.rawValue)" : nil,
+                    msgDigest?.asCliOption,
                     "-d",
                 ].compactMap { $0 },
                 log: .commandAndOutput(outputLogLevel: .debug),
@@ -152,15 +152,16 @@ public final class OpenSSLService: OpenSSLServicing {
         }
     }
 
+    /// Note: It will figure out the format by itself, just pass nil.
     public func x509Fingerprint(
         inFile: AbsolutePath,
-        format: OpenSSLCertificateFormat,
+        format: OpenSSLCertificateFormat? = nil,
         msgDigest: OpenSSLMsgDigest
     ) throws -> String {
         let stdout = try shell.run(
             [
                 "openssl x509",
-                "-inform '\(format)'",
+                format.map { "-inform '\($0)'" },
                 "-in '\(inFile)'",
                 OpenSSLX509Options.noout,
                 OpenSSLX509Options.fingerprint,

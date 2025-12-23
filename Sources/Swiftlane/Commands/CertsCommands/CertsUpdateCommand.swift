@@ -55,6 +55,7 @@ public struct CertsUpdateCommand: ParsableCommand, CommandRunnerProtocol {
         let passwordReader: PasswordReading = DependenciesFactory.resolve()
 
         let repoPassword = try options.repoPassword?.sensitiveValue ??
+            commandConfig.repoPassword?.sensitiveValue ??
             passwordReader.readPassword(hint: "Enter certificates repo decryption password:")
 
         let taskConfig = CertsUpdateConfig(

@@ -1,0 +1,21 @@
+sharedValues:
+  jiraProjectKey: "PROJ"
+  jiraRequestsTimeout: 30
+  gitAuthorName: "swiftlane-ci"
+  gitAuthorEmail: "swiftlane-ci@example.com"
+pathsConfig:
+  xclogparserJSONReportName: "xclogparser_report.json"
+  xclogparserHTMLReportDirName: "build_report_html"
+  mergedJUnitName: "_merged_result.junit"
+  mergedXCResultName: null
+  xccovFileName: "xccov_report.json"
+  projectFile: "Ask.xcodeproj"
+  derivedDataDir: "../swiftlane_builds/derived_data"
+  testRunsDerivedDataDir: "../swiftlane_builds/test_runs_derived_data"
+  logsDir: "../swiftlane_builds/logs"
+  resultsDir: "../swiftlane_builds/results"
+  archivesDir: "../swiftlane_builds/archives"
+  swiftlintConfigPath: ".swiftlint.yml"
+  swiftlintWarningsJsonsFolder: "ProjectWarnings/SwiftLint"
+  tempDir: "../swiftlane_builds/temp"
+  xcodebuildFormatterCommand: "xcbeautify"

@@ -14,7 +14,7 @@ public protocol CertsAtomicInstalling {
         timeout: TimeInterval,
         reinstall: Bool,
         keychainName: String,
-        keychainPassword: String
+        keychainPassword: String?
     ) throws
 }
 
@@ -43,15 +43,21 @@ public class CertsAtomicInstaller {
 // swiftformat:disable indent
 extension CertsAtomicInstaller: CertsAtomicInstalling {
 	/// Recursively traverses `profilesDir`
-	/// and copies all found profiles into `~/Library/MobileDevice/Provisioning Profiles/`.
+	/// and copies all found profiles into `~/Library/Developer/Xcode/UserData/Provisioning Profiles`.
 	///
-	///    Valid profile extensions: `".mobileprovision"`.
+	///    Valid profile extensions: `".mobileprovision"` (iOS), `".provisionprofile"` (macOS).
 	///
 	/// - Parameter profilesDir: directory where to look (recursively) for profiles.
 	public func installProvisionProfiles(
 		from profilesDir: AbsolutePath
 	) throws -> [(MobileProvision, installPath: AbsolutePath)] {
-		let validExtension = [".mobileprovision"]
+		let validExtension = [".mobileprovision", ".provisionprofile"]
+
+    guard filesManager.directoryExists(profilesDir) else {
+      logger.warn("profiles directory \(profilesDir.string.quoted) does not exist.")
+      return []
+    }
+
 		let profilesFiles = try filesManager.find(profilesDir)
 			.filter { file in
 				validExtension.contains { file.hasSuffix($0) }
@@ -78,14 +84,22 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 	    timeout: TimeInterval,
 	    reinstall: Bool,
 	    keychainName: String,
-	    keychainPassword: String
+	    keychainPassword: String?
 	) throws {
 		let keychainPath = try security.getKeychainPath(keychainName: keychainName)
-		try security.unlockKeychain(keychainPath, password: keychainPassword)
+        if let keychainPassword {
+            try security.unlockKeychain(keychainPath, password: keychainPassword)
+        } else {
+            logger.warn("Keychain password is not set, keychain will not be unlocked.")
+        }
 
-		let allFiles = try filesManager.find(certificatesDir)
-		let certificatesFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.certificateFileExtension) }
-		let privateKeysFiles = allFiles.filter { $0.hasSuffix(CertificatesConstants.privateKeyExtension) }
+        let allFiles = try filesManager.find(certificatesDir)
+        let certificatesFiles = allFiles.filter { file in
+            CertificatesConstants.certificateFileExtensions.contains(file.pathExtension)
+        }
+        let privateKeysFiles = allFiles.filter { file in
+            CertificatesConstants.privateKeyExtensions.contains(file.pathExtension)
+        }
 
 		// swiftformat:disable:next wrap
 		logger.important("Going to install \(certificatesFiles.count) certificates and \(privateKeysFiles.count) private keys into \(keychainPath.lastComponent.deletingExtension.string.quoted) keychain.")
@@ -102,11 +116,14 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 			logger.error("Count of certificates and count private keys aren't equal.")
 		}
 
+        logger.info("certificatesFiles: \(certificatesFiles)")
+        logger.info("privateKeysFiles: \(privateKeysFiles)")
+
 		func uninstall(certificateFile file: AbsolutePath) throws {
 			logger.important("Uninstalling \(file.lastComponent.string.quoted)...")
 			let fingerprint = try openssl.x509Fingerprint(
 			    inFile: file,
-			    format: .der,
+			    format: nil,
 			    msgDigest: .sha1
 			).replacingOccurrences(of: ":", with: "")
 
@@ -159,15 +176,31 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 				try install(file: file)
 			}
 			.contains(true)
-
+		
+		for cert in certificatesFiles {
+			do {
+				logger.important("Verifying the certificate file post-install...")
+				let output = try security.verifyCertificate(path: cert, keychainPath: keychainPath)
+				logger.important("Result: \(output.stdoutText ?? output.stderrText ?? "No output")")
+			} catch {
+				logger.warn("Warning: Failed to verify the certificate \(cert.string.quoted) post-install.")
+				logger.logError(error)
+			}
+		}
+		
 		let validIdentities = try security.validCodesigningIdentities(keychainPath)
 
-		let expectedFingerprints = try certificatesFiles.map {
-			try openssl.x509Fingerprint(
-			    inFile: $0,
-			    format: .der,
-			    msgDigest: .sha1
-			).replacingOccurrences(of: ":", with: "")
+		let expectedFingerprints: [String] = certificatesFiles.map {
+			do {
+				return try openssl.x509Fingerprint(
+					inFile: $0,
+					format: nil,
+					msgDigest: .sha1
+				).replacingOccurrences(of: ":", with: "")
+			} catch {
+				logger.logError(error)
+				return "unknown"
+			}
 		}
 
 		let allInstalledAreValid = Set(validIdentities.map(\.fingerprint)).isSuperset(of: Set(expectedFingerprints))
@@ -190,11 +223,16 @@ extension CertsAtomicInstaller: CertsAtomicInstalling {
 
 		logger.important("Allowing Apple apps to sign things using private keys in keychain...")
 
-		// This can be really time consuming, so we run it only if needed.
-		try security.allowSigningUsingKeysFromKeychain(
-		    keychainPath,
-		    password: keychainPassword
-		)
+        // This can be really time consuming, so we run it only if needed.
+        do {
+            try security.allowSigningUsingKeysFromKeychain(
+                keychainPath,
+                password: keychainPassword,
+                timeout: 120
+            )
+        } catch {
+            logger.logError(error)
+        }
 	}
 }
 

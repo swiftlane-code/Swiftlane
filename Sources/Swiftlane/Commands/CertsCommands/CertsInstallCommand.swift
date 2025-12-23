@@ -13,6 +13,7 @@ public protocol CertsInstallCommandParamsAccessing {
     var additionalCertificates: String { get }
     var keychainPassword: SensitiveData<String>? { get }
     var forceReinstall: Bool { get }
+    var authKeyOutputDirectory: AbsolutePath? { get }
 }
 
 // swiftformat:disable indent
@@ -24,11 +25,14 @@ public struct CertsInstallCommand: ParsableCommand, CertsInstallCommandParamsAcc
 
 	@OptionGroup public var options: CertsCommandOptions
 
-	@Option(help: "Keychain password.")
+	@Option(help: "Keychain password. Can be passed via \(CertsCommandConfig.keychainPasswordEnvKey)")
 	public var keychainPassword: SensitiveData<String>?
 
 	@Flag(help: "Force reinstall of certificates and private keys into keychain.")
 	public var forceReinstall: Bool = false
+
+  @Option(help: "Path to directory to copy decrypted AuthKey_XXXXXXX.p8 into.")
+  public var authKeyOutputDirectory: AbsolutePath?
 
 	@OptionGroup public var commonOptions: CommonOptions
 
