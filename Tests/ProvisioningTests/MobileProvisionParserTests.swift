@@ -55,4 +55,20 @@ class MobileProvisionParserTests: XCTestCase {
         XCTAssertEqual(parsedProfile.applicationBundleID, "com.fakecompany.app")
         XCTAssertEqual(parsedProfile.DeveloperCertificates, [expectedCertData])
     }
+
+    func test_macOSProvisioningProfileEntitlementsAreParsedCorrectly() throws {
+        // Test that macOS profiles using "com.apple.application-identifier" key are parsed correctly
+        // given
+        let expectedProfileData = try Bundle.module.readStubData(path: "test_macOS_app.plist")
+
+        // when
+        let parsedProfile = try PropertyListDecoder().decode(MobileProvision.self, from: expectedProfileData)
+
+        // then
+        XCTAssertEqual(parsedProfile.UUID, "12345678-1234-1234-1234-123456789012")
+        XCTAssertEqual(parsedProfile.Name, "Test macOS App Profile")
+        XCTAssertEqual(parsedProfile.Platform, ["OSX"])
+        XCTAssertEqual(parsedProfile.applicationBundleID, "com.test.macapp")
+        XCTAssertEqual(parsedProfile.Entitlements.applicationIdentifier, "TESTPREFIX.com.test.macapp")
+    }
 }
