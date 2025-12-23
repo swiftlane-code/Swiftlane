@@ -82,11 +82,10 @@ public final class MacOSSecurity: MacOSSecurityProtocol {
     public func verifyCertificate(path: AbsolutePath, keychainPath: AbsolutePath) throws -> ShellOutput {
         try shell.run(
             [
-                "security",
-                "verify-cert",
-                "-c", path.string,
-                "-k", keychainPath.string,
-            ],
+                "security verify-cert",
+                "-c", path.string.quoted,
+                "-k", keychainPath.string.quoted,
+            ].compactMap { $0 },
             log: .commandAndOutput(outputLogLevel: .important),
             shouldIgnoreNonZeroExitCode: { _, _ in false }
         )
